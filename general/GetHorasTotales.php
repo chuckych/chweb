@@ -1,5 +1,7 @@
 <?php
-require __DIR__ . '/../config/session_start.php';
+if (session_status() == PHP_SESSION_NONE) {
+    require __DIR__ . '/../config/session_start.php';
+}
 require __DIR__ . '/../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
@@ -39,7 +41,7 @@ $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$Calculos = (!$Calculos == 1) ? "AND TIPOHORA.THoColu > 0" : '';
+$Calculos = (!($Calculos ?? 0) == 1) ? "AND TIPOHORA.THoColu > 0" : '';
 
 $sql_query = "SELECT
 FICHAS1.FicHora AS 'FicHora', TIPOHORA.THoDesc AS 'THoDesc',

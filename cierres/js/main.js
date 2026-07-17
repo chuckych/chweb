@@ -16,53 +16,6 @@ $(document).ready(function () {
     ls.set(LS_TIPO_INGRESO, $PROCESAR_POR.filter(':checked').val() === '2');
     $('#Personal-select-all').addClass('check');
 
-    function initDatePicker(selector) {
-        const anioMin = parseFloat($('#anioMin').val());
-        const anioMax = parseFloat($('#anioMax').val());
-        const rangos = {
-            'Hoy': [moment(), moment()],
-            'Esta semana': [moment().day(1), moment().day(7)],
-            'Ultima Semana': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
-            'Este mes': [moment().startOf('month'), moment()],
-            'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-        }
-        const locale_opt = {
-            format: "DD/MM/YYYY",
-            separator: " al ",
-            applyLabel: "Aplicar",
-            cancelLabel: "Cancelar",
-            fromLabel: "Desde",
-            toLabel: "Para",
-            customRangeLabel: "Personalizado",
-            weekLabel: "Sem",
-            daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
-            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-            firstDay: 1,
-            alwaysShowCalendars: true,
-            applyButtonClasses: "btn-custom fw5 px-3"
-        }
-        $(selector).daterangepicker({
-            singleDatePicker: false,
-            showDropdowns: true,
-            minYear: anioMin,
-            maxYear: anioMax,
-            maxDate: moment(),
-            showWeekNumbers: false,
-            autoUpdateInput: true,
-            opens: "center",
-            drops: "down",
-            autoApply: true,
-            alwaysShowCalendars: true,
-            linkedCalendars: false,
-            buttonClasses: "btn btn-sm fontq",
-            applyButtonClasses: "btn-custom fw4 px-3 opa8",
-            cancelClass: "btn-link fw4 text-gris",
-            ranges: rangos,
-            locale: locale_opt,
-        });
-    }
-
     /**
      * Maneja el evento de selección en un elemento select2 y actualiza el valor de un input asociado con el texto del elemento seleccionado. También realiza acciones adicionales como actualizar un contador y recargar una tabla de datos.
      *
@@ -156,7 +109,6 @@ $(document).ready(function () {
         const marcados = marcadosAll
             ? total - legajosDesMarcados.size
             : legajosMarcados.size;
-
         return { marcados, total };
     }
 
@@ -278,6 +230,10 @@ $(document).ready(function () {
                 "class": "align-middle fadeIn",
                 "data": 'pers_nombre2'
             },
+            {
+                "class": "align-middle fadeIn",
+                "data": 'FechaCierre'
+            },
 
         ],
         scrollY: '550px',
@@ -290,7 +246,8 @@ $(document).ready(function () {
         ordering: false,
         language: DT_SPANISH_LEGAJOS
     });
-    initDatePicker('#_drProc');
+
+    singleDatePicker('#cierre', 'right', 'up');
 
     /**
      * Inicializa el estado de la tabla table y actualiza el contador de legajos marcados al cargar los datos por primera vez.
@@ -517,6 +474,21 @@ $(document).ready(function () {
         limpiarMarcados();
         reloadDataTable($('#table'), true);
     });
+    $('input[name="Eliminar"]').val('0');
+    const textButtonSubmit = () => {
+        const eliminar = $('input[name="Eliminar"]').val() === '1';
+        return eliminar ? 'Eliminar Cierres' : 'Ingresar Cierres';
+    };
+    $('input[name="Eliminar"]').change(function () {
+        if ($(this).is(':checked')) {
+            $('input[name="Eliminar"]').val('1');
+            $('input[name="Fecha"]').addClass('loader-in');
+        } else {
+            $('input[name="Eliminar"]').val('0');
+            $('input[name="Fecha"]').removeClass('loader-in');
+        }
+        $("#submit").text(textButtonSubmit());
+    });
 
     $PROCESAR_POR.change(function () {
         checkSession();
@@ -530,10 +502,9 @@ $(document).ready(function () {
         $('.check').prop('disabled', show);
     }
 
-    ActiveBTN(false, "#submit", 'Procesando', 'Procesar');
+    ActiveBTN(false, "#submit", 'Ingresando', textButtonSubmit());
 
     const legajos_data = async () => {
-
         const url = "/" + homehost + "/app-data/custom/arrpersonal";
 
         try {
@@ -548,7 +519,7 @@ $(document).ready(function () {
                 Sucur: $(".sel_sucursal").val(),
                 _c: $("#_c").val(),
                 _r: $("#_r").val(),
-                Modulo: "ws_procesar",
+                Modulo: "generar_cierres",
                 NoPag: false,
                 flag: FLAG_LEGAJOS_DATA,
                 marcadosAll: ls.get(LS_LEGAJOS_MARCADOS_ALL),
@@ -569,12 +540,12 @@ $(document).ready(function () {
             notify('Error en la solicitud: ' + error.message, 'danger', 5000, 'right');
         }
     }
-    const ws_procesar = async (payload) => {
+    const generar = async (payload) => {
 
-        const url = "/" + homehost + "/app-data/ws_procesar";
+        const url = "/" + homehost + "/app-data/cierres/generar";
 
         try {
-            ActiveBTN(true, "#submit", 'Procesando', 'Procesar');
+            ActiveBTN(true, "#submit", 'Ingresando', textButtonSubmit());
 
             /**
              * Si el valor del campo $TipoIngreso es igual a 2 (Por Legajos), se realiza una llamada a la función legajos_data() para obtener los datos de legajos. Si la llamada falla, se lanza un error indicando que no se pudieron obtener los datos y se solicita al usuario que intente nuevamente.
@@ -604,24 +575,18 @@ $(document).ready(function () {
             const response = await axios.post(url, payload);
             $.notifyClose();
 
+
             if (response.data?.RESPONSE_CODE !== '200 OK') {
                 throw new Error(response.data?.MESSAGE);
             }
-            const dataResult = Array.isArray(response.data?.DATA)
-                ? response.data.DATA[0]
-                : response.data?.DATA;
-
-            if (dataResult !== true && dataResult !== 'true') {
-                throw new Error(response.data?.MESSAGE || 'Error en la respuesta del servidor.');
-            }
 
             limpiarFiltros();
-            ActiveBTN(false, "#submit", 'Procesando', 'Procesar');
-            notify('Proceso enviado correctamente', 'success', 5000, 'right');
+            ActiveBTN(false, "#submit", 'Ingresando', textButtonSubmit());
+            notify('Cierres procesados correctamente', 'success', 5000, 'right');
             reloadDataTable($('#table'), true);
         } catch (error) {
             notify('Error: ' + error.message, 'danger', 5000, 'right');
-            ActiveBTN(false, "#submit", 'Procesando', 'Procesar');
+            ActiveBTN(false, "#submit", 'Ingresando', textButtonSubmit());
             reloadDataTable($('#table'), true);
         }
     }
@@ -653,22 +618,19 @@ $(document).ready(function () {
             return obj;
         }, {});
 
-        payload.flag = FLAG_LEGAJOS_DATA
+        payload.flag = FLAG_LEGAJOS_DATA;
 
         // Procesar los datos del formulario
         $(this).serializeArray().forEach(item => {
             // Procesamiento especial para el rango de fechas
-            if (item.name === '_drProc') {
-                const fechas = item.value.split(' al ');
-                if (fechas.length === 2) {
-                    // Convertir DD/MM/YYYY a YYYY-MM-DD
-                    const convertirFecha = (fecha) => {
-                        const partes = fecha.trim().split('/');
-                        return `${partes[2]}-${partes[1]}-${partes[0]}`;
-                    };
-                    payload.FechaDesde = convertirFecha(fechas[0]);
-                    payload.FechaHasta = convertirFecha(fechas[1]);
-                }
+            if (item.name === 'Fecha') {
+                const fecha = item.value
+                // Convertir DD/MM/YYYY a YYYY-MM-DD
+                const convertirFecha = (fecha) => {
+                    const partes = fecha.trim().split('/');
+                    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+                };
+                payload.Fecha = convertirFecha(fecha);
                 return;
             }
 
@@ -678,16 +640,10 @@ $(document).ready(function () {
                 return;
             }
 
-            // Conversión de checkboxes a valores binarios
-            if (item.name === 'aFicCate' || item.name === 'aLaboral') {
-                const keyName = map_items_names[item.name];
-                payload[keyName] = item.value === 'on' ? 1 : 0;
-                return;
-            }
-
             // Mapeo normal de campos
             const keyName = map_items_names[item.name] || item.name;
             payload[keyName] = item.value;
+            payload.Eliminar = $('input[name="Eliminar"]').val();
         });
 
         // Empresa, Planta, Sector, Sección, Grupo y Sucursal al menos uno es obligatorio cuando TipoIngreso es 1 (Por Filtros)
@@ -709,7 +665,7 @@ $(document).ready(function () {
         }
 
         if (payload.procesar_por == "2" || payload.procesar_por == "1") {
-            ws_procesar(payload);
+            generar(payload);
             return;
         }
         e.stopImmediatePropagation();
@@ -728,7 +684,7 @@ $(document).ready(function () {
         $('#aTipo').val(0).trigger("change");
 
         $(".sel_seccion").prop("disabled", true);
-        ActiveBTN(false, "#submit", 'Procesando', 'Procesar');
+        ActiveBTN(false, "#submit", 'Ingresando', textButtonSubmit());
     }
 
 });

@@ -56,7 +56,7 @@ class Auditor
             $ms_offset = 0; // Desfase inicial en milisegundos para evitar colisiones de timestamp en SQL Server DATETIME
             $FechaHora = $this->conect->FechaHora();
             $FechaHoraSql = $this->formatSqlDateTime121($FechaHora);
-
+            // $inicio = microtime(true);
             foreach ($datos as $dato) { // Recorro los datos
                 $FechaHora = $this->conect->FechaHora();
                 usleep(10000); // Pausa 10ms. Reducir colisiones timestamp SQL DATETIME
@@ -79,6 +79,10 @@ class Auditor
                 $totalAffectedRows += $stmt->rowCount(); // Devuelve el número de filas afectadas por la última sentencia SQL
             }
             $conn->commit(); // Confirmar la transacción
+            // $fin = microtime(true);
+            // $tiempo = round($fin - $inicio, 2);
+            // error_log("Auditoría de cierres: en $tiempo segundos");
+
             if (!$data) {
                 $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
             }

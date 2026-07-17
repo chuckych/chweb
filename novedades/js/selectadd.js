@@ -202,7 +202,7 @@ $(document).ready(function () {
             deferRender: true,
             searchDelay: 350,
             ajax: {
-                url: "/" + homehost + "/novedades/?p=array_personal.php",
+                url: "/" + homehost + "/app-data/custom/arrpersonal",
                 type: "GET",
                 "data": function (data) {
                     data.Tipo = $("#aTipo").val();
@@ -244,9 +244,7 @@ $(document).ready(function () {
             searching: true,
             info: true,
             ordering: false,
-            language: {
-                "url": "/" + homehost + "/js/DataTableSpanishShort.json"
-            },
+            language: DT_SPANISH_LEGAJOS
         });
 
         /**
@@ -437,7 +435,7 @@ $(document).ready(function () {
                 }
             },
             ajax: {
-                url: "/" + homehost + "/data/getPerEmpresas.php",
+                url: "/" + homehost + "/app-data/custom/peremp",
                 dataType: "json",
                 type: 'GET',
                 delay: '250',
@@ -497,7 +495,7 @@ $(document).ready(function () {
                 }
             },
             ajax: {
-                url: "/" + homehost + "/data/getPerPlantas.php",
+                url: "/" + homehost + "/app-data/custom/perplan",
                 dataType: "json",
                 type: 'GET',
                 delay: '250',
@@ -557,7 +555,7 @@ $(document).ready(function () {
                 }
             },
             ajax: {
-                url: "/" + homehost + "/data/getPerSectores.php",
+                url: "/" + homehost + "/app-data/custom/persect",
                 dataType: "json",
                 type: 'GET',
                 delay: '250',
@@ -617,7 +615,7 @@ $(document).ready(function () {
                 }
             },
             ajax: {
-                url: "/" + homehost + "/data/getPerSecciones.php",
+                url: "/" + homehost + "/app-data/custom/persecc",
                 dataType: "json",
                 type: 'GET',
                 delay: '250',
@@ -672,7 +670,7 @@ $(document).ready(function () {
                 }
             },
             ajax: {
-                url: "/" + homehost + "/data/getPerGrupos.php",
+                url: "/" + homehost + "/app-data/custom/pergrup",
                 dataType: "json",
                 type: 'GET',
                 delay: '250',
@@ -732,7 +730,7 @@ $(document).ready(function () {
                 }
             },
             ajax: {
-                url: "/" + homehost + "/data/getPerSucursales.php",
+                url: "/" + homehost + "/app-data/custom/persucu",
                 dataType: "json",
                 type: 'GET',
                 delay: '250',
@@ -943,7 +941,7 @@ $(document).ready(function () {
 
     const legajos_data = async () => {
 
-        const url = "/" + homehost + "/novedades/?p=array_personal.php";
+        const url = "/" + homehost + "/app-data/custom/arrpersonal";
 
         try {
 

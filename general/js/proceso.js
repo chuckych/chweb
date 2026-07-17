@@ -538,7 +538,7 @@ $(document).on("click", ".procReg", function (e) {
     $.ajax({
         type: "POST",
         dataType: "json",
-        url: "../procesar/procesando.php",
+        url: "/" + _homehost + "/app-data/custom/proc-proceso",
         data: {
             procesaLegajo: procLega,
             nombreLegajo: Nombre,
@@ -810,7 +810,7 @@ $(document).on("click", ".open-modal", function (e) {
         $.ajax({
             type: "POST",
             dataType: "json",
-            url: "../procesar/procesando.php",
+            url: "/" + _homehost + "/app-data/custom/proc-proceso",
             data: {
                 procesaLegajo: true,
                 nombreLegajo: Nombre,
@@ -848,7 +848,7 @@ $(document).on("click", ".open-modal", function (e) {
         $.ajax({
             type: 'GET',
             dataType: "json",
-            url: "../data/GetCierre.php",
+            url: "/" + _homehost + "/app-data/custom/cierre",
             'data': {
                 Datos: $('#data').val()
             },
@@ -887,7 +887,7 @@ $(document).on("click", ".open-modal", function (e) {
         $.ajax({
             type: 'GET',
             dataType: "json",
-            url: "GetFichas2.php",
+            url: "/" + _homehost + "/app-data/custom/gen-fichas2",
             'data': {
                 Datos: $('#data').val()
             },
@@ -934,7 +934,7 @@ $(document).on("click", ".open-modal", function (e) {
         $.ajax({
             type: 'GET',
             dataType: "json",
-            url: "GetCitacion.php",
+            url: "/" + _homehost + "/app-data/custom/gen-citacion",
             'data': {
                 Datos: $('#data').val()
             },
@@ -972,7 +972,7 @@ $(document).on("click", ".open-modal", function (e) {
             bProcessing: true,
             deferRender: true,
             "ajax": {
-                url: "GetFichadas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-fichadas",
                 type: "GET",
                 dataSrc: "Fichadas",
                 'data': {
@@ -1007,7 +1007,7 @@ $(document).on("click", ".open-modal", function (e) {
             bProcessing: true,
             deferRender: true,
             "ajax": {
-                url: "GetNovedades.php",
+                url: "/" + _homehost + "/app-data/custom/gen-novedades",
                 type: "GET",
                 dataSrc: "Novedades",
                 'data': {
@@ -1045,7 +1045,7 @@ $(document).on("click", ".open-modal", function (e) {
             bProcessing: true,
             deferRender: true,
             "ajax": {
-                url: "GetOtrasNovedades.php",
+                url: "/" + _homehost + "/app-data/custom/gen-onovedades",
                 type: "GET",
                 dataSrc: "ONovedades",
                 'data': {
@@ -1076,7 +1076,7 @@ $(document).on("click", ".open-modal", function (e) {
         bProcessing: true,
         deferRender: true,
         "ajax": {
-            url: "GetHoras.php",
+            url: "/" + _homehost + "/app-data/custom/gen-horas",
             type: "GET",
             dataSrc: "Horas",
             'data': {
@@ -1231,7 +1231,7 @@ $(document).on("click", ".open-modal", function (e) {
             }
         },
         ajax: {
-            url: "../data/getListNovedades.php",
+            url: "/" + _homehost + "/app-data/custom/novedades",
             dataType: "json",
             type: "POST",
             delay: optSelect2.delay,
@@ -1300,7 +1300,7 @@ $(document).on("click", ".open-modal", function (e) {
             }
         },
         ajax: {
-            url: "../data/getListNoveCausa.php",
+            url: "/" + _homehost + "/app-data/custom/novecausa",
             dataType: "json",
             type: "POST",
             delay: optSelect2.delay,
@@ -1354,7 +1354,7 @@ $(document).on("click", ".open-modal", function (e) {
             }
         },
         ajax: {
-            url: "../data/getListTipoHora.php",
+            url: "/" + _homehost + "/app-data/custom/tipo-horas",
             dataType: "json",
             type: "POST",
             delay: optSelect2.delay,
@@ -1477,7 +1477,7 @@ $(document).on("click", ".open-modal", function (e) {
             }
         },
         ajax: {
-            url: "../data/getListOtrasNovedades.php",
+            url: "/" + _homehost + "/app-data/custom/onovedades",
             dataType: "json",
             type: "POST",
             delay: optSelect2.delay,
@@ -1650,7 +1650,7 @@ $(document).on("click", ".open-modal", function (e) {
                 if (result) {
                     $.ajax({
                         type: "POST",
-                        url: "insert.php",
+                        url: "/" + _homehost + "/app-data/custom/gen-post",
                         'data': {
                             baja_fichada: true,
                             Datos
@@ -1803,7 +1803,7 @@ $(document).on("click", ".open-modal", function (e) {
                     if (result) {
                         $.ajax({
                             type: "POST",
-                            url: "insert.php",
+                            url: "/" + _homehost + "/app-data/custom/gen-post",
                             'data': {
                                 baja_novedad: true,
                                 Datos,
@@ -1913,7 +1913,7 @@ $(document).on("click", ".open-modal", function (e) {
                 if (result) {
                     $.ajax({
                         type: "POST",
-                        url: "insert.php",
+                        url: "/" + _homehost + "/app-data/custom/gen-post",
                         'data': {
                             baja_Hora: true,
                             Datos,
@@ -2052,7 +2052,7 @@ $(document).on("click", ".open-modal", function (e) {
                 if (result) {
                     $.ajax({
                         type: "POST",
-                        url: "insert.php",
+                        url: "/" + _homehost + "/app-data/custom/gen-post",
                         'data': {
                             baja_ONov: true,
                             Datos,
@@ -2161,7 +2161,7 @@ $(document).on("click", ".open-modal", function (e) {
                     if (result) {
                         $.ajax({
                             type: "POST",
-                            url: "insert.php",
+                            url: "/" + _homehost + "/app-data/custom/gen-post",
                             'data': {
                                 baja_Cit: true,
                                 Datos

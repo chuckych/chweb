@@ -48,6 +48,7 @@ $Fichadas = new Classes\Fichadas;
 $Acceso = new Classes\Acceso;
 $horario = new Classes\Horario;
 $rotacion = new Classes\Rotacion;
+$cierres = new Classes\Cierres;
 
 define('ID_COMPANY', $tools->padLeft(getenv('ID_COMPANY'), 3, 0)); // ID de la empresa con formato
 
@@ -221,6 +222,7 @@ Flight::route('POST /conectar', function () {
 Flight::route('GET /acceso/relohabi', [$Acceso, 'relojes_habilitados']);
 Flight::route('GET /acceso/perrelo', [$Acceso, 'personal_relojes']);
 Flight::route('GET /acceso/identifica', [$Acceso, 'identifica']);
+Flight::route('POST /cierres/generar', [$cierres, 'generate']);
 
 Flight::map('notFound', [$response, 'notFound']);
 Flight::set('flight.log_errors', true);

@@ -76,7 +76,7 @@ $(document).ready(function () {
             templateSelection: selectionTemplate,
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getEmpFichas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-emp",
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
@@ -124,7 +124,7 @@ $(document).ready(function () {
             templateSelection: selectionTemplate,
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getPlanFichas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-pla",
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
@@ -172,7 +172,7 @@ $(document).ready(function () {
             templateSelection: selectionTemplate,
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getSectFichas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-sec",
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
@@ -220,7 +220,7 @@ $(document).ready(function () {
             templateSelection: selectionTemplate,
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getSec2Fichas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-se2",
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
@@ -268,7 +268,7 @@ $(document).ready(function () {
             templateSelection: selectionTemplate,
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getGrupFichas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-gru",
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
@@ -316,7 +316,7 @@ $(document).ready(function () {
             templateSelection: selectionTemplate,
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getSucFichas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-suc",
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
@@ -364,7 +364,7 @@ $(document).ready(function () {
             templateSelection: template,
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-leg",
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
@@ -415,7 +415,7 @@ $(document).ready(function () {
             tokenSeparators: [',', ' '],
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichasDeHa.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-legdeha",
                 dataType: "json",
                 type: "POST",
                 delay: 250,
@@ -477,7 +477,7 @@ $(document).ready(function () {
             tokenSeparators: [',', ' '],
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichasDeHa.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-legdeha",
                 dataType: "json",
                 type: "POST",
                 delay: 250,
@@ -534,7 +534,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getTipoPerFichas.php",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-tipoper",
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
@@ -582,8 +582,8 @@ $(document).ready(function () {
             // templateSelection: selectionTemplate,
             language: SELECT2_LANGUAGE_ES,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/getSelect/getNovNovedades.php",
-                dataType: "json",
+                url: "/" + _homehost + "/app-data/custom/gen-sel-novedades",
+                dataType: "json",                
                 type: "POST",
                 delay: opt2["delay"],
                 data: function (params) {

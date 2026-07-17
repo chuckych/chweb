@@ -1,7 +1,9 @@
 <?php
 require __DIR__ . '/../config/index.php';
 ini_set('max_execution_time', 900); // 900 segundos 15 minutos
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 header("Content-Type: application/json");
 ultimoacc();
 secure_auth_ch_json();

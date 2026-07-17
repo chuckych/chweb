@@ -1,7 +1,9 @@
 <?php
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '/../config/session_start.php';
+if (session_status() == PHP_SESSION_NONE) {
+    require __DIR__ . '/../config/session_start.php';
+}
 require_once __DIR__ . '/../config/index.php';
 E_ALL();
 require_once __DIR__ . '/../config/conect_mssql.php';
@@ -31,36 +33,42 @@ $FicFech = $Datos[1];
 
 $data = array();
 
-$q = (ValString($_POST['q'])) ? $_POST['q'] : exit;
-// $NovCNove = (ValNumerico($_POST['NovCNove'])) ? $_POST['NovCNove'] : exit;
-$valores = '';
-$query = "SELECT FICHAS1.FicHora FROM FICHAS1 WHERE FICHAS1.FicLega='$FicLega' AND FICHAS1.FicFech='$FicFech'";
-$result = sqlsrv_query($link, $query, $params, $options);
-if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)):
-        $FicHora[] = $row['FicHora'];
-        $valores = implode(",", $FicHora);
-        $valores = 'AND THoCodi NOT IN (' . $valores . ')';
-    endwhile;
-}
-sqlsrv_free_stmt($result);
-
-
-$query = "SELECT THoCodi AS Codigo, THoDesc AS Descripcion FROM TipoHora WHERE THoCodi > 0 $valores AND THoDesc LIKE '%$q%' $FiltroTHoCodi $filtroTipoHora ORDER BY THoCodi";
-
-$result = sqlsrv_query($link, $query, $params, $options);
-// print_r($query); exit;
-
-if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)):
-        // $cod = str_pad($row['Codigo'], 3, "0", STR_PAD_LEFT);
-        $data[] = array(
-            'id' => $row['Codigo'],
-            'text' => $row['Descripcion'],
-        );
-    endwhile;
+try {
+    $q = (ValString($_POST['q'])) ? $_POST['q'] : exit;
+    // $NovCNove = (ValNumerico($_POST['NovCNove'])) ? $_POST['NovCNove'] : exit;
+    $valores = '';
+    $query = "SELECT FICHAS1.FicHora FROM FICHAS1 WHERE FICHAS1.FicLega='$FicLega' AND FICHAS1.FicFech='$FicFech'";
+    $result = sqlsrv_query($link, $query, $params, $options);
+    if (sqlsrv_num_rows($result) > 0) {
+        while ($row = sqlsrv_fetch_array($result)):
+            $FicHora[] = $row['FicHora'];
+            $valores = implode(",", $FicHora);
+            $valores = 'AND THoCodi NOT IN (' . $valores . ')';
+        endwhile;
+    }
     sqlsrv_free_stmt($result);
-}
 
-sqlsrv_close($link);
-echo json_encode(($data));
+
+    $query = "SELECT THoCodi AS Codigo, THoDesc AS Descripcion FROM TipoHora WHERE THoCodi > 0 $valores AND THoDesc LIKE '%$q%' $FiltroTHoCodi $filtroTipoHora ORDER BY THoCodi";
+
+    $result = sqlsrv_query($link, $query, $params, $options);
+    // print_r($query); exit;
+
+    if (sqlsrv_num_rows($result) > 0) {
+        while ($row = sqlsrv_fetch_array($result)):
+            // $cod = str_pad($row['Codigo'], 3, "0", STR_PAD_LEFT);
+            $data[] = array(
+                'id' => $row['Codigo'],
+                'text' => $row['Descripcion'],
+            );
+        endwhile;
+        sqlsrv_free_stmt($result);
+    }
+
+    sqlsrv_close($link);
+    echo json_encode(($data));  
+
+} catch (Exception $e) {
+    echo json_encode(['error' => 'Error al ejecutar la consulta: ' . $e->getMessage()]);
+    exit;
+}

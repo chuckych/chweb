@@ -1,6 +1,7 @@
 <?php
-session_start();
-// header('Content-type: text/html; charset=utf-8');
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 require __DIR__ . '/../config/index.php';
 ultimoacc();
 secure_auth_ch();

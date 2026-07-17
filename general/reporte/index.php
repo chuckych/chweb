@@ -1,6 +1,8 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-require __DIR__ . '/../../config/session_start.php';
+if (session_status() == PHP_SESSION_NONE) {
+    require __DIR__ . '/../../config/session_start.php';
+}
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
 require __DIR__ . '/../../config/index.php';
@@ -10,7 +12,6 @@ $Modulo = '4';
 ExisteModRol($Modulo);
 require_once __DIR__ . '/../../vendor/autoload.php';
 E_ALL();
-
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
     try {
@@ -167,7 +168,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
         $mpdf->WriteHTML($stylesheet, 1); // The parameter 1 tells that this is css/style only and no body/html/text
         $t_css = microtime(true);
-        // error_log('[reporte] 3) WriteHTML CSS en ' . round($t_css - $t_init, 2) . 's');
 
         // Procesar el cuerpo en bloques para evitar errores de PCRE con HTML muy grande.
         $chunks = explode('<!--CHWEB_MPDF_CHUNK-->', $buffer);
@@ -179,16 +179,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             $mpdf->WriteHTML($chunk, 2);
         }
         $t_write = microtime(true);
-        // error_log('[reporte] 4) WriteHTML (single call) en ' . round($t_write - $t_css, 2) . 's  | buffer: ' . round(strlen($buffer) / 1024, 1) . ' KB');
-
-        // ob_end_clean();
 
         $mpdf->Output($NombreArchivo, \Mpdf\Output\Destination::FILE);
         $t_output = microtime(true);
-        // error_log('[reporte] 5) Output PDF en ' . round($t_output - $t_write, 2) . 's');
-        // error_log('[reporte] TOTAL: ' . round($t_output - $start_time, 2) . 's');
 
         $data = ['status' => 'ok', 'Mensaje' => 'Reporte Creado.' . $_nombre, 'archivo' => $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid()];
+
         echo json_encode($data);
         exit();
     } catch (\Mpdf\MpdfException $e) {

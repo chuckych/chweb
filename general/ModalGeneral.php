@@ -26,7 +26,7 @@
             <div class="modal-body pt-0 mt-n3">
                 <input type="hidden" hidden id="Mxs">
                 <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
-                    <form action="insert.php" method="POST" class="Form_Citacion">
+                    <form action="../app-data/custom/gen-post" method="POST" class="Form_Citacion">
                         <div class="row d-none mt-2" id="rowCitacion">
                             <!-- <div class="col-lg-6 col-12"></div> -->
                             <div class="col-12 col-md-4 col-lg-7">
@@ -108,7 +108,7 @@
                                 <div class="row m-0 overflow-auto" style="min-height:250px;">
                                     <div class="col-12 py-2 py-sm-3">
                                         <span class="d-block d-lg-none fontq mb-1" id="xsTFic">Fichadas</span>
-                                        <form action="insert.php" method="POST" class="Form_Fichadas d-none">
+                                        <form action="../app-data/custom/gen-post" method="POST" class="Form_Fichadas d-none">
                                             <div class="form-inline mb-2"><label for="RegFech_Fichada" class="mr-2 w80">Fecha:</label>
                                                 <input type="text" readonly name="RegFech" class="h40 form-control RegFech w120 ls1" id="RegFech_Fichada">
                                             </div>
@@ -118,7 +118,7 @@
                                                 <div class="respuesta_fichada fontq text-secondary mx-2"></div>
                                             </div>
                                         </form>
-                                        <form action="insert.php" method="POST" class="Form_Fichadas_Mod d-none">
+                                        <form action="../app-data/custom/gen-post" method="POST" class="Form_Fichadas_Mod d-none">
                                             <div class="form-inline mb-2"><label for="RegFech_mod" class="mr-2 w80">Fecha:</label><input type="text" name="RegFech_mod" readonly class="h40 form-control RegFech w120 ls1" id="RegFech_mod">
                                             </div>
                                             <div class="form-inline mb-2">
@@ -150,7 +150,7 @@
                                 <div class="row m-0 overflow-auto" style="min-height:250px;">
                                     <div class="col-12 py-2 py-sm-3">
                                         <span class="d-block d-lg-none fontq mb-1" id="xsTNov">Novedades</span>
-                                        <form action="insert.php" method="POST" class="Form_Novedad d-none">
+                                        <form action="../app-data/custom/gen-post" method="POST" class="Form_Novedad d-none">
                                             <input type="hidden" name="_nt" id="novTipo">
                                             <input type="hidden" name="_nc" id="novCate">
                                             <div class="mb-2 d-flex align-items-center">
@@ -204,7 +204,7 @@
                                 <div class="row m-0 overflow-auto" style="min-height:250px;">
                                     <div class="col-12 py-2 py-sm-3">
                                         <span class="d-block d-lg-none fontq mb-1" id="xsTHor">Horas</span>
-                                        <form action="insert.php" method="POST" class="Form_Horas d-none">
+                                        <form action="../app-data/custom/gen-post" method="POST" class="Form_Horas d-none">
                                             <div class="d-flex align-items-center mb-2">
                                                 <label for="Fic1Hora" class="mr-2 w80 d-none d-sm-block">Tipo
                                                     Hora:</label>
@@ -261,7 +261,7 @@
                                 <div class="row m-0 overflow-auto" style="min-height:250px;">
                                     <div class="col-12 py-2 py-sm-3">
                                         <span class="d-block d-lg-none fontq mb-1" id="xsTOnov">Otras Novedades</span>
-                                        <form action="insert.php" method="POST" class="Form_OtraNovedad d-none">
+                                        <form action="../app-data/custom/gen-post" method="POST" class="Form_OtraNovedad d-none">
                                             <div class="d-flex align-items-center mb-2">
                                                 <!-- <label for="FicONov" class="mr-2 w80">Novedad:</label> -->
                                                 <label for="FicONov" class="w80 mr-2 d-none d-sm-block">Novedad:</label>

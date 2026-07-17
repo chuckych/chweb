@@ -256,11 +256,10 @@ $(document).ready(function () {
         deferRender: true,
         searchDelay: 350,
         ajax: {
-            url: "/" + homehost + "/novedades/?p=array_personal.php",
+            url: "/" + homehost + "/app-data/custom/arrpersonal",
             type: "GET",
             "data": function (data) {
                 data.Tipo = $("#aTipo").val();
-                // data.Tipo = $TIPO_DE_PERSONAL.filter(':checked').val();
                 data.Emp = $("#aEmp").val();
                 data.Plan = $("#aPlan").val();
                 data.Sect = $("#aSect").val();
@@ -299,9 +298,7 @@ $(document).ready(function () {
         searching: true,
         info: true,
         ordering: false,
-        language: {
-            "url": "/" + homehost + "/js/DataTableSpanishShort.json"
-        },
+        language: DT_SPANISH_LEGAJOS
     });
     initDatePicker('#_drProc');
 
@@ -331,6 +328,8 @@ $(document).ready(function () {
             textCountMarcados(0, TOTALREGISTROS());
             ls.remove(LS_WAITING_DT);
         }
+
+        textCountMarcados(calcularMarcadosGlobal().marcados, TOTALREGISTROS());
 
         /**
          * Marca los checkboxes de los legajos que están almacenados en localStorage (LS_LEGAJOS_MARCADOS) al redibujar la tabla table. Esto asegura que los legajos previamente seleccionados permanezcan marcados incluso después de cambiar de página o filtrar la tabla.
@@ -406,27 +405,27 @@ $(document).ready(function () {
         const OPT = {
             '.sel_empresa': {
                 'placeholder': MAPPING_LABELS.Empresas || 'Empresas',
-                'ajax': 'getPerEmpresas.php'
+                'ajax': 'peremp'
             },
             '.sel_plantas': {
                 'placeholder': MAPPING_LABELS.Plantas || 'Plantas',
-                'ajax': 'getPerPlantas.php'
+                'ajax': 'perplan'
             },
             '.sel_sectores': {
                 'placeholder': MAPPING_LABELS.Sectores || 'Sectores',
-                'ajax': 'getPerSectores.php'
+                'ajax': 'persect'
             },
             '.sel_seccion': {
                 'placeholder': MAPPING_LABELS.Secciones || 'Secciones',
-                'ajax': 'getPerSecciones.php'
+                'ajax': 'persecc'
             },
             '.sel_grupos': {
                 'placeholder': MAPPING_LABELS.Grupos || 'Grupos',
-                'ajax': 'getPerGrupos.php'
+                'ajax': 'pergrup'
             },
             '.sel_sucursal': {
                 'placeholder': MAPPING_LABELS.Sucursales || 'Sucursal',
-                'ajax': 'getPerSucursales.php'
+                'ajax': 'persucu'
             }
         };
 
@@ -469,7 +468,7 @@ $(document).ready(function () {
             width: '100%',
             language: LANG_SELECT2,
             ajax: {
-                url: "/" + homehost + "/data/" + OPT[selector]['ajax'],
+                url: "/" + homehost + "/app-data/custom/" + OPT[selector]['ajax'],
                 dataType: "json",
                 type: 'GET',
                 delay: '250',
@@ -523,6 +522,7 @@ $(document).ready(function () {
         $('.sel_personal').val(null).trigger("change");
         $('.sel_plantas').val(null).trigger("change");
         $('.sel_empresa').val(null).trigger("change");
+        limpiarMarcados();
         reloadDataTable($('#table'), true);
     });
 
@@ -531,11 +531,6 @@ $(document).ready(function () {
         const isLegajos = $(this).val() === '2';
         ls.set(LS_TIPO_INGRESO, isLegajos);
         toggleDivTablePers(!isLegajos);
-    });
-    
-    $TIPO_DE_PERSONAL.change(function () {
-        console.log('Tipo de Personal seleccionado:', $(this).val());
-        reloadDataTable($('#table'), true);
     });
 
     const toggleDivTablePers = (show) => {
@@ -547,7 +542,7 @@ $(document).ready(function () {
 
     const legajos_data = async () => {
 
-        const url = "/" + homehost + "/novedades/?p=array_personal.php";
+        const url = "/" + homehost + "/app-data/custom/arrpersonal";
 
         try {
 
@@ -728,14 +723,11 @@ $(document).ready(function () {
     });
 
     function limpiarFiltros() {
-        checkSession();
         limpiarMarcados();
         textCountMarcados();
         ls.set(LS_WAITING_DT, true);
 
-        SELECTORES_SELECT2.forEach(selector => {
-            $(selector).val(null).trigger("change");
-        });
+        $('#aTipo').val(0).trigger("change");
 
         $(".sel_seccion").prop("disabled", true);
         ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');

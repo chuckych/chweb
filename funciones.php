@@ -1890,12 +1890,11 @@ function dataListaEstruct($lista, $uid)
     //     return false;
     // }
 }
-function InsertRegistro($query)
+function InsertRegistro(string $query)
 {
     $params = [];
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
     require __DIR__ . '/config/conect_mssql.php';
-    // print_r($query);
     $stmt = sqlsrv_query($link, $query, $params, $options);
     if (($stmt)) {
         sqlsrv_close($link);
@@ -3816,13 +3815,17 @@ function MSQuery($query)
         // exit;
     }
 }
-function arrMSQuery(string $query)
+function arrMSQuery(string $query, array $opt = [])
 {
 
     static $link = null;
     static $connectionCount = 0;
     static $queryCount = 0;
+
     $stmt = null;
+
+    $insert = $opt['insert'] ?? false;
+    $update = $opt['update'] ?? false;
 
     try {
 
@@ -3844,12 +3847,20 @@ function arrMSQuery(string $query)
         $stmt = sqlsrv_query($link, $query);
 
         // error_log('[MSSQL CACHE] Consulta #' . ($queryCount + 1) . ' ejecutada: ' . $query);
-        // $queryCount++;
+        $queryCount++;
 
         if ($stmt === false) {
             $errors = sqlsrv_errors();
             $mensaje = $errors[0]['message'] ?? 'Error desconocido en sqlsrv_query';
             throw new Exception($mensaje);
+        }
+
+        if($insert) {
+            return true;
+        }
+
+        if($update) {
+            return true;
         }
 
         while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {

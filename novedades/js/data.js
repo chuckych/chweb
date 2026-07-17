@@ -96,7 +96,7 @@ let GetPersonal = $('#GetPersonal').DataTable({
     >
         `,
     ajax: {
-        url: "/" + $("#_homehost").val() + "/novedades/GetPersonal.php",
+        url: "/" + $("#_homehost").val() + "/app-data/custom/nov-getper",
         type: "POST",
         "data": function (data) {
             data._l = $("#_l").val();
@@ -138,9 +138,7 @@ let GetPersonal = $('#GetPersonal').DataTable({
     responsive: false,
     info: true,
     ordering: false,
-    language: {
-        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-    },
+    language: DT_SPANISH_2
 });
 
 let GetNovedades = $('#GetNovedades').DataTable({
@@ -165,7 +163,8 @@ let GetNovedades = $('#GetNovedades').DataTable({
         "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
         "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
     ajax: {
-        url: "/" + $("#_homehost").val() + "/novedades/GetNovedades.php",
+        // url: "/" + $("#_homehost").val() + "/novedades/GetNovedades.php",
+        url: "/" + $("#_homehost").val() + "/app-data/custom/nov-getnove",
         type: "POST",
         "data": function (data) {
             data.Per = $("#Per").val();
@@ -264,9 +263,7 @@ let GetNovedades = $('#GetNovedades').DataTable({
     info: true,
     searching: false,
     ordering: false,
-    language: {
-        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-    },
+    language: DT_SPANISH_2
 });
 $("#GetNovedades").on('init.dt', function () {
 
@@ -330,7 +327,7 @@ setTimeout(function () {
         >
             `,
         ajax: {
-            url: "/" + $("#_homehost").val() + "/novedades/GetFechas.php",
+            url: "/" + $("#_homehost").val() + "/app-data/custom/nov-getfechas",
             type: "POST",
             "data": function (data) {
                 data.Per = $("#Per").val();
@@ -368,9 +365,7 @@ setTimeout(function () {
         responsive: false,
         info: true,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-        },
+        language: DT_SPANISH_2
     });
     let GetNovedadesFecha = $('#GetNovedadesFecha').DataTable({
         "drawCallback": function (settings) {
@@ -393,7 +388,7 @@ setTimeout(function () {
             "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
             "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         ajax: {
-            url: "/" + $("#_homehost").val() + "/novedades/GetNovedadesFecha.php",
+            url: "/" + $("#_homehost").val() + "/app-data/custom/nov-getnove-fecha",
             type: "POST",
             "data": function (data) {
                 data._f = $("#_f").val();
@@ -493,9 +488,7 @@ setTimeout(function () {
         info: true,
         searching: false,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-        },
+        language: DT_SPANISH_2
     });
     $("#GetNovedadesFecha").on('init.dt', function () {
 
@@ -581,7 +574,7 @@ const modalEditNove = async (data) => {
         if (!data) { // Si no hay datos
             throw new Error('No se encontraron datos para editar');
         }
-        let response = await axios('modal_editar.html' + "?" + Date.now()); // Busca el modal
+        let response = await axios('../app-data/custom/nov-modal-editar' + "?" + Date.now()); // Busca el modal
         let html = response.data; // Obtiene el modal
 
         $('#modales').html(html); // Agrega el modal al DOM
@@ -656,14 +649,14 @@ const tableNoveEdit = async (data) => {
             nove.NoveDelete = Ficha.NoveDelete;
         });
 
-        let siFichaCerrada = (Ficha.Cierre.Estado != 'abierto') ? '(Periodo ' + Ficha.Cierre.Estado + ')' : '';
+        const siFichaCerrada = (Ficha.Cierre.Estado != 'abierto') ? '(Periodo ' + Ficha.Cierre.Estado + ')' : '';
         $('.modal-title').html('Editar Novedades ' + siFichaCerrada ?? '') // Cambia el título del modal
 
         if ($.fn.DataTable.isDataTable('#tableNovEdit')) {
             $('#tableNovEdit').DataTable().destroy();
         }
 
-        let dt = $('#tableNovEdit').DataTable({
+        const dt = $('#tableNovEdit').DataTable({
             dom: `
                 <'row '
                     <'col-12 divFichadas'>
@@ -759,10 +752,9 @@ const tableNoveEdit = async (data) => {
             responsive: false,
             info: true,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-            },
+            language: DT_SPANISH_2
         });
+
         dt.on('init.dt', function (e, settings) {
 
             e.preventDefault();
@@ -770,7 +762,7 @@ const tableNoveEdit = async (data) => {
 
             fadeInOnly('#tableNovEdit');
 
-            let tableInfo = tableInfoFicha(); // Crea la tabla de información de la ficha
+            const tableInfo = tableInfoFicha(); // Crea la tabla de información de la ficha
 
             $("#modal .divFichadas").html('');
             $("#modal .divFichadas").html(tableInfo);
@@ -783,6 +775,7 @@ const tableNoveEdit = async (data) => {
                     $(tr).trigger('click'); // Dispara el evento click del primer tr
                 }
             }, 0);
+
             $(idTableBody).on('click', (e) => {
 
                 e.preventDefault();

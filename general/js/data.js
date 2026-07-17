@@ -35,7 +35,7 @@ const lsDataSelect = function (LS_KEY, selector) {
 }
 
 const status_ws = function () {
-    axios.get("/" + $("#_homehost").val() + '/status_ws.php', {
+    axios.get("/" + $("#_homehost").val() + '/app-data/custom/status_ws', {
         params: {
             status: 'ws',
         }
@@ -395,7 +395,7 @@ const GetPersonal = $('#GetPersonal').DataTable({
     searchDelay: 1500,
     dom: ',<"d-inline-flex d-flex align-items-center"t<"m,l-2"p>><"mt-n3 d-flex justify-content-end"i>',
     ajax: {
-        url: "/" + $("#_homehost").val() + "/general/GetPersonalFichas.php",
+        url: "/" + $("#_homehost").val() + "/app-data/custom/gen-per-fichas",
         type: "POST",
         "data": function (data) {
             data._l = $("#_l").val();
@@ -508,7 +508,7 @@ GetPersonal.on('draw.dt', function (e, settings) {
             deferRender: true,
             searchDelay: 1500,
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/GetGeneral.php",
+                url: "/" + $("#_homehost").val() + "/app-data/custom/gen-general",
                 type: "POST",
                 "data": function (data) {
                     data.Per = lsDataSelect(LS_PERSONAL);
@@ -618,7 +618,7 @@ $('#GetFechas').DataTable({
     searchDelay: 1500,
     dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
     ajax: {
-        url: "/" + $("#_homehost").val() + "/general/GetFechasFichas.php",
+        url: "/" + $("#_homehost").val() + "/app-data/custom/gen-fechas-fichas",
         type: "POST",
         "data": function (data) {
             data.Per = lsDataSelect(LS_PERSONAL);
@@ -685,7 +685,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
             // stateSave: -1,
             dom: 'ltip',
             ajax: {
-                url: "/" + $("#_homehost").val() + "/general/GetGeneralFecha.php",
+                url: "/" + $("#_homehost").val() + "/app-data/custom/gen-general-fecha",
                 type: "POST",
                 "data": function (data) {
                     // console.log(data);

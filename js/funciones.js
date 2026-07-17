@@ -724,7 +724,7 @@ function CheckSesion(e = null) {
     if (_homehost.value == '') { return false }
 
     const _referer = sessionStorage.getItem(LS_REFERER_URL) ?? '';
-    const _url = "/" + _homehost.value + "/sesion.php"
+    const _url = "/" + _homehost.value + "/app-data/custom/session"
     const _sesion = document.getElementById('_sesion');
 
     axios.get(_url).then(function (response) {

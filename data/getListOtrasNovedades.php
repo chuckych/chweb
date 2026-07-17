@@ -1,7 +1,9 @@
 <?php
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '/../config/session_start.php';
+if (session_status() == PHP_SESSION_NONE) {
+    require __DIR__ . '/../config/session_start.php';
+}
 require __DIR__ . '/../config/index.php';
 UnsetGet('q');
 E_ALL();

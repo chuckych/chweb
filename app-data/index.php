@@ -1864,7 +1864,98 @@ Flight::route('POST /ws_procesar', function () {
             ];
         }
 
-        auditoria_multiple($arrayAuditoria ?? [], 2);
+        auditoria_multiple($arrayAuditoria ?? [], 12);
+    }
+
+    Flight::json($arrayData ?? []);
+
+});
+
+Flight::route('POST /cierres/generar', function () {
+
+    $request = Flight::request();
+    $payload = $request->data ?? [];
+    $payload['flag'] ??= '';
+    $payload['procesar_por'] ??= '';
+
+    // Verificar si 'flag' está presente y 'TipoIngreso' es igual a '2' (Legajos Marcados)
+    if ($payload['flag'] && $payload['procesar_por'] === '2') {
+        // Construir la ruta del archivo JSON basado en el valor de 'flag'
+        $pathFile = __DIR__ . '/json/' . $payload['flag'] . '_legajos_generar_cierres.json';
+
+        // Verificar si el archivo existe
+        if (file_exists($pathFile)) {
+
+            // Leer el contenido del archivo JSON y decodificarlo en un array
+            $legajosFromFile = json_decode(file_get_contents($pathFile), true);
+
+            // Validar que el contenido del archivo sea un array
+            if (is_array($legajosFromFile)) {
+                $payload['Legajos'] = $legajosFromFile;
+            } else {
+                Flight::json(['status' => 'error', 'message' => 'legajos inválidos'], 400);
+                exit;
+            }
+
+        } else {
+            Flight::json(['status' => 'error', 'message' => 'El archivo de legajos no existe.'], 400);
+            exit;
+        }
+    }
+
+    // if ($payload['procesar_por'] === '1') {
+    //     $requiredFields = ['Empresa', 'Planta', 'Sector', 'Seccion', 'Grupo', 'Sucursal'];
+
+    //     // Filtrar los campos que tienen valor
+    //     $camposConValor = array_filter($requiredFields, fn($field) => !empty($payload[$field]));
+    //     // Si no hay ningún campo con valor → error
+    //     if (empty($camposConValor)) {
+    //         echo json_encode(['status' => 'error', 'MESSAGE' => 'Debe completar al menos una Entidad.']);
+    //         exit;
+    //     }
+    // }
+
+    $endpoint = URLAPI . "/api/v1/cierres/generar";
+    // error_log(json_encode($payload));
+
+    $ingresar = ch_api($endpoint, $payload, 'POST', []);
+    $arrayData = json_decode($ingresar, true);
+    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
+
+    if ($result) {
+        $Fecha = $payload['Fecha'] ?? '';
+        $Legajos = $payload['Legajos'] ?? [];
+        $Eliminar = $payload['Eliminar'] ?? '0';
+
+        // fomatear las fechas a 'd/m/Y'
+        $Fecha = date('d/m/Y', strtotime($Fecha));
+        if ($Legajos) {
+            $AudDato = $Eliminar === '1' ? "Eliminación de cierres" : "Cierre Legajo";
+            foreach ($Legajos as $legajo) {
+                $arrayAuditoria[] = [
+                    'AudTipo' => $Eliminar === '1' ? 'B' : 'M',
+                    'AudDato' => $Eliminar === '1' ? "Cierre Legajo: {$legajo}" : "Cierre Legajo: {$legajo} Fecha {$Fecha}",
+                ];
+            }
+        }
+        
+        // if ($payload['procesar_por'] === '1') {
+        //     // crear un string a partir del payload con su clave valor separado por comas, omitiendo la clave Legajos, fechaDesde y FechaHasta
+        //     $datos = [];
+        //     foreach ($payload as $key => $value) {
+        //         if ($value === null || $value === '')
+        //             continue;
+        //         if (in_array($key, ['Empresa', 'Planta', 'Sector', 'Seccion', 'Grupo', 'Sucursal'])) {
+        //             $datos[] = "{$key}: {$value}";
+        //         }
+        //     }
+        //     $arrayAuditoria[] = [
+        //         'AudTipo' => 'P',
+        //         'AudDato' => "Procesar: " . implode(", ", $datos) . ' desde ' . $FechaDesde . ' hasta ' . $FechaHasta,
+        //     ];
+        // }
+
+        auditoria_multiple($arrayAuditoria ?? [], 14);
     }
 
     Flight::json($arrayData ?? []);
@@ -1956,12 +2047,65 @@ Flight::route('POST /ws_fichar_horario', function () {
             ];
         }
 
-        auditoria_multiple($arrayAuditoria ?? [], 2);
+        auditoria_multiple($arrayAuditoria ?? [], 11);
     }
 
     Flight::json($arrayData ?? []);
 
 });
+
+Flight::route('POST|GET /custom/@file', function ($file) {
+    $mapFiles = [
+        'arrpersonal' => __DIR__ . '/../novedades/array_personal.php',
+        'peremp' => __DIR__ . '/../data/getPerEmpresas.php',
+        'perplan' => __DIR__ . '/../data/getPerPlantas.php',
+        'persect' => __DIR__ . '/../data/getPerSectores.php',
+        'persecc' => __DIR__ . '/../data/getPerSecciones.php',
+        'pergrup' => __DIR__ . '/../data/getPerGrupos.php',
+        'persucu' => __DIR__ . '/../data/getPerSucursales.php',
+        'cierre' => __DIR__ . '/../data/GetCierre.php',
+        'tipo-horas' => __DIR__ . '/../data/getListTipoHora.php',
+        'novedades' => __DIR__ . '/../data/getListNovedades.php',
+        'novecausa' => __DIR__ . '/../data/getListNoveCausa.php',
+        'onovedades' => __DIR__ . '/../data/getListOtrasNovedades.php',
+        'proc-proceso' => __DIR__ . '/../procesar/procesando.php',
+        'nov-getper' => __DIR__ . '/../novedades/GetPersonal.php',
+        'nov-getnove' => __DIR__ . '/../novedades/GetNovedades.php',
+        'nov-getnove-fecha' => __DIR__ . '/../novedades/GetNovedadesFecha.php',
+        'nov-getfechas' => __DIR__ . '/../novedades/GetFechas.php',
+        'nov-modal-editar' => __DIR__ . '/../novedades/modal_editar.html',
+        'gen-per-fichas' => __DIR__ . '/../general/GetPersonalFichas.php',
+        'gen-fechas-fichas' => __DIR__ . '/../general/GetFechasFichas.php',
+        'gen-general' => __DIR__ . '/../general/GetGeneral.php',
+        'gen-general-fecha' => __DIR__ . '/../general/GetGeneralFecha.php',
+        'gen-citacion' => __DIR__ . '/../general/GetCitacion.php',
+        'gen-fichas2' => __DIR__ . '/../general/GetFichas2.php',
+        'gen-fichadas' => __DIR__ . '/../general/GetFichadas.php',
+        'gen-novedades' => __DIR__ . '/../general/GetNovedades.php',
+        'gen-onovedades' => __DIR__ . '/../general/GetOtrasNovedades.php',
+        'gen-horas' => __DIR__ . '/../general/GetHoras.php',
+        'gen-sel-emp' => __DIR__ . '/../general/getSelect/getEmpFichas.php',
+        'gen-sel-pla' => __DIR__ . '/../general/getSelect/getPlanFichas.php',
+        'gen-sel-sec' => __DIR__ . '/../general/getSelect/getSectFichas.php',
+        'gen-sel-se2' => __DIR__ . '/../general/getSelect/getSec2Fichas.php',
+        'gen-sel-gru' => __DIR__ . '/../general/getSelect/getGrupFichas.php',
+        'gen-sel-suc' => __DIR__ . '/../general/getSelect/getSucFichas.php',
+        'gen-sel-leg' => __DIR__ . '/../general/getSelect/getLegajosFichas.php',
+        'gen-sel-legdeha' => __DIR__ . '/../general/getSelect/getLegajosFichasDeHa.php',
+        'gen-sel-tipoper' => __DIR__ . '/../general/getSelect/getTipoPerFichas.php',
+        'gen-sel-novedades' => __DIR__ . '/../general/getSelect/getNovNovedades.php',
+        'gen-post' => __DIR__ . '/../general/insert.php',
+        'session' => __DIR__ . '/../sesion.php',
+        'status_ws' => __DIR__ . '/../status_ws.php',
+        'dt-es-2' => __DIR__ . '/../js/DataTableSpanishShort2.json',
+    ];
+    if (isset($mapFiles[$file])) {
+        require $mapFiles[$file];
+    } else {
+        Flight::json(['status' => 'error', 'message' => 'Archivo no encontrado'], 404);
+    }
+});
+
 
 Flight::route('POST /personal/(@recid)', function ($recid = '') {
     $empresasRol = empresasRol();

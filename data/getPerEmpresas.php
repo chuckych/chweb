@@ -1,5 +1,8 @@
 <?php
-session_start();
+// si la session no está iniciada, iniciarla
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 // header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '/../config/index.php';
 ultimoacc();

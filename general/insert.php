@@ -1098,20 +1098,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
 
         $FicValor = procesarValor($FicValor);
 
-        require __DIR__ . '/../config/conect_mssql.php';
-
         $query = "SELECT TOP 1 OTRASNOV.ONovCodi, OTRASNOV.ONovDesc FROM OTRASNOV WHERE OTRASNOV.ONovCodi > 0 AND OTRASNOV.ONovCodi = '$FicONov'";
 
-        $result = sqlsrv_query($link, $query, $params, $options);
-        while ($row = sqlsrv_fetch_array($result)) {
-            $ONovDesc = $row['ONovDesc'];
-            $ONovCodi = $row['ONovCodi'];
-        }
-        sqlsrv_free_stmt($result);
-        sqlsrv_close($link);
-
-        // $Dato = 'Alta Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
-        // $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc;
+        $row = arrMSQuery($query)[0] ?? [];
+        $ONovDesc = $row['ONovDesc'] ?? '';
+        $ONovCodi = $row['ONovCodi'] ?? '';
 
         $arrayRegistrosInsertados = [];
 
@@ -1124,35 +1115,37 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
                 exit;
             }
 
-            $ExisteRegistro = CountRegistrosMayorCero("SELECT * FROM FICHAS2 WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
+            $sql = "SELECT * FROM FICHAS2 WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'";
+
+            $ExisteRegistro = arrMSQuery($sql)[0] ?? [];
+            $ExisteRegistro = !empty($ExisteRegistro) ? true : false;
 
             if (!$ExisteRegistro) {
 
                 $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua" : '';
                 $valuesFicUsua = ($systemVersion >= 70) ? ", '$FicUsua'" : '';
-                $insert = InsertRegistro("INSERT INTO FICHAS2 (FicLega,FicFech,FicTurn,FicONov,FicValor,FicObsN,FechaHora $columnFicUsua) VALUES ('$FicLega','$fecha',1,'$FicONov', '$FicValor','$FicObsN','$FechaHora' $valuesFicUsua)");
+                $insert = arrMSQuery("INSERT INTO FICHAS2 (FicLega,FicFech,FicTurn,FicONov,FicValor,FicObsN,FechaHora $columnFicUsua) VALUES ('$FicLega','$fecha',1,'$FicONov', '$FicValor','$FicObsN','$FechaHora' $valuesFicUsua)", ['insert' => true]);
                 if (!$insert) {
                     $data = ['status' => 'Error', 'Mensaje' => $Dato ?? ''];
                     echo json_encode($data);
                     exit;
                 }
-                $Dato = 'Alta Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . FechaFormatVar($fecha, 'd/m/Y');
-                $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' ' . FechaFormatVar($fecha, 'd/m/Y') . ' (A)';
+                $Dato = "Alta Otra Novedad: ($ONovCodi) $ONovDesc de Legajo: $FicLega Fecha: " . FechaFormatVar($fecha, 'd/m/Y');
+                $Dato2 = "Otra Novedad: ($ONovCodi) $ONovDesc " . FechaFormatVar($fecha, 'd/m/Y') . ' (A)';
                 audito_ch('A', $Dato, '4');
                 $arrayRegistrosInsertados[] = $Dato2;
             } else {
                 $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua='$FicUsua'" : '';
-                $update = UpdateRegistro("UPDATE FICHAS2 SET FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' $columnFicUsua WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
+                $update = arrMSQuery("UPDATE FICHAS2 SET FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' $columnFicUsua WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'", ['update' => true]);
 
                 if (!$update) {
-                    $data = ['status' => 'Error', 'Mensaje' => $Dato];
+                    $data = ['status' => 'Error', 'Mensaje' => $Dato ?? ''];
                     echo json_encode($data);
-                    sqlsrv_close($link);
                     exit;
                 }
 
-                $Dato = 'Modificación Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . FechaFormatVar($fecha, 'd/m/Y');
-                $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' ' . FechaFormatVar($fecha, 'd/m/Y') . ' (M)';
+                $Dato = "Modificación Otra Novedad: ($ONovCodi) $ONovDesc de Legajo: $FicLega Fecha: " . FechaFormatVar($fecha, 'd/m/Y');
+                $Dato2 = "Otra Novedad: ($ONovCodi) $ONovDesc " . FechaFormatVar($fecha, 'd/m/Y') . ' (M)';
                 audito_ch('M', $Dato, '4');
                 $arrayRegistrosInsertados[] = $Dato2;
             }
@@ -1190,7 +1183,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_ONov'] == 'true')) {
         echo json_encode($data);
         exit;
     }
-    ;
 
     $datos = explode('-', $_POST['Datos']);
     /** FicOnov, FicFech, FicLega */
@@ -1212,8 +1204,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_ONov'] == 'true')) {
     }
     ;
 
-    $Dato = 'Baja Otra Novedad: (' . $FicONov . ') ' . $Descrip . '. Legajo: ' . $FicLega . '. Fecha: ' . Fech_Format_Var($FicFech, 'd-m-Y');
-    $Dato2 = 'Otra Novedad: (' . $FicONov . ') ' . $Descrip;
+    $Dato = "Baja Otra Novedad: ($FicONov) $Descrip. Legajo: $FicLega. Fecha: " . Fech_Format_Var($FicFech, 'd-m-Y');
+    $Dato2 = "Otra Novedad: ($FicONov) $Descrip";
 
     if ((DeleteRegistro("DELETE FROM FICHAS2 WHERE FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn = 1 AND FicONov = '$FicONov'"))) {
         audito_ch('B', $Dato, '4');
@@ -1233,8 +1225,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         echo json_encode($data);
         exit;
     }
-    ;
-
 
     $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
     $FicUsua = strtoupper(substr($FicUsua, 0, 10));
@@ -1242,23 +1232,23 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
     $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
     $systemVersion = intval($systemVersion[1]) ?? '';
 
-    $_POST['FicONov'] = $_POST['FicONov'] ?? '';
-    $_POST['FicValor'] = $_POST['FicValor'] ?? '';
-    $_POST['FicObsN'] = $_POST['FicObsN'] ?? '';
-    $_POST['datos_OtrasNov'] = $_POST['datos_OtrasNov'] ?? '';
+    $_POST['FicONov'] ??= '';
+    $_POST['FicValor'] ??= '';
+    $_POST['FicObsN'] ??= '';
+    $_POST['datos_OtrasNov'] ??= '';
 
     if ((valida_campo($_POST['FicONov'])) || (valida_campo($_POST['FicValor']))) {
         $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>Novedad y Valor</strong> son requeridos!'];
         echo json_encode($data);
         exit;
     }
-    
+
     if (valida_campo($_POST['datos_OtrasNov'])) {
         $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>datos_OtrasNov</strong> requerido!'];
         echo json_encode($data);
         exit;
     }
-    
+
     $datos_OtrasNov = explode('-', $_POST['datos_OtrasNov']);
 
     $FicLega = test_input($datos_OtrasNov[0]);
@@ -1275,7 +1265,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         echo json_encode($data);
         exit;
     }
-    $ExisteRegistro = CountRegistrosMayorCero("SELECT FicLega FROM FICHAS2 WHERE FicFech = '$FicFech' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
+
+    $sql = "SELECT FicLega FROM FICHAS2 WHERE FicFech = '$FicFech' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'";
+    $ExisteRegistro = arrMSQuery($sql)[0] ?? [];
+    $ExisteRegistro = !empty($ExisteRegistro) ? true : false;
 
     if (!$ExisteRegistro) {
         $data = ['status' => 'Error', 'Mensaje' => 'No existe el registro'];
@@ -1283,40 +1276,35 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         exit;
     }
 
-    $ExisteRegistro = CountRegistrosMayorCero("SELECT FicLega FROM FICHAS2 WHERE FicFech = '$FicFech' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov' AND FicValor = '$FicValor' AND FicObsN = '$FicObsN'");
+    $sql = "SELECT FicLega FROM FICHAS2 WHERE FicFech = '$FicFech' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov' AND FicValor = '$FicValor' AND FicObsN = '$FicObsN'";
+    $ExisteRegistro = arrMSQuery($sql)[0] ?? [];
+    $ExisteRegistro = !empty($ExisteRegistro) ? true : false;
 
     if ($ExisteRegistro) {
         $data = ['status' => 'Error', 'Mensaje' => 'Ya existe el registro'];
         echo json_encode($data);
         exit;
     }
-    require __DIR__ . '/../config/conect_mssql.php';
 
     $query = "SELECT TOP 1 OTRASNOV.ONovCodi, OTRASNOV.ONovDesc FROM OTRASNOV WHERE OTRASNOV.ONovCodi > 0 AND OTRASNOV.ONovCodi = '$FicONov'";
-    $result = sqlsrv_query($link, $query, $params, $options);
-    while ($row = sqlsrv_fetch_array($result)) {
-        $ONovDesc = $row['ONovDesc'];
-        $ONovCodi = $row['ONovCodi'];
-    }
-    sqlsrv_free_stmt($result);
+    $row = arrMSQuery($query)[0] ?? [];
+    $ONovDesc = $row['ONovDesc'] ?? '';
+    $ONovCodi = $row['ONovCodi'] ?? '';
 
-
-    $Dato = 'Modificación Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
-    $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc;
+    $Dato = "Modificación Otra Novedad: ($ONovCodi) $ONovDesc de Legajo: $FicLega Fecha: " . Fech_Format_Var($FicFech, 'd/m/Y');
+    $Dato2 = "Otra Novedad: ($ONovCodi) $ONovDesc";
 
     /** Luego UPDATE  */
     $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua='$FicUsua'" : '';
-    if (UpdateRegistro("UPDATE FICHAS2 Set FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' $columnFicUsua WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicONov = '$FicONov'")) {
+    if (arrMSQuery("UPDATE FICHAS2 Set FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' $columnFicUsua WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicONov = '$FicONov'", ['update' => true])) {
         $data = ['status' => 'ok', 'Mensaje' => $Dato2, 'tipo' => 'mod'];
         audito_ch('M', $Dato, '4');
         /** Grabamos en Auditor */
         echo json_encode($data);
-        sqlsrv_close($link);
         exit;
     } else {
         $data = ['status' => 'Error', 'Mensaje' => $Dato];
         echo json_encode($data);
-        sqlsrv_close($link);
         exit;
     }
 }
@@ -1328,13 +1316,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         echo json_encode($data);
         exit;
     }
-    ;
 
-
-    $_POST['CitEntra'] = $_POST['CitEntra'] ?? '';
-    $_POST['CitSale'] = $_POST['CitSale'] ?? '';
-    $_POST['CitDesc'] = $_POST['CitDesc'] ?? '';
-    $_POST['datos_Citacion'] = $_POST['datos_Citacion'] ?? '';
+    $_POST['CitEntra'] ??= '';
+    $_POST['CitSale'] ??= '';
+    $_POST['CitDesc'] ??= '';
+    $_POST['datos_Citacion'] ??= '';
 
     $CitEntra = test_input($_POST['CitEntra']);
     $CitSale = test_input($_POST['CitSale']);
@@ -1363,23 +1349,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         echo json_encode($data);
         exit;
     }
-    ;
+
     if ((($CitEntra == '00:00') && ($CitSale == '00:00'))) {
         $data = ['status' => 'error', 'Mensaje' => 'Campos Entrada y Salida no pueden estar en 00:00'];
         echo json_encode($data);
         exit;
     }
-    ;
-    // if ((($CitEntra == '00:00'))) {
-    //     $data = array('status' => 'error', 'Mensaje' => 'Campo Entrada no puede estar en 00:00');
-    //     echo json_encode($data);
-    //     exit;
-    // };
-    // if ((($CitSale == '00:00'))) {
-    //     $data = array('status' => 'error', 'Mensaje' => 'Campo Salida no puede estar en 00:00');
-    //     echo json_encode($data);
-    //     exit;
-    // };
+
     if (ValidarHora($_POST['CitEntra'])) {
         $data = ['status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto: ' . $_POST['CitSale']];
         echo json_encode($data);
@@ -1392,33 +1368,20 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         exit;
     }
 
-    // if ((HoraMin($CitEntra) >= HoraMin($CitSale))) {
-    //     $data = array('status' => 'error', 'Mensaje' => 'El Horario de entrada no puede ser Mayor o Igual de Salida.');
-    //     echo json_encode($data);
-    //     exit;
-    // };
-
     $Intervalo = HoraMin($CitSale) - HoraMin($CitEntra);
-
-    // if ((HoraMin($CitDesc) >= ($Intervalo))) {
-    //     $data = array('status' => 'error', 'Mensaje' => 'El Descanso no puede ser Mayor al intervalo entre Entrada y Salida<br/>Intervalo: ' . FormatHora($Intervalo) . '<br/>Descanso: ' . $CitDesc);
-    //     echo json_encode($data);
-    //     exit;
-    // };
 
     if (valida_campo($_POST['datos_Citacion'])) {
         $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>datos_Citacion</strong> requerido!'];
         echo json_encode($data);
         exit;
     }
-    ;
-
 
     $datos_Citacion = explode('-', $datos_Citacion);
     $FicLega = ($datos_Citacion[0]);
     $FicFech = ($datos_Citacion[1]);
 
-    $_POST['tipo'] = $_POST['tipo'] ?? '';
+    $_POST['tipo'] ??= '';
+
     if ($_POST['tipo'] == 'c_citacion') {
         /** cuando viene de admini de horarios */
         $datos_Citacion = $_POST['datos_Citacion'];
@@ -1427,20 +1390,23 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         $FicFech = (dr_fecha($datos_Citacion[1]));
     }
 
-
     if (PerCierre($FicFech, $FicLega)) {
         $data = ['status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . Fech_Format_Var($FicFech, ('d/m/Y'))];
         echo json_encode($data);
         exit;
     }
-    $Dato = 'Modificación Citación: ' . $CitEntra . ' - ' . $CitSale . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
-    $Dato2 = 'Citación: ' . $CitEntra . ' - ' . $CitSale;
+    
+    $Dato = "Modificación Citación: $CitEntra - $CitSale de Legajo: $FicLega Fecha: " . Fech_Format_Var($FicFech, 'd/m/Y');
+    $Dato2 = "Citación: $CitEntra - $CitSale";
 
-    $ExisteCitacion = CountRegistrosMayorCero("SELECT CitLega ,CitFech ,CitTurn ,CitEntra ,CitSale ,CitDesc ,FechaHora FROM CITACION WHERE CitLega = '$FicLega' and CitFech = '$FicFech' and CitTurn = 1");
+    $sql = "SELECT CitLega ,CitFech ,CitTurn ,CitEntra ,CitSale ,CitDesc ,FechaHora FROM CITACION WHERE CitLega = '$FicLega' and CitFech = '$FicFech' and CitTurn = 1";
+    $ExisteCitacion = arrMSQuery($sql)[0] ?? [];
+    $ExisteCitacion = !empty($ExisteCitacion) ? true : false;
 
     if ($ExisteCitacion) {
-        if (UpdateRegistro("UPDATE CITACION SET CitEntra = '$CitEntra', CitSale='$CitSale', CitDesc='$CitDesc', FechaHora ='$FechaHora' WHERE CitLega='$FicLega' AND CitFech ='$FicFech' AND CitTurn = 1")) {
+        if (arrMSQuery("UPDATE CITACION SET CitEntra = '$CitEntra', CitSale='$CitSale', CitDesc='$CitDesc', FechaHora ='$FechaHora' WHERE CitLega='$FicLega' AND CitFech ='$FicFech' AND CitTurn = 1", ['update' => true])) {
             audito_ch('M', $Dato, '4');
+
             if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
                 $Procesado = " - Procesado.";
                 $data = ['status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod'];
@@ -1451,11 +1417,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
             echo json_encode($data);
             exit;
         }
-        ;
     } else {
-        $Dato = 'Alta Citación: ' . $CitEntra . ' - ' . $CitSale . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
-        if (InsertRegistro("INSERT INTO CITACION (CitLega,CitFech,CitTurn,CitEntra,CitSale,CitDesc,FechaHora) VALUES ( '$FicLega','$FicFech','1','$CitEntra','$CitSale','$CitDesc','$FechaHora' )")) {
+        $Dato = "Alta Citación: $CitEntra - $CitSale de Legajo: $FicLega Fecha: " . Fech_Format_Var($FicFech, 'd/m/Y');
+        if (arrMSQuery("INSERT INTO CITACION (CitLega,CitFech,CitTurn,CitEntra,CitSale,CitDesc,FechaHora) VALUES ( '$FicLega','$FicFech','1','$CitEntra','$CitSale','$CitDesc','$FechaHora' )", ['insert' => true])) {
             audito_ch('A', $Dato, '4');
+
             if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
                 $Procesado = " - Procesado.";
                 $data = ['status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'alta'];
@@ -1463,10 +1429,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
                 $Procesado = " - <b>Sin procesar.</b>.";
                 $data = ['status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'alta'];
             }
+
             echo json_encode($data);
             exit;
         }
-        ;
     }
 }
 /** BAJA CITACION */

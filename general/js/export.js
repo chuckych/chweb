@@ -296,7 +296,7 @@ $(document).ready(function () {
 
         axios({
             method: 'post',
-            url: 'reporte/index.php',
+            url: "/" + _homehost + "/general/reporte/",
             data: sendData,
             headers: { "Content-Type": "multipart/form-data" },
         }).then(function (response) {
@@ -304,9 +304,8 @@ $(document).ready(function () {
             console.log(response);
             if (data.destino == "V") {
                 $('#Exportar').modal('hide');
-                var homehost = $("#_homehost").val();
-                var host = $("#_host").val();
-                window.open(host + '/' + homehost + '/general/reporte/archivos/' + data.archivo, '_blank');
+                const host = $("#_host").val();
+                window.open(host + '/' + _homehost + '/general/reporte/archivos/' + data.archivo, '_blank');
                 // window.location = 'reporte/archivos/' + data.archivo
                 $.notifyClose();
                 notify('Reporte Generado', 'success', 2000, 'right')

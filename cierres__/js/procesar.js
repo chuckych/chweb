@@ -160,5 +160,5 @@ $(function () {
         }
     });
 
-    singleDatePicker('#cierre', 'right', 'up')
+    singleDatePicker('#cierre', 'right', 'up');
 });

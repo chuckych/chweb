@@ -1,5 +1,7 @@
 <?php
-require __DIR__ . '/../../config/session_start.php';
+if (session_status() == PHP_SESSION_NONE) {
+    require __DIR__ . '/../../config/session_start.php';
+}
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '/../../config/index.php';
 ultimoacc();

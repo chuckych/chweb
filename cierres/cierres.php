@@ -1,163 +1,212 @@
+<?php
+$labelEmpr ??= 'Empresas';
+$labelPlan ??= 'Plantas';
+$labelSect ??= 'Sectores';
+$labelSecc ??= 'Secciones';
+$labelGrup ??= 'Grupos';
+$labelSucu ??= 'Sucursales';
+$mappingLabels = [
+    'Empresas' => $labelEmpr,
+    'Plantas' => $labelPlan,
+    'Sectores' => $labelSect,
+    'Secciones' => $labelSecc,
+    'Grupos' => $labelGrup,
+    'Sucursales' => $labelSucu,
+];
+?>
 <!doctype html>
 <html lang="es">
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../llamadas.php"; ?>
-    <title><?= MODULOS['cierres'] ?></title>
-    <style>
-
-
-    </style>
+    <title>
+        <?= MODULOS['cierres'] ?>
+    </title>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '/../nav.php'; ?>
+        <?php require __DIR__ . '/../nav.php';
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#e3e3e3" viewBox="0 -960 960 960"><path d="M232-216 96-352l51-51 84 85 170-170 52 51zm0-312L96-664l51-51 85 85 169-170 52 51zm296 240v-72h336v72zm0-312v-72h336v72z"/></svg>';
+        $titulo = "<span style='margin-top:1px'>" . MODULOS['cierres'] . "</span>";
+        ?>
         <!-- Encabezado -->
-        <?= encabezado_mod('bg-custom', 'white', 'task.png', MODULOS['cierres'], '') ?>
+        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
+        <?php
+        $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
+        $FechaMinMax2 = (fecha_min_max2('FICHAS', 'FICHAS.FicFech'));
+        $FechaFinEnd = $FechaMinMax2['max'];
+        $FirstDate = $FechaMinMax['min'];
+        /** FirstDate */
+        $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
+        /** FirstYear */
+        $maxDate = $FechaMinMax['max'];
+        /** maxDate */
+        $maxYear = date('Y');
+        /** maxYear */
+        $FechaIni = $FechaMinMax['max'];
+        $FechaFin = $FechaMinMax['max'];
+        // $FechaIni = date("Y-m-d", strtotime(hoy() . "- 1 month"));
+        $AnioMax = date("Y", strtotime(hoy()));
+        ?>
+        <input type="hidden" value="<?= $FirstYear ?>" id="anioMin">
+        <input type="hidden" value="<?= $AnioMax ?>" id="anioMax">
+        <input type="hidden" value='<?= json_encode($mappingLabels) ?>' id="mappingLabels">
         <!-- Fin Encabezado -->
-        <form action="insert.php" method="post" class="alta_cierre">
-            <div class="row bg-white p-3 radius">
-                <div class="col-12 col-sm-6">
-                    <div class="row">
-                        <div class="col-12 m-0">
-                            <div class="form-inline mt-2">
-                                <!-- Tipo personal -->
-                                <input type="hidden" name="alta_cierre" id="alta_cierre">
-                                <label for="Tipo" class="mr-2 w120">Tipo de Personal</label>
-                                <select class="select2 form-control w150" id="Tipo" name="Tipo">
-                                    <?php
-                                    foreach (TIPO_PER as $key => $value) {
-                                        echo '<option value="' . $value . '">' . $key . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                                <button type="button" class="fontq btn btn-link text-decoration-none text-secondary"
-                                    id="trash_all">Limpiar Filtro</button>
-                            </div>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <div class="form-inline">
-                                <!-- Empresa -->
-                                <label for="Emp" class="mr-2 w120"><?=$labelEmpr?></label>
-                                <select class="form-control selectjs_empresa w300" id="Emp" name="Emp" data-label="<?=$labelEmpr?>">
-                                </select>
-                                <span id="trash_emp" class="trash"></span>
-                            </div>
-                            <div class=" form-inline mt-2">
-                                <!-- Planta -->
-                                <label for="Plan" class="mr-2 w120"><?=$labelPlan?></label>
-                                <select class="form-control selectjs_plantas w300" id="Plan" name="Plan" data-label="<?=$labelPlan?>">
-                                </select>
-                                <span id="trash_plan" class="trash"></span>
-                            </div>
-                            <div class="form-inline mt-2">
-                                <!-- Sector -->
-                                <label for="Sect" class="mr-2 w120"><?=$labelSect?></label>
-                                <select class="form-control selectjs_sectores w300" id="Sect" name="Sect" data-label="<?=$labelSect?>">
-                                </select>
-                                <span id="trash_sect" class="trash"></span>
-                            </div>
-                            <div class="form-inline mt-2" id="select_seccion">
-                                <!-- Seccion -->
-                                <label for="Sec2" class="mr-2 w120"><?=$labelSecc?></label>
-                                <select disabled class="form-control select_seccion w300" id="Sec2" name="Sec2" data-label="<?=$labelSecc?>">
-                                </select>
-                                <span id="trash_secc" class="trash"></span>
-                            </div>
-                            <div class="form-inline mt-2">
-                                <!-- Grupos -->
-                                <label for="Grup" class="mr-2 w120"><?=$labelGrup?></label>
-                                <select class="form-control selectjs_grupos w300" id="Grup" name="Grup" data-label="<?=$labelGrup?>">
-                                </select>
-                                <span id="trash_grup" class="trash"></span>
-                            </div>
-                            <div class="form-inline mt-2">
-                                <!-- Sucursal -->
-                                <label for="Sucur" class="mr-2 w120"><?=$labelSucu?></label>
-                                <select class="form-control selectjs_sucursal w300" id="Sucur" name="Sucur" data-label="<?=$labelSucu?>">
-                                </select>
-                                <span id="trash_sucur" class="trash"></span>
-                            </div>
-                            <div class="form-inline mt-2">
-                                <!-- Legajo -->
-                                <label for="Per" class="mr-2 w120">Personal</label>
-                                <select class="form-control selectjs_personal w300" id="Per" name="Per">
-                                </select>
-                                <span id="trash_per" class="trash"></span>
-                            </div>
-                            <div class="form-inline mt-3">
-                                <!-- Fecha de cierre -->
-                                <label for="Sucur" class="mr-2 w120">Fecha de cierre</label>
-                                <input type="text" name="cierre" id="cierre" class="form-control h40 ls1 text-center">
-                            </div>
-                            <div class="form-inline mt-3">
-                                <!-- Eliminar Cierres -->
-                                <div class="custom-control custom-switch" data-toggle="tooltip" id="switch"
-                                    data-placement="right" data-html="true"
-                                    title="<span class''>AL ACTIVAR ESTA OPCION, SE QUITARAN LOS CIERRES DE LOS LEGAJOS SELECCIONADOS</span>">
-                                    <input type="checkbox" class="custom-control-input" id="EliminaCierre" name="Quita">
-                                    <label class="custom-control-label" style="padding-top: 2px;"
-                                        for="EliminaCierre">Quitar Cierres</label>
+        <form id="form-procesar">
+            <div class="mt-3 px-2">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <div class="form-row">
+                            <div class="col-12">
+                                <div class="d-inline-flex justify-content-end w-100">
+                                    <div class="d-none">
+                                        <span class="font08 py-2 mr-2">Procesar Por:</span>
+                                        <div class="d-flex align-items-center pt-2">
+                                            <div class="btn-group btn-group-toggle p-1 border radius"
+                                                data-toggle="buttons" style="gap: 5px;">
+                                                <label
+                                                    class="hint--top btn font08 btn btn-outline-custom border-0 w100 radius"
+                                                    id="TipoIngresoFiltros" data-toggle="tooltip"
+                                                    data-placement="bottom" data-html="true" title=""
+                                                    aria-label="Procesar por Filtros">
+                                                    <input type="radio" name="procesar_por" value="1"> Filtros
+                                                </label>
+                                                <label
+                                                    class="hint--top btn font08 btn btn-outline-custom border-0 w100 radius"
+                                                    id="TipoIngresoFiltrosLegajos" data-toggle="tooltip"
+                                                    data-placement="bottom" data-html="true" title=""
+                                                    aria-label="Procesar por Legajo">
+                                                    <input checked type="radio" name="procesar_por" value="2"> Legajos
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button"
+                                            class="float-right font08 btn btn-link text-decoration-none text-secondary"
+                                            id="trash_allFilter">
+                                            Limpiar Filtro
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
-                        <input type="hidden" name="SelEmpresa" id="SelEmpresa">
-                        <input type="hidden" name="SelPlanta" id="SelPlanta">
-                        <input type="hidden" name="SelSector" id="SelSector">
-                        <input type="hidden" name="SelSeccion" id="SelSeccion">
-                        <input type="hidden" name="SelGrupo" id="SelGrupo">
-                        <input type="hidden" name="SelSucursal" id="SelSucursal">
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 table-responsive pt-2">
-                    <table class="table table-hover text-nowrap w-100 table-sm table-borderless " id="GetPersonal">
-                        <thead class="">
-                            <tr>
-                                <th>
-                                    <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" name="select_all" value="1"
-                                            id="Personal-select-all" type="checkbox">
-                                        <label class="custom-control-label" for="Personal-select-all"></label>
+                        <div class="form-row">
+                            <div class="col-12 col-sm-6 mt-2">
+                                <div class="d-inline-flex mt-1 w-100">
+                                    <!-- Tipo personal -->
+                                    <select class="select2Tipo form-control" id="aTipo" name="TipoDePersonal"
+                                        style="width:100%;">
+                                        <?php
+                                        foreach (TIPO_PER as $key => $value) {
+                                            echo "<option value=\"$value\">$key</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-auto"></div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Empresa -->
+                                <select class="form-control sel_empresa" id="aEmp" name="aEmp">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- PLanta -->
+                                <select class="form-control sel_plantas" id="aPlan" name="aPlan">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Sector -->
+                                <select class="form-control sel_sectores w200" id="aSect" name="aSect">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Seccion -->
+                                <select class="form-control sel_seccion w200" id="aSec2" name="aSec2">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Grupo -->
+                                <select class="form-control sel_grupos w200" id="aGrup" name="aGrup">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Sucursal -->
+                                <select class="form-control sel_sucursal w200" id="aSucur" name="aSucur">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-12 mt-2">
+                                <div class="d-flex flex-column mt-1 w-100">
+                                    <!-- Rango de Fecha -->
+                                    <label style="width:fit-content">Fecha de Cierre</label>
+                                    <div style="width:100%;">
+                                        <input type="text" class="bg-white h40 form-control text-center" name="Fecha"
+                                            id="cierre">
                                     </div>
-                                </th>
-                                <th>LEGAJO</th>
-                                <th>NOMBRE</th>
-                                <th>CIERRE</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-                <div class="col-12 mt-2 d-flex justify-content-end">
-                    <div class="form-inline mt-2">
-                        <button type="submit" class="btn bg-custom btn-sm text-white fontq w150" id="submit"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-12 mt-3 d-flex justify-content-end">
+                                <button type="submit" class="ml-1 btn bg-custom text-white font08" id="submit"
+                                    style="width:150px"></button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-12 mt-3 d-flex justify-content-end">
+                                <div class="custom-control custom-switch hint--left hint-switch-label" aria-label="Se quitarán cierres de legajos seleccionados" id="switch">
+                                    <input type="checkbox" class="custom-control-input" id="EliminaCierre"
+                                        name="Eliminar">
+                                    <label class="custom-control-label" style="padding-top: 2px;" for="EliminaCierre">
+                                        Quitar Cierres
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-12 mt-4">
-                    <div id="respuesta" class="alert d-none fonth text-wrap">
-                        <div id="respuetatext" class="text-wrap"></div>
-
+                    <div class="col-12 col-sm-6 table-responsive pt-2" id="divTablePers">
+                        <table class="table table-hover text-nowrap w-100 table-sm" id="table">
+                            <thead class="">
+                                <tr class="bg-light">
+                                    <th class="border-0">
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" name="select_all" value="1"
+                                                id="Personal-select-all" type="checkbox">
+                                            <label class="custom-control-label" for="Personal-select-all"
+                                                style="padding-top:4px;"></label>
+                                        </div>
+                                    </th>
+                                    <th class="border-0"><span id="countMarcados" class="font08"></span></th>
+                                    <th class="border-0"></th>
+                                    <th class="border-0 font08">Fecha de cierre</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
                 </div>
             </div>
         </form>
+        <div id="modales"></div>
     </div>
     <!-- fin container -->
     <?php
+    /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "/../js/jquery.php";
-    require __DIR__ . "/../js/DataTable.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DateRanger.php";
+    /** INCLUIMOS LIBRERÍAS y script DATATABLES */
+    require __DIR__ . "/../js/DataTable.php";
     ?>
-    <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/procesar.js?v=<?= version_file("/cierres/js/procesar.js") ?>"></script>
-    <script src="js/select.js?v=<?= version_file("/cierres/js/select.js") ?>"></script>
-    <script src="js/trash-select.js?v=<?= version_file("/cierres/js/trash-select.js") ?>"></script>
+    <script src="../js/select2-es.js"></script>
+    <script src="js/main.js?<?= version_file("/cierres/js/main.js") ?>"></script>
 
 </body>
 

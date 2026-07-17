@@ -1,5 +1,7 @@
 <?php
-require __DIR__ . '/../config/session_start.php';
+if (session_status() == PHP_SESSION_NONE) {
+    require __DIR__ . '/../config/session_start.php';
+}
 require __DIR__ . '/../config/index.php';
 ultimoacc();
 secure_auth_ch();
