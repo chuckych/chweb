@@ -150,6 +150,7 @@ $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'per
 $sqlTot = "SELECT COUNT(PERSONAL.LegNume) as 'total' FROM PERSONAL WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
 
 if ($_GET['Modulo'] === 'Cierres') {
+    $sqlTot .= " AND PERSONAL.LegEsta = 0";
     $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERCIERRE.CierreFech AS 'FechaCierre' FROM PERSONAL LEFT JOIN PERCIERRE ON PERSONAL.LegNume=PERCIERRE.CierreLega WHERE PERSONAL.LegNume >'0' AND PERSONAL.LegEsta = 0 $estado $filtros $FilterEstruct";
 }
 
