@@ -10,11 +10,12 @@
 <body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '/../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php';
+        $svg = iconEncabezados('informes');
+        $titulo = "<span style='margin-top:2px'>" . MODULOS['informe_de_novedades'] . "</span>";
+        ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['informe_de_novedades'], '') ?>
-        <!-- Fin Encabezado -->
-        <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
+        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
         <?php
         $FechaMinMax = (fecha_min_max2('FICHAS3', 'FICHAS3.FicFech'));
         $FirstDate = $FechaMinMax['min'];
@@ -64,38 +65,39 @@
         <div class="row bg-white collapse invisible" id="rowFiltros">
             <div class="col-12 col-sm-4">
                 <!-- Empresa -->
-                <label for="Emp" class="mb-1 fontq"><?=$labelEmprPlu?></label>
-                <select class="form-control selectjs_empresa" id="Emp" name="Emp" data-label="<?=$labelEmprPlu?>">
+                <label for="Emp" class="mb-1 fontq"><?= $labelEmprPlu ?></label>
+                <select class="form-control selectjs_empresa" id="Emp" name="Emp" data-label="<?= $labelEmprPlu ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Planta -->
-                <label for="Plan" class="mb-1 w100 fontq"><?=$labelPlanPlu?></label>
-                <select class="form-control selectjs_plantas" id="Plan" name="Plan" data-label="<?=$labelPlanPlu?>">
+                <label for="Plan" class="mb-1 w100 fontq"><?= $labelPlanPlu ?></label>
+                <select class="form-control selectjs_plantas" id="Plan" name="Plan" data-label="<?= $labelPlanPlu ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Sector -->
-                <label for="Sect" class="mb-1 w100 fontq"><?=$labelSectPlu?></label>
-                <select class="form-control selectjs_sectores" id="Sect" name="Sect" data-label="<?=$labelSectPlu?>">
+                <label for="Sect" class="mb-1 w100 fontq"><?= $labelSectPlu ?></label>
+                <select class="form-control selectjs_sectores" id="Sect" name="Sect" data-label="<?= $labelSectPlu ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Seccion -->
-                <label for="Sec2" class="mb-1 w100 fontq"><?=$labelSeccPlu?></label>
-                <select disabled class="form-control select_seccion" id="Sec2" name="Sec2" data-label="<?=$labelSeccPlu?>">
+                <label for="Sec2" class="mb-1 w100 fontq"><?= $labelSeccPlu ?></label>
+                <select disabled class="form-control select_seccion" id="Sec2" name="Sec2"
+                    data-label="<?= $labelSeccPlu ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Grupos -->
-                <label for="Grup" class="mb-1 w100 fontq"><?=$labelGrupPlu?></label>
-                <select class="form-control selectjs_grupos" id="Grup" name="Grup" data-label="<?=$labelGrupPlu?>">
+                <label for="Grup" class="mb-1 w100 fontq"><?= $labelGrupPlu ?></label>
+                <select class="form-control selectjs_grupos" id="Grup" name="Grup" data-label="<?= $labelGrupPlu ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Sucursal -->
-                <label for="Sucur" class="mb-1 w100 fontq"><?=$labelSucuPlu?></label>
-                <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" data-label="<?=$labelSucuPlu?>">
+                <label for="Sucur" class="mb-1 w100 fontq"><?= $labelSucuPlu ?></label>
+                <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" data-label="<?= $labelSucuPlu ?>">
                 </select>
             </div>
             <div class="col-12 ">

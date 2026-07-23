@@ -10,8 +10,8 @@ E_ALL();
 
 require_once __DIR__ . '/../config/conect_mssql.php';
 
-$params = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$params = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 $filtroNov = '';
 $ListaNov = $_SESSION['ListaONov'];
 if ($ListaNov != "-") {
@@ -29,7 +29,7 @@ $FiltrarNovTipo2 = '';
 $query = "SELECT OTRASNOV.ONovTipo AS Tipo FROM OTRASNOV WHERE OTRASNOV.ONovCodi > 0 $filtroNov GROUP BY OTRASNOV.ONovTipo";
 $result = sqlsrv_query($link, $query, $params, $options);
 // print_r($query);exit;
-$data = array();
+$data = [];
 
 if (sqlsrv_num_rows($result) > 0) {
 
@@ -44,19 +44,18 @@ if (sqlsrv_num_rows($result) > 0) {
                 AND CONCAT(' ', OTRASNOV.ONovCodi, OTRASNOV.ONovDesc) LIKE '%$q%'
                 AND OTRASNOV.ONovCodi NOT IN (SELECT FICHAS2.FicONov FROM FICHAS2 WHERE FICHAS2.FicLega = '$FicLega' AND FICHAS2.FicFech = '$FicFech') $filtroNov
                 ORDER BY OTRASNOV.ONovCodi";
-        // print_r($query);exit;
 
         $result_ONov = sqlsrv_query($link, $query, $params, $options);
 
-        $ONovedades = array();
+        $ONovedades = [];
 
         if (sqlsrv_num_rows($result_ONov) > 0) {
             while ($row_ONov = sqlsrv_fetch_array($result_ONov)):
                 $cod = str_pad($row_ONov['Codigo'], 3, "0", STR_PAD_LEFT);
-                $ONovedades[] = array(
+                $ONovedades[] = [
                     'id' => $row_ONov['Codigo'],
-                    'text' => $cod . ' - ' . $row_ONov['Descrip'],
-                );
+                    'text' => "$cod - " . $row_ONov['Descrip'],
+                ];
             endwhile;
             sqlsrv_free_stmt($result_ONov);
         } else {
@@ -65,10 +64,10 @@ if (sqlsrv_num_rows($result) > 0) {
 
         $tipo = strtoupper(TipoONov($ONovTipo));
 
-        $data[] = array(
+        $data[] = [
             'text' => $tipo,
             "children" => $ONovedades,
-        );
+        ];
         unset($ONovedades);
     }
 }

@@ -10,11 +10,12 @@
 <body class="fadeIn">
     <!-- inicio container -->
     <div class="container">
-        <?php require __DIR__ . '/../../../nav.php'; ?>
-        <!-- Encabezado -->
-        <?php encabezado_mod2('bg-custom', 'white', 'folder-symlink-fill', MODULOS['reporte_prysmian'], '25', 'text-white mr-2');
+        <?php require __DIR__ . '/../../../nav.php';
+        $svg = iconEncabezados('informes');
+        $titulo = "<span style='margin-top:2px'>" . MODULOS['reporte_prysmian'] . "</span>";
         ?>
-        <!-- Fin Encabezado -->
+        <!-- Encabezado -->
+        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
         <div class="row bg-white p-2 radius wrapper" hidden>
             <div class="col-12 col-sm-8">
                 <div class="form-row">

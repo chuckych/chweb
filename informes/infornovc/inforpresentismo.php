@@ -11,10 +11,12 @@
 <body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '/../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php';
+        $svg = iconEncabezados('informes');
+        $titulo = "<span style='margin-top:2px'>" . MODULOS['informe_presentismo'] . "</span>";
+        ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['informe_presentismo'], '') ?>
-        <!-- Fin Encabezado -->
+        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
         <div class="row bg-white py-2">
             <div class="col-12 col-sm-6 mt-2">
                 <input type="hidden" id="dl" value="<?= $_SESSION["DIAS_FRANCO"] ?>">

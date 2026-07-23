@@ -37,7 +37,7 @@ function version($html = false)
 
 function verDBLocal(): int
 {
-    return 20260603; // Version de la base de datos local
+    return 20260721; // Version de la base de datos local
 }
 function checkDBIntegrity()
 {
@@ -1048,13 +1048,14 @@ function ExisteModRol($modulo)
 function existConnMSSQL()
 {
     require_once __DIR__ . '/config/conect_mssql.php'; // conexion a MSSQL
-    (!$_SESSION['CONECT_MSSQL']) ? header("Location:/" . HOMEHOST . "/inicio/?e=errorConexionMSSQL") . exit : ''; // si no existe conexion a MSSQL redirigimos al inicio
+    if (empty($_SESSION['CONECT_MSSQL'])) {
+        header("Location:/" . HOMEHOST . "/inicio/?e=errorConexionMSSQL");
+        exit;
+    } // si no existe conexion a MSSQL redirigimos al inicio
 }
-function ListaRoles($Recid_C)
+function ListaRoles(string $Recid_C)
 {
     $url = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid_c=" . $Recid_C;
-    // $json         = file_get_contents($url);
-    // $array        = json_decode($json, TRUE);
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['roles'];
     if (is_array($array)):
@@ -1068,10 +1069,6 @@ function ListaRoles($Recid_C)
 function estructura_rol($get_rol, $recid_rol, $e, $data)
 {
     $url = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
-    // echo $url; br();
-    // $json  = file_get_contents($url);
-    // $array = json_decode($json, TRUE);
-    // print_r($url);exit;
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0][$data];
     if (is_array($data)) {
@@ -1205,6 +1202,7 @@ function Foto($face_url, $title, $width)
 }
 function color_fichada($array)
 {
+    $fichada = [];
     foreach ($array as $valor) {
         switch ($valor['Tipo']) {
             case 'Manual':
@@ -1234,8 +1232,9 @@ function color_fichada($array)
     }
     return $fichada;
 }
-function color_fichada3($array)
+function color_fichada3(array $array)
 {
+    $fichada = [];
     foreach ($array as $valor) {
         switch ($valor['Tipo']) {
             case 'Manual':
@@ -1776,6 +1775,7 @@ function simpleQueryDataMS($query)
         sqlsrv_free_stmt($stmt);
         return $a;
     } else {
+        $mensaje = '';
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
@@ -2174,16 +2174,17 @@ function pingWebService($textError) // Función para validar que el Webservice d
     $response = curl_exec($ch); // extract information from response
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
+    $textError = '';
 
     if ($curl_errno > 0) { // si hay error
-        $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
+        $text = "WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         if (PHP_VERSION_ID >= 80000) {
             unset($ch);
         } else {
             curl_close($ch);
         } // Cerrar curl antes de salir
-        PrintRespuestaJson('Error', $textError);
+        PrintRespuestaJson('Error', $text);
         exit; // salimos del script
     }
 
@@ -2194,7 +2195,13 @@ function pingWebService($textError) // Función para validar que el Webservice d
         curl_close($ch);
     } // close curl handle
 
-    return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
+    switch ($http_code) {
+        case 201:
+            return true;
+        default:
+            PrintRespuestaJson('Error', $textError);
+            exit;
+    } // escribir en el log
 }
 // Función para validar que el Webservice de Control Horario esta disponible
 function pingWS()
@@ -3407,7 +3414,7 @@ function write_apiKeysFile()
     fclose($handle);
     return $success;
 }
-function getIniCuenta($recidCuenta, $key = false)
+function getIniCuenta(string $recidCuenta, $key = false)
 {
     $urlHost = '';
     $d = (getDataIni(__DIR__ . '/mobileApikey.php'));
@@ -3855,11 +3862,11 @@ function arrMSQuery(string $query, array $opt = [])
             throw new Exception($mensaje);
         }
 
-        if($insert) {
+        if ($insert) {
             return true;
         }
 
-        if($update) {
+        if ($update) {
             return true;
         }
 
@@ -3891,22 +3898,15 @@ function arrMSQueryData(string $query)
 
     try {
         if ($link === null) {
-            // Solo log cuando se crea la conexión
-            // error_log('[MSSQL CACHE] Nueva conexión creada (#' . ($connectionCount + 1) . ')');
-
             require __DIR__ . '/config/conect_mssql.php';
 
             if (!$link) {
                 throw new Exception('No se pudo establecer la conexión a la base de datos');
             }
             $connectionCount++;
-        } else {
-            // Log opcional para verificar que usa caché
-            // error_log('[MSSQL CACHE] Reutilizando conexión #' . $connectionCount . ' - Consulta #' . ($queryCount + 1));
         }
 
         $queryCount++;
-        // $startTime = microtime(true);
 
         $stmt = sqlsrv_query($link, $query);
 
@@ -3920,10 +3920,6 @@ function arrMSQueryData(string $query)
         while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
             $registros[] = $r;
         }
-
-        // $executionTime = round((microtime(true) - $startTime) * 1000, 2);
-        // error_log('[MSSQL CACHE] Consulta #' . $queryCount . ' completada en ' . $executionTime . 'ms - ' . count($registros) . ' filas');
-        // error_log('[QUERY] ' . $query);
 
         return $registros;
 
@@ -4553,4 +4549,15 @@ function validarTablaSeccion(string $recid_cliente)
     } catch (\Throwable $th) {
         error_log($th->getMessage());
     }
+}
+function iconEncabezados(string $modulo)
+{
+
+    $iconInformes = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#e3e3e3" viewBox="0 -960 960 960"><path d="M280-280h280v-80H280zm0-160h400v-80H280zm0-160h400v-80H280zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120zm0-80h560v-560H200zm0-560v560z"/></svg>';
+
+    $mapModulos = [
+        'informes' => $iconInformes
+    ];
+
+    return $mapModulos[$modulo] ?? '';
 }

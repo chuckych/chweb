@@ -45,6 +45,7 @@ $mapColor = [
     '20'  => '#4263eb', // Planilla Horaria
 	'21'  => '#d32f2f', // Parte Diario
     '22'  => '#0288d1', // Informe de Novedades
+    '51'  => '#0374b1', // Informe Otras Novedades
 	'23'  => '#009688', // Informe de Fichadas
     '24'  => '#bc5100', // Informe de Horas
 	'29'  => '#0276aa', // Informe de Presentismo

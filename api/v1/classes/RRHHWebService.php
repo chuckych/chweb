@@ -166,6 +166,7 @@ class RRHHWebService
     public function procesar(array $params = []): bool
     {
         try {
+            $inicioScript = microtime(true);
             $this->ping();
 
             $FechaDesde = $params['FechaDesde'] ?? '';
@@ -185,7 +186,8 @@ class RRHHWebService
             }
 
             $ruta = $this->baseUrl() . '/' . 'Procesar';
-            $dateSegments = $this->tools->dividefecha31dias($FechaDesde, $FechaHasta);
+            $daySegment = 7; // Cantidad de días por segmento
+            $dateSegments = $this->tools->divideFechaDias($FechaDesde, $FechaHasta, $daySegment);
 
             if (!$dateSegments) {
                 return false;
@@ -212,7 +214,7 @@ class RRHHWebService
                 'Seccion' => $normalizarFiltro($params['Seccion'] ?? null),
                 'TipoDePersonal' => $normalizarFiltro($params['TipoDePersonal'] ?? null),
             ];
-            $lengthChunk = 20; // Tamaño del chunk para legajos
+            $lengthChunk = 25; // Tamaño del chunk para legajos
             $LegajosSegment = !empty($Legajos) ? array_chunk($Legajos, $lengthChunk) : [];
             $ch = curl_init();
 
@@ -308,7 +310,10 @@ class RRHHWebService
             } else {
                 curl_close($ch);
             }
-
+            $finScript = microtime(true);
+            $tiempoEjecucion = \round($finScript - $inicioScript, 2);
+            $tiempoEjecucion = \round($tiempoEjecucion / 60, 2);
+            $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': Tiempo de ejecución: ' . $tiempoEjecucion . ' minutos', $this->NameLog);
             return true;
         } catch (\Exception $e) {
             $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ', $this->NameLog, $e);

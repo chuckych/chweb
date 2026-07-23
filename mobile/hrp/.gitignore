@@ -16,3 +16,4 @@ temp/*.json
 api/**
 *.7z
 *.delete
+*.json

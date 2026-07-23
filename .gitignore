@@ -1,41 +1,9 @@
-/old
-/vendor/igorescobar/jquery-mask-plugin/test
-/vendor/spipu/html2pdf/examples
-/vendor/spipu/html2pdf/doc
-/vendor/spipu/html2pdf/src
-/vendor/spipu/html2pdf/test
-/vendor/spipu
-/vendor/tecnickcom/tcpdf/examples
-/vendor/tecnickcom/tcpdf/.github
-/vendor/tecnickcom/
-/informes/infornovc/reporte/*
-/informes/horasign-old/*
-/informes/horasign2
-/informes/horasign-ws
-/mpdf-examples
-/mobile/sms
-/docs
-/general2/
-llamadasv2.php
-/wfch_
-mobileApikey.php
-/general/dataGeneral.php
-/general/dataGeneral2.php
-confTarea.php
-confTarea.ini
-confTarea.ini
-pruebaApiWF.php
-pruebaDataWFlow.php
-pruebaApiML.php
-/sidebar
-/.test
-/.github
-/mobile/hrp/*.json
-/mobile/hrp/fotos/*.jpg
-/mobile/hrp/fotos/*.png
-/mobile/hrp/api
-/procesar__
-/fichar__
+*_
+*_.php
+*_.js
+*_.html
+*_.css
+*_.json
 *.pdf
 *.log
 *.zip
@@ -51,31 +19,11 @@ pruebaApiML.php
 *.backup
 *.ini
 *.lock
-app-data/json/*.json
-app-data/json/config/*.json
-*--old.php
-*--old.js
-*--old.css
-*--old.html
-*--old.json
 *.env
-composer.phar
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 *.code-workspace
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
-### Windows ###
-# Windows thumbnail cache files
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
 
 # Dump file
 *.stackdump
@@ -83,20 +31,12 @@ ehthumbs_vista.db
 # Folder config file
 [Dd]esktop.ini
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
 # Windows shortcuts
 *.lnk
 ### Linux ###
 *~
+
+app-data/json/*.json
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
@@ -111,3 +51,5 @@ $RECYCLE.BIN/
 .nfs*
 composer.lock
 .vscode
+mobileApikey.php
+/.github

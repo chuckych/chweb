@@ -10,4 +10,4 @@ define("TIPO_PER", [
     'Mensuales' => '1',
     'Jornales' => '2',
 ]);
-require pagina('procesar_.php');
+require pagina('procesar.php');

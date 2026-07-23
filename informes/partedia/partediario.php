@@ -10,11 +10,12 @@
 <body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '/../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php';
+        $svg = iconEncabezados('informes');
+        $titulo = "<span style='margin-top:2px'>" . MODULOS['parte_diario'] . "</span>";
+        ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['parte_diario'], '') ?>
-        <!-- Fin Encabezado -->
-        <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
+        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
         <?php
         $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
         $FirstDate = $FechaMinMax['min'];

@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <title><?= MODULOS['informe_de_fichadas'] ?></title>
+    <title><?= MODULOS['informe_otras_novedades'] ?></title>
 </head>
 
 <body class="fadeIn">
@@ -12,44 +12,35 @@
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../../nav.php';
         $svg = iconEncabezados('informes');
-        $titulo = "<span style='margin-top:2px'>" . MODULOS['informe_de_fichadas'] . "</span>";
+        $titulo = "<span style='margin-top:2px'>" . MODULOS['informe_otras_novedades'] . "</span>";
         ?>
         <!-- Encabezado -->
         <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
         <?php
-        $FechaMinMax = (fecha_min_max2('FICHAS', 'FICHAS.FicFech'));
+        $FechaMinMax = (fecha_min_max2('FICHAS2', 'FICHAS2.FicFech'));
         $FirstDate = $FechaMinMax['min'];
         /** FirstDate */
         $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
         /** FirstYear */
         $maxDate = $FechaMinMax['max'];
+        // $maxDate   = date('Y-m-d');
         /** maxDate */
         $maxYear = date('Y');
         /** maxYear */
         $FechaIni = $FechaMinMax['max'];
         $FechaFin = $FechaMinMax['max'];
-        $FechaIni = date('Y-m-d');
-        $FechaFin = date('Y-m-d');
         ?>
-        <div class="row py-2">
+        <div class="row bg-white py-2">
             <div class="col-12 col-sm-6">
-                <label for="Tipo"><span class="d-none d-sm-none d-md-none d-lg-block mb-1 fontq">Tipo de Personal:
-                    </span></label>
-                <select class="selectjs_tipoper w150" id="Tipo" name="Tipo">
+                <label for="Tipo" class="mb-1 font08">
+                    <span class="mr-1 d-none d-sm-none d-md-none d-lg-block mb-1 font08">Tipo de Personal: </span>
+                </label>
+                <select class="selectjs_tipoper" id="Tipo" name="Tipo">
                 </select>
-                <span style="display: none;">
-                    <label class="mx-2" for="_agrupar">Agrupar por: </label>
-                    <select id="_agrupar" class="select2 form-control w150">
-                        <?php
-                        foreach (AGRUPAR as $key => $value) {
-                            echo '<option value="' . $value . '">' . $key . '</option>';
-                        }
-                        ?>
-                    </select></span>
             </div>
             <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
-                    <button type="button" class="btn btn-outline-custom border btn-sm fontq" data-toggle="collapse"
+                    <button type="button" class="btn btn-outline-custom border btn-sm font08" data-toggle="collapse"
                         data-target="#rowFiltros" aria-expanded="false" aria-controls="rowFiltros">
                         Filtros
                     </button>
@@ -61,96 +52,90 @@
         <div class="row bg-white collapse invisible" id="rowFiltros">
             <div class="col-12 col-sm-4">
                 <!-- Empresa -->
-                <label for="Emp" class="mb-1 fontq"><?= $labelEmprPlu ?></label>
-                <select class="form-control selectjs_empresa" id="Emp" name="Emp" data-label="<?= $labelEmprPlu ?>">
+                <label for="Emp" class="mb-1 font08"><?= $labelEmprPlu ?? '' ?></label>
+                <select class="form-control selectjs_empresa" id="Emp" name="Emp"
+                    data-label="<?= $labelEmprPlu ?? '' ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Planta -->
-                <label for="Plan" class="mb-1 w100 fontq"><?= $labelPlanPlu ?></label>
-                <select class="form-control selectjs_plantas" id="Plan" name="Plan" data-label="<?= $labelPlanPlu ?>">
+                <label for="Plan" class="mb-1 w100 font08"><?= $labelPlanPlu ?? '' ?></label>
+                <select class="form-control selectjs_plantas" id="Plan" name="Plan"
+                    data-label="<?= $labelPlanPlu ?? '' ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Sector -->
-                <label for="Sect" class="mb-1 w100 fontq"><?= $labelSectPlu ?></label>
-                <select class="form-control selectjs_sectores" id="Sect" name="Sect" data-label="<?= $labelSectPlu ?>">
+                <label for="Sect" class="mb-1 w100 font08"><?= $labelSectPlu ?? '' ?></label>
+                <select class="form-control selectjs_sectores" id="Sect" name="Sect"
+                    data-label="<?= $labelSectPlu ?? '' ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Seccion -->
-                <label for="Sec2" class="mb-1 w100 fontq"><?= $labelSeccPlu ?></label>
+                <label for="Sec2" class="mb-1 w100 font08"><?= $labelSeccPlu ?? '' ?></label>
                 <select disabled class="form-control select_seccion" id="Sec2" name="Sec2"
-                    data-label="<?= $labelSeccPlu ?>">
+                    data-label="<?= $labelSeccPlu ?? '' ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Grupos -->
-                <label for="Grup" class="mb-1 w100 fontq"><?= $labelGrupPlu ?></label>
-                <select class="form-control selectjs_grupos" id="Grup" name="Grup" data-label="<?= $labelGrupPlu ?>">
+                <label for="Grup" class="mb-1 w100 font08"><?= $labelGrupPlu ?? '' ?></label>
+                <select class="form-control selectjs_grupos" id="Grup" name="Grup"
+                    data-label="<?= $labelGrupPlu ?? '' ?>">
                 </select>
             </div>
             <div class="col-12 col-sm-4">
                 <!-- Sucursal -->
-                <label for="Sucur" class="mb-1 w100 fontq"><?= $labelSucuPlu ?></label>
-                <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" data-label="<?= $labelSucuPlu ?>">
+                <label for="Sucur" class="mb-1 w100 font08"><?= $labelSucuPlu ?? '' ?></label>
+                <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur"
+                    data-label="<?= $labelSucuPlu ?? '' ?>">
                 </select>
             </div>
             <div class="col-12 ">
                 <!-- Legajo -->
-                <label for="Per" class="mb-1 w100 fontq">Legajos</label>
+                <label for="Per" class="mb-1 w100 font08">Legajos</label>
                 <div class="d-flex align-items-center">
                     <select class="form-control selectjs_personal" id="Per" name="Per">
                     </select>
                 </div>
             </div>
+            <div class="col-12 pb-3">
+                <!-- Novedad -->
+                <label for="FicNove" class="mb-1 w100 font08">Novedad</label>
+                <select class="form-control selectjs_FicNove" id="FicNove" name="FicNove">
+                </select>
+            </div>
         </div>
-        <form action="reporte/index.php" method="POST" id="FormExportar" class="">
-            <div class="row">
-                <div class="pt-1 col-12">
-                    <!-- Por Legajo -->
+        <form action="reporte/" method="POST" id="FormExportar">
+            <div class="row bg-white">
+                <div class="pt-2 col-12">
                     <div class="custom-control custom-switch custom-control-inline ml-1 w180">
                         <input checked type="radio" class="custom-control-input" id="PorLegajo" name="_Por" value="Leg">
-                        <label class="custom-control-label" for="PorLegajo" style="padding-top: 3px;"><span
+                        <label class="custom-control-label w180" for="PorLegajo" style="padding-top: 3px;"><span
                                 class="text-dark">Por Legajo</span></label>
                     </div>
-                    <!-- Por Nombre -->
                     <div class="custom-control custom-switch custom-control-inline ml-1 w180">
                         <input type="radio" class="custom-control-input" id="PorNombre" name="_Por" value="ApNo">
-                        <label class="custom-control-label" for="PorNombre" style="padding-top: 3px;"><span
+                        <label class="custom-control-label w180" for="PorNombre" style="padding-top: 3px;"><span
                                 class="text-dark">Por Nombre</span></label>
                     </div>
-                    <!-- Por Fecha -->
                     <div class="custom-control custom-switch custom-control-inline ml-1 w180">
                         <input type="radio" class="custom-control-input" id="PorFecha" name="_Por" value="Fech">
                         <label class="custom-control-label w180" for="PorFecha" style="padding-top: 3px;"><span
                                 class="text-dark">Por Fecha</span></label>
                     </div>
-                    <!-- Solo Resumen -->
-                    <div class="custom-control custom-switch custom-control-inline ml-1 w180 d-none">
-                        <input type="checkbox" class="custom-control-input" id="Resumen" name="_Res">
-                        <label class="custom-control-label w180" for="Resumen" style="padding-top: 3px;"><span
-                                class="text-dark">Solo Resumen</span></label>
-                    </div>
                 </div>
                 <div class="col-12 pt-2">
-                    <!-- Salto de pagina -->
                     <div class="custom-control custom-switch custom-control-inline ml-1 w180">
                         <input type="checkbox" class="custom-control-input" id="SaltoPag">
                         <label class="custom-control-label w180" for="SaltoPag" style="padding-top: 3px;"><span
                                 class="text-dark">Salto de p&aacute;gina</span></label>
                         <input type="hidden" name="_SaltoPag" id="datoSaltoPag">
                     </div>
-                    <!-- Fichadas Inonsistentes -->
-                    <div class="custom-control custom-switch custom-control-inline ml-1 w300">
-                        <input type="checkbox" class="custom-control-input" id="FicFalta">
-                        <label class="custom-control-label" for="FicFalta" style="padding-top: 3px;"><span
-                                class="text-dark">Fichadas Inconsistentes</span></label>
-                        <input type="hidden" name="" id="datoFicFalta">
-                    </div>
                 </div>
                 <div class="col-12">
-                    <a class="btn btn-link text-decoration-none text-dark fontq px-0" data-toggle="collapse"
+                    <a class="btn btn-link text-decoration-none text-dark font08 px-0" data-toggle="collapse"
                         href="#Permisos" role="button" aria-expanded="false" aria-controls="Permisos">
                         <span id="btnPermiso">Opciones del Reporte</span><span class="fontpp ml-2">
                             <svg class="bi mr-1" width="10" height="10" fill="currentColor">
@@ -165,7 +150,7 @@
                         <select name="_format" id="_format" class="select2 form-control w80">
                             <?php
                             foreach (TIPO_HOJA as $key => $value) {
-                                echo '<option value="' . $value . '">' . $key . '</option>';
+                                echo "<option value=\"$value\">$key</option>";
                             }
                             ?>
                         </select>
@@ -173,7 +158,7 @@
                         <select name="_orientation" id="_orientation" class="select2 form-control w120">
                             <?php
                             foreach (ORIENTACION as $key => $value) {
-                                echo '<option value="' . $value . '">' . $key . '</option>';
+                                echo "<option value=\"$value\">$key</option>";
                             }
                             ?>
                         </select>
@@ -182,45 +167,20 @@
                             <select name="_destino" id="_destino" class="select2 form-control w200">
                                 <?php
                                 foreach (DESTINO as $key => $value) {
-                                    echo '<option value="' . $value . '">' . $key . '</option>';
+                                    echo "<option value=\"$value\">$key</option>";
                                 }
                                 ?>
                             </select>
-                    </div>
-                    <div class="col-12 pt-2 d-none">
-                        <span class="fontq">Bloquear:</span>
-                        <div class="custom-control custom-switch custom-control-inline">
-                            <input type="checkbox" class="custom-control-input" id="_print" name="_print" value="print">
-                            <label class="custom-control-label" for="_print" style="padding-top: 3px;">
-                                <span id="VerPor" data-toggle="tooltip" data-placement="top" data-html="true" title=""
-                                    data-original-title="<b>Incluye valores en cero.</b>"
-                                    aria-describedby="tooltip">Imprimir</span>
-                            </label>
-                        </div>
-                        <div class="custom-control custom-switch custom-control-inline">
-                            <input type="checkbox" class="custom-control-input" id="_annotforms" name="_annotforms"
-                                value="annot-forms">
-                            <label class="custom-control-label" for="_annotforms"
-                                style="padding-top: 3px;">Comentarios</label>
-                        </div>
-                        <div class="custom-control custom-switch custom-control-inline">
-                            <input type="checkbox" class="custom-control-input" id="_copy" name="_copy" value="copy">
-                            <label class="custom-control-label" for="_copy" style="padding-top: 3px;">Copiar</label>
-                        </div>
                     </div>
                     <div class="col-12 mt-2 form-inline">
                         <label for="_watermark"><span class="mr-2 d-none d-sm-block">Marca de agua: </span></label>
                         <input type="text" class="form-control w200 h40" name="_watermark" placeholder="Marca de agua">
                     </div>
-                    <div class="col-12 mt-2 form-inline d-none">
-                        <label class="mr-2" for="_password">Contrase&ntilde;a de apertura: </label>
-                        <input type="text" class="form-control w200" maxlength="10" name="_password" id="_password">
-                    </div>
                 </div>
             </div>
             <div class="row pb-2">
-                <div class="col-12">
-                    <button class="btn btn-custom btn-sm fontq px-3 float-right btn-mobile" type="submit"
+                <div class="pb-2 col-12">
+                    <button class="btn btn-custom btn-sm font08 px-3 float-right btn-mobile" type="submit"
                         id="btnExportar">Generar PDF</button>
                 </div>
             </div>
@@ -238,8 +198,8 @@
     ?>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../js/select2.min.js"></script>
-    <script src="js/select.js?v=<?= version_file("/informes/inforfic/js/select.js") ?>"></script>
-    <script src="js/export.js?v=<?= version_file("/informes/inforfic/js/export.js") ?>"></script>
+    <script src="js/export.js?v=<?= version_file("/informes/inforonov/js/export.js") ?>"></script>
+    <script src="js/select.js?v=<?= version_file("/informes/inforonov/js/select.js") ?>"></script>
 </body>
 
 </html>

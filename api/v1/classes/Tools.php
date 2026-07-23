@@ -45,9 +45,9 @@ class Tools
             return false;
         }
     }
-    public function dividefecha31dias($startDate, $endDate)
+    public function dividefecha31dias(string $startDate, string $endDate)
     {
-        function splitDates($startDate, $endDate)
+        function splitDates(string $startDate, string $endDate)
         {
             $dateRange = [];
             $currentDate = $startDate;
@@ -86,6 +86,53 @@ class Tools
             $endDate = strtotime($endDate);
 
             $dateSegments = splitDates($startDate, $endDate);
+
+            return $dateSegments;
+        } catch (\Exception $th) {
+            return false;
+        }
+    }
+    public function divideFechaDias(string $startDate, string $endDate, int $Days = 31)
+    {
+        function splitDias(string $startDate, string $endDate, int $Days = 31)
+        {
+            $dateRange = [];
+            $currentDate = $startDate;
+
+            while ($currentDate <= $endDate) {
+                $nextDate = strtotime("+{$Days} days", $currentDate);
+                if ($nextDate > $endDate) {
+                    $nextDate = $endDate;
+                }
+                $dateRange[] = [
+                    "FechaMin" => date("Y-m-d", $currentDate),
+                    "FechaMax" => date("Y-m-d", $nextDate)
+                ];
+                $currentDate = strtotime('+1 day', $nextDate);
+                if ($currentDate == $endDate) {
+                    break;
+                }
+            }
+            return $dateRange;
+        }
+
+        try {
+
+            if (!\DateTime::createFromFormat('Y-m-d', $startDate)) { // Valida la fecha desde 
+                throw new \Exception('Fecha desde no es valida', 1);
+            }
+            if (!\DateTime::createFromFormat('Y-m-d', $endDate)) { // Valida la fecha desde 
+                throw new \Exception('Fecha desde no es valida', 1);
+            }
+            // función para calcular si la fecha de inicio es mayor a la fecha de fin
+            if (strtotime($startDate) > strtotime($endDate)) {
+                throw new \Exception('startDate no puede ser mayor endDate', 1);
+            }
+
+            $startDate = strtotime($startDate);
+            $endDate = strtotime($endDate);
+
+            $dateSegments = splitDias($startDate, $endDate, $Days);
 
             return $dateSegments;
         } catch (\Exception $th) {
@@ -146,7 +193,8 @@ class Tools
     }
     public function agrupar_por(array $array, string $key)
     {
-        if (!$array) return [];
+        if (!$array)
+            return [];
         $result = [];
         foreach ($array as $item) {
             $result[$item[$key]][] = $item;
@@ -156,14 +204,15 @@ class Tools
     public function get_fecha_hora(string $tabla, ?\PDO $connDB = null)
     {
         try {
-            if (!$tabla) throw new \Exception("Tabla en get_fecha_hora no especificada", 400);
+            if (!$tabla)
+                throw new \Exception("Tabla en get_fecha_hora no especificada", 400);
             $conn = $this->conect->check_connection($connDB);
 
             $sql = "SELECT MAX(FechaHora) as FechaHora FROM $tabla";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            $data =  $data[0]['FechaHora'] ?? '';
+            $data = $data[0]['FechaHora'] ?? '';
             return $this->date_time_str($data);
         } catch (\Throwable $th) {
             throw new \Exception("Error al obtener FechaHora en {$tabla}", 400);
@@ -173,11 +222,11 @@ class Tools
     {
         $conn = $this->conect->check_connection($connDB);
 
-        $FHora      = $this->get_fecha_hora($tabla, $conn);
+        $FHora = $this->get_fecha_hora($tabla, $conn);
         $FHoraCache = $this->log->get_cache($cacheFecha, '.txt') ?? 0;
 
         $obj = new \stdClass();
-        $obj->data  = [];
+        $obj->data = [];
         $obj->FHora = $FHora;
         $obj->total = 0;
 

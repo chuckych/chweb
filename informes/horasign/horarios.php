@@ -13,7 +13,8 @@
         .dataTables_paginate {
             margin-top: 0px !important;
         }
-        .dataTables_info{
+
+        .dataTables_info {
             font-size: 0.7rem;
         }
 
@@ -25,7 +26,8 @@
             margin-top: -5px !important;
             padding: 0px !important;
         }
-        .infoTabla>div{
+
+        .infoTabla>div {
             margin-top: -10px;
         }
     </style>
@@ -35,15 +37,11 @@
     <!-- inicio container -->
     <div class="container pb-2">
         <?php require __DIR__ . '/../../nav.php';
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mr-1" viewBox="0 0 16 16">
-        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
-        <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5zM11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
-        </svg>';
-        $titulo = "<span style='margin-top:7px'>" . MODULOS['horarios_asignados'] . "</span>";
+        $svg = iconEncabezados('informes');
+        $titulo = "<span style='margin-top:2px'>" . MODULOS['horarios_asignados'] . "</span>";
         ?>
         <!-- Encabezado -->
         <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
-        <!-- Fin Encabezado -->
         <?php require 'body.php'; ?>
     </div>
     <!-- fin container -->

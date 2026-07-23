@@ -1124,3 +1124,19 @@ if ($verDB < 20260603) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog);
 }
+
+if ($verDB < 20260721) {
+
+    $verDB = 20260721; // nueva version de la DB. modificar también en la función verDBLocal() del archivo de funciones.php
+    insert_pdoQuery("ALTER TABLE `modulos` CHANGE COLUMN `nombre` `nombre` VARCHAR(30) NOT NULL DEFAULT '0' COLLATE 'utf8mb4_general_ci' AFTER `id`;");
+    fileLog("Se actualizó la columna `nombre` de la tabla `modulos`", $pathLog); // escribir en el log
+    insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, descripcion, orden, estado, idtipo) VALUES ('51', '1nf0oN0v', 'Informe Otras Novedades', 'Informe De Otras Novedades', 11, '0', 2)");
+    fileLog("Se inserto el modulo: \"Informe Otras Novedades\"", $pathLog); // escribir en el log
+    insert_pdoQuery("UPDATE `chweb`.`modulos` SET `orden`=20 WHERE  `id`=23;");
+    fileLog("Se actualizó el orden del módulo con ID 23 a 20", $pathLog); // escribir en el log
+    insert_pdoQuery("UPDATE `chweb`.`modulos` SET `orden`=30 WHERE  `id`=24;");
+    fileLog("Se actualizó el orden del módulo con ID 24 a 30", $pathLog); // escribir en el log
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog);
+
+}
