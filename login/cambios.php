@@ -1138,5 +1138,12 @@ if ($verDB < 20260721) {
     fileLog("Se actualizó el orden del módulo con ID 24 a 30", $pathLog); // escribir en el log
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog);
+}
 
+if ($verDB < 20260723) {
+    $verDB = 20260723;
+    updateModulosCache();
+    fileLog("Se actualizó la cache de módulos", $pathLog);
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog);
 }
