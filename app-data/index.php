@@ -2055,7 +2055,6 @@ Flight::route('POST /ws_fichar_horario', function () {
 });
 
 Flight::route('POST|GET /custom/@file', function ($file) {
-    error_log("Request for custom file: {$file}");
     $mapFiles = [
         'arrpersonal'       => __DIR__ . '/../novedades/array_personal.php',
         'peremp'            => __DIR__ . '/../data/getPerEmpresas.php',
@@ -2111,7 +2110,6 @@ Flight::route('POST|GET /custom/@file', function ($file) {
         'dt-es-2'           => __DIR__ . '/../js/DataTableSpanishShort2.json',
     ];
     if (isset($mapFiles[$file])) {
-        error_log("Including file: {$mapFiles[$file]}");
         require $mapFiles[$file];
     } else {
         Flight::json(['status' => 'error', 'message' => 'Archivo no encontrado'], 404);

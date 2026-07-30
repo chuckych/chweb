@@ -4554,9 +4554,11 @@ function iconEncabezados(string $modulo)
 {
 
     $iconInformes = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#e3e3e3" viewBox="0 -960 960 960"><path d="M280-280h280v-80H280zm0-160h400v-80H280zm0-160h400v-80H280zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120zm0-80h560v-560H200zm0-560v560z"/></svg>';
+    $iconInformesBlack = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 -960 960 960"><path d="M300-300h240v-40H300zm0-160h360v-40H300zm0-160h360v-40H300zm-75.38 460q-27.62 0-46.12-18.5T160-224.62v-510.76q0-27.62 18.5-46.12t46.12-18.5h510.76q27.62 0 46.12 18.5t18.5 46.12v510.76q0 27.62-18.5 46.12T735.38-160zm0-40h510.76q9.24 0 16.93-7.69t7.69-16.93v-510.76q0-9.24-7.69-16.93T735.38-760H224.62q-9.24 0-16.93 7.69T200-735.38v510.76q0 9.24 7.69 16.93t16.93 7.69M200-760v560z"/></svg>';
 
     $mapModulos = [
-        'informes' => $iconInformes
+        'informes' => $iconInformes,
+        'informesBlack' => $iconInformesBlack,
     ];
 
     return $mapModulos[$modulo] ?? '';

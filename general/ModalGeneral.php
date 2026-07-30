@@ -268,7 +268,7 @@
                                                 <select class="selectjs_OtrasNovedades w250" name="FicONov" id="FicONov"></select>
                                                 <span class="mx-1"></span>
                                                 <label for="FicValor" class="mr-1 d-none d-sm-block">Valor:</label>
-                                                <input type="tel" name="FicValor" id="FicValor" class="form-control h40 w80" placeholder="0.00">
+                                                <input type="tel" name="FicValor" id="FicValor" class="form-control h40 w120" placeholder="0.00">
                                             </div>
                                             <div class="d-flex align-items-center mb-2">
                                                 <label for="FicONovFechas" class="w80 mr-2 d-none d-sm-block">Fecha:</label>

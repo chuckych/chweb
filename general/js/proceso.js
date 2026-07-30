@@ -715,7 +715,50 @@ $(document).on("click", ".open-modal", function (e) {
     $('#Horas').addClass('d-none')
     $('#Novedades').addClass('d-none')
     $('#OtrasNov').addClass('d-none')
-    $('#FicValor').mask('##.##00.00', { reverse: true });
+    // Máscara dinámica: entero por defecto; al presionar punto, activa decimales
+    // NOTA: reverse:true no soporta punto decimal matemático (llena hundredths antes que tenths),
+    //       por eso en modo decimal se quita la máscara y se valida manualmente.
+    const ficValorModoEntero = () => $('#FicValor').mask('######0', { reverse: true });
+
+    $('#FicValor').off('keydown.ficmask input.ficmask');
+    ficValorModoEntero();
+
+    $('#FicValor').on('keydown.ficmask', function(e) {
+        const enModoDecimal = !$(this).data('mask');
+        if (e.key === '.') {
+            e.preventDefault();
+            if (!enModoDecimal) {
+                // Pasar a modo decimal: quitar máscara y poner punto
+                const num = $(this).cleanVal();
+                $(this).unmask().val((num || '') + '.');
+                const len = $(this).val().length;
+                this.setSelectionRange(len, len);
+            }
+        } else if (e.key === 'Backspace' && enModoDecimal) {
+            // Si el cursor está sobre el punto o antes, revertir a modo entero
+            const val = $(this).val();
+            const dotPos = val.indexOf('.');
+            if (dotPos !== -1 && this.selectionStart <= dotPos + 1 && this.selectionStart === this.selectionEnd) {
+                e.preventDefault();
+                const intPart = val.substring(0, dotPos).replace(/\D/g, '');
+                $(this).val(intPart || '');
+                ficValorModoEntero();
+                if (intPart) $(this).trigger('input');
+            }
+        }
+    }).on('input.ficmask', function() {
+        const enModoDecimal = !$(this).data('mask');
+        if (!enModoDecimal) return;
+        const val = $(this).val();
+        // Permitir solo dígitos, un punto y máximo 2 decimales
+        let limpio = val.replace(/[^\d.]/g, '');
+        const partes = limpio.split('.');
+        if (partes.length > 2) limpio = `${partes[0]}.${partes.slice(1).join('')}`;
+        if (partes[1]?.length > 2) limpio = `${partes[0]}.${partes[1].substring(0, 2)}`;
+        if (limpio !== val) $(this).val(limpio);
+        // Si se borró el punto, volver a modo entero
+        if (!limpio.includes('.')) ficValorModoEntero();
+    });
 
     const Datos = $(this).attr('data');
     const Nombre = $(this).attr('data2');
