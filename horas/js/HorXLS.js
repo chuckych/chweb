@@ -62,6 +62,10 @@ function GetFicExcel() {
                         $.notifyClose();
                     });
                 }
+            } else {
+                ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
+                $.notifyClose();
+                notify(data.message ?? 'Error al generar el archivo.', 'danger', 5000, 'right');
             }
 
         },

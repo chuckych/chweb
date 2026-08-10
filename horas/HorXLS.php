@@ -17,7 +17,7 @@ header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
 
-require __DIR__ . '/../config/conect_mssql.php';
+// require __DIR__ . '/../config/conect_mssql.php';
 require __DIR__ . '/../filtros/filtros.php';
 require __DIR__ . '/valores.php';
 
@@ -34,6 +34,23 @@ use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+
+function FormatoHoraToExcel(string $Hora = '00:00:00')
+{
+    $timestamp = new \DateTime($Hora);
+    $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
+    $excelDate = floor($excelTimestamp);
+    $Hora = ($excelTimestamp - $excelDate) == 0 ? '' : $excelTimestamp - $excelDate;
+    return $Hora;
+}
+function FormatoFechaToExcel(string $Fecha = '1970-01-01')
+{
+    $timestamp = new \DateTime($Fecha);
+    $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
+    $excelDate = floor($excelTimestamp);
+    // $Fecha = ($excelTimestamp);
+    return $excelDate;
+}
 
 $documento = new Spreadsheet();
 $documento
@@ -95,14 +112,10 @@ $spreadsheet->getPageMargins()->setTop(0.5);
 $spreadsheet->getPageMargins()->setRight(0.3);
 $spreadsheet->getPageMargins()->setLeft(0.3);
 $spreadsheet->getPageMargins()->setBottom(0.5);
-// $spreadsheet->getPageMargins()->setHeader(0.2);
-// $spreadsheet->getPageMargins()->setFooter(0.2);
 /** ajustar a 1 página de ancho por infinitas páginas de alto */
 $spreadsheet->getPageSetup()->setFitToWidth(1);
 $spreadsheet->getPageSetup()->setFitToHeight(0);
 /** Para centrar una página horizontal o verticalmente */
-// $spreadsheet->getPageSetup()->setHorizontalCentered(true);
-// $spreadsheet->getPageSetup()->setVerticalCentered(false);
 /** Encabezado y Pie de Pagina */
 $dateini = FechaFormatVar($FechaIni, 'd/m/Y');
 $datefin = FechaFormatVar($FechaFin, 'd/m/Y');
@@ -202,137 +215,121 @@ ORDER BY FICHAS1.FicLega, TIPOHORA.THoColu, FICHAS1.FicHora";
 
 // query de la tabla registro para obtener la primer y ultima fichada de cada dia
 $qReg = "WITH DatosOrdenados AS (
-    SELECT 
-        RegLega,
-        RegFeAs,
-        RegFeRe,
-        RegHoRe,
-        CONVERT(datetime, CONVERT(varchar, RegFeRe, 23) + ' ' + RegHoRe) AS FechaHoraReal,
-        ROW_NUMBER() OVER (PARTITION BY RegLega, RegFeAs ORDER BY RegFeRe, RegHoRe) AS rn_primero,
-        ROW_NUMBER() OVER (PARTITION BY RegLega, RegFeAs ORDER BY RegFeRe DESC, RegHoRe DESC) AS rn_ultimo,
-        COUNT(*) OVER (PARTITION BY RegLega, RegFeAs) AS TotalRegistros
-    FROM REGISTRO
-    INNER JOIN FICHAS1 ON REGISTRO.RegLega = FICHAS1.FicLega AND REGISTRO.RegFeAs = FICHAS1.FicFech
-    INNER JOIN PERSONAL ON FICHAS1.FicLega=PERSONAL.LegNume
-    INNER JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi
-    WHERE RegLega > 0
-        AND RegFeAs BETWEEN '$FechaIni' AND '$FechaFin' $Calculos $FilterEstruct $FiltrosFichas
-)
-SELECT 
-    RegLega,
-   CONVERT(varchar, RegFeAs, 112) AS Fecha,
-    -- RegFeAs,
-    MAX(CASE WHEN rn_primero = 1 THEN RegHoRe END) AS PrimerFichada,
-    -- Si solo hay un registro, mostrar NULL (vacío)
-    CASE 
-        WHEN COUNT(*) = 1 THEN NULL
-        ELSE MAX(CASE WHEN rn_ultimo = 1 THEN RegHoRe END)
-    END AS UltimaFichada,
-    -- Determinar tipo de turno
-    CASE 
-        WHEN COUNT(*) = 1 THEN 'Único registro'
-        WHEN MAX(CASE WHEN rn_primero = 1 THEN RegFeRe END) < 
-             MAX(CASE WHEN rn_ultimo = 1 THEN RegFeRe END) 
-        THEN 'Nocturno'
-        ELSE 'Normal'
-    END AS Turno
-FROM DatosOrdenados
-GROUP BY RegLega, RegFeAs
-ORDER BY RegLega, RegFeAs;";
+            SELECT 
+                RegLega,
+                RegFeAs,
+                RegFeRe,
+                RegHoRe,
+                CONVERT(datetime, CONVERT(varchar, RegFeRe, 23) + ' ' + RegHoRe) AS FechaHoraReal,
+                ROW_NUMBER() OVER (PARTITION BY RegLega, RegFeAs ORDER BY RegFeRe, RegHoRe) AS rn_primero,
+                ROW_NUMBER() OVER (PARTITION BY RegLega, RegFeAs ORDER BY RegFeRe DESC, RegHoRe DESC) AS rn_ultimo,
+                COUNT(*) OVER (PARTITION BY RegLega, RegFeAs) AS TotalRegistros
+            FROM REGISTRO
+            INNER JOIN FICHAS1 ON REGISTRO.RegLega = FICHAS1.FicLega AND REGISTRO.RegFeAs = FICHAS1.FicFech
+            INNER JOIN PERSONAL ON FICHAS1.FicLega=PERSONAL.LegNume
+            INNER JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi
+            WHERE RegLega > 0
+                AND RegFeAs BETWEEN '$FechaIni' AND '$FechaFin' $Calculos $FilterEstruct $FiltrosFichas
+        )
+        SELECT 
+            RegLega,
+        CONVERT(varchar, RegFeAs, 112) AS Fecha,
+            -- RegFeAs,
+            MAX(CASE WHEN rn_primero = 1 THEN RegHoRe END) AS PrimerFichada,
+            -- Si solo hay un registro, mostrar NULL (vacío)
+            CASE 
+                WHEN COUNT(*) = 1 THEN NULL
+                ELSE MAX(CASE WHEN rn_ultimo = 1 THEN RegHoRe END)
+            END AS UltimaFichada,
+            -- Determinar tipo de turno
+            CASE 
+                WHEN COUNT(*) = 1 THEN 'Único registro'
+                WHEN MAX(CASE WHEN rn_primero = 1 THEN RegFeRe END) < 
+                    MAX(CASE WHEN rn_ultimo = 1 THEN RegFeRe END) 
+                THEN 'Nocturno'
+                ELSE 'Normal'
+            END AS Turno
+        FROM DatosOrdenados
+        GROUP BY RegLega, RegFeAs
+        ORDER BY RegLega, RegFeAs;";
 
-$fichadas = arrMSQuery($qReg) ?: [];
-
-$fichadas = array_reduce_safe($fichadas, function ($carry, $item) {
-    $carry[(int) ($item['RegLega'] . $item['Fecha'])] = $item;
-    return $carry;
-}, []);
-// error_log(print_r($fichadas, true));
-
-$result = sqlsrv_query($link, $query, $param, $options);
-
-function FormatoHoraToExcel(string $Hora = '00:00:00')
-{
-    $timestamp = new \DateTime($Hora);
-    $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
-    $excelDate = floor($excelTimestamp);
-    $Hora = ($excelTimestamp - $excelDate) == 0 ? '' : $excelTimestamp - $excelDate;
-    return $Hora;
-}
-function FormatoFechaToExcel(string $Fecha = '1970-01-01')
-{
-    $timestamp = new \DateTime($Fecha);
-    $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
-    $excelDate = floor($excelTimestamp);
-    // $Fecha = ($excelTimestamp);
-    return $excelDate;
-}
-
-while ($row = sqlsrv_fetch_array($result)) {
-    # Obtener los datos de la base de datos
-    $claveFechaLega = (int) ($row['Legajo'] . $row['Fecha2']);
-    $PrimerFichada = $fichadas[$claveFechaLega]['PrimerFichada'] ?? '';
-    $UltimaFichada = $fichadas[$claveFechaLega]['UltimaFichada'] ?? '';
-    $Legajo = $row['Legajo'];
-    $Nombre = $row['Nombre'];
-    $Fecha = $row['Fecha']->format('Y-m-d');
-    $Horario = $row['Horario'];
-    $Entrada = $row['Entrada'];
-    $Salida = $row['Salida'];
-    $Dia = $row['Dia'];
-    $Hora = $row['Hora'];
-    $HoraDesc = $row['HoraDesc'];
-    $FicHsAu = FormatoHoraToExcel($row['FicHsAu']);
-    $FicHsAu2 = FormatoHoraToExcel($row['FicHsAu2']);
-    $Observ = $row['Observ'];
-    $Motivo = ($row['Motivo'] == '0') ? '' : $row['Motivo'];
-    $DescMotivo = $row['DescMotivo'];
-    $FicUsua = $row['FicUsua'] ?? '';
-
-    $Fecha = FormatoFechaToExcel($Fecha);
-
-    # Escribirlos en el documento
-    $spreadsheet->setCellValue('A' . $numeroDeFila, $Legajo);
-    $spreadsheet->setCellValue('B' . $numeroDeFila, $Nombre);
-    $spreadsheet->setCellValue('C' . $numeroDeFila, $Fecha);
-    $spreadsheet->setCellValue('D' . $numeroDeFila, $Horario);
-    $spreadsheet->setCellValue('E' . $numeroDeFila, $Entrada);
-    $spreadsheet->setCellValue('F' . $numeroDeFila, $Salida);
-    $spreadsheet->setCellValue('G' . $numeroDeFila, $PrimerFichada);
-    $spreadsheet->setCellValue('H' . $numeroDeFila, $UltimaFichada);
-    $spreadsheet->setCellValue('I' . $numeroDeFila, $Dia);
-    $spreadsheet->setCellValue('J' . $numeroDeFila, $Hora);
-    $spreadsheet->setCellValue('K' . $numeroDeFila, $HoraDesc);
-    $spreadsheet->setCellValue('L' . $numeroDeFila, $FicHsAu);
-    $spreadsheet->setCellValue('M' . $numeroDeFila, $FicHsAu2);
-    $spreadsheet->setCellValue('N' . $numeroDeFila, $Motivo);
-    $spreadsheet->setCellValue('O' . $numeroDeFila, $DescMotivo);
-    $spreadsheet->setCellValue('P' . $numeroDeFila, $Observ);
-    $spreadsheet->setCellValue('Q' . $numeroDeFila, $FicUsua);
-
-    $numeroDeFila++;
-}
-
-foreach (['L', 'M'] as $col) {
-    $ref = "{$col}{$numeroDeFila}";
-    $spreadsheet->setCellValue($ref, '=SUBTOTAL(9,' . $col . '2:' . $col . ($numeroDeFila - 1) . ')');
-    $spreadsheet->getStyle($ref)->getNumberFormat()->setFormatCode("[h]:mm");
-    $spreadsheet->getStyle($ref)->getFont()->setBold(true);
-}
-
-// añadir indentacion a todas las filas y celdas
-foreach ($spreadsheet->getRowIterator() as $row) {
-    $rowIndex = $row->getRowIndex();
-    $spreadsheet->getStyle("A{$rowIndex}:Q{$rowIndex}")->getAlignment()->setIndent(1);
-    // añadir altura de 25 a todas las filas
-    if ($rowIndex > 1) {
-        $spreadsheet->getRowDimension($rowIndex)->setRowHeight(25);
-    }
-}
-
-sqlsrv_free_stmt($result);
-sqlsrv_close($link);
-# Crear un "escritor"
 try {
+    $result = arrMSQuery($query) ?: [];
+
+    if (empty($result)) {
+        throw new \Exception("No se encontraron registros para el rango de fechas especificado.");
+    }
+
+    $fichadas = arrMSQuery($qReg) ?: [];
+
+    $fichadas = array_reduce_safe($fichadas, function ($carry, $item) {
+        $carry[(int) ($item['RegLega'] . $item['Fecha'])] = $item;
+        return $carry;
+    }, []);
+
+
+    foreach ($result as $row) {
+        # Obtener los datos de la base de datos
+        $claveFechaLega = (int) ($row['Legajo'] . $row['Fecha2']);
+        $PrimerFichada = $fichadas[$claveFechaLega]['PrimerFichada'] ?? '';
+        $UltimaFichada = $fichadas[$claveFechaLega]['UltimaFichada'] ?? '';
+        $Legajo = $row['Legajo'];
+        $Nombre = $row['Nombre'];
+        $Fecha = $row['Fecha']->format('Y-m-d');
+        $Horario = $row['Horario'];
+        $Entrada = $row['Entrada'];
+        $Salida = $row['Salida'];
+        $Dia = $row['Dia'];
+        $Hora = $row['Hora'];
+        $HoraDesc = $row['HoraDesc'];
+        $FicHsAu = FormatoHoraToExcel($row['FicHsAu']);
+        $FicHsAu2 = FormatoHoraToExcel($row['FicHsAu2']);
+        $Observ = $row['Observ'];
+        $Motivo = ($row['Motivo'] == '0') ? '' : $row['Motivo'];
+        $DescMotivo = $row['DescMotivo'];
+        $FicUsua = $row['FicUsua'] ?? '';
+
+        $Fecha = FormatoFechaToExcel($Fecha);
+
+        # Escribirlos en el documento
+        $spreadsheet->setCellValue('A' . $numeroDeFila, $Legajo);
+        $spreadsheet->setCellValue('B' . $numeroDeFila, $Nombre);
+        $spreadsheet->setCellValue('C' . $numeroDeFila, $Fecha);
+        $spreadsheet->setCellValue('D' . $numeroDeFila, $Horario);
+        $spreadsheet->setCellValue('E' . $numeroDeFila, $Entrada);
+        $spreadsheet->setCellValue('F' . $numeroDeFila, $Salida);
+        $spreadsheet->setCellValue('G' . $numeroDeFila, $PrimerFichada);
+        $spreadsheet->setCellValue('H' . $numeroDeFila, $UltimaFichada);
+        $spreadsheet->setCellValue('I' . $numeroDeFila, $Dia);
+        $spreadsheet->setCellValue('J' . $numeroDeFila, $Hora);
+        $spreadsheet->setCellValue('K' . $numeroDeFila, $HoraDesc);
+        $spreadsheet->setCellValue('L' . $numeroDeFila, $FicHsAu);
+        $spreadsheet->setCellValue('M' . $numeroDeFila, $FicHsAu2);
+        $spreadsheet->setCellValue('N' . $numeroDeFila, $Motivo);
+        $spreadsheet->setCellValue('O' . $numeroDeFila, $DescMotivo);
+        $spreadsheet->setCellValue('P' . $numeroDeFila, $Observ);
+        $spreadsheet->setCellValue('Q' . $numeroDeFila, $FicUsua);
+
+        $numeroDeFila++;
+    }
+
+    foreach (['L', 'M'] as $col) {
+        $ref = "{$col}{$numeroDeFila}";
+        $spreadsheet->setCellValue($ref, '=SUBTOTAL(9,' . $col . '2:' . $col . ($numeroDeFila - 1) . ')');
+        $spreadsheet->getStyle($ref)->getNumberFormat()->setFormatCode("[h]:mm");
+        $spreadsheet->getStyle($ref)->getFont()->setBold(true);
+    }
+
+    // añadir indentacion a todas las filas y celdas
+    foreach ($spreadsheet->getRowIterator() as $row) {
+        $rowIndex = $row->getRowIndex();
+        $spreadsheet->getStyle("A{$rowIndex}:Q{$rowIndex}")->getAlignment()->setIndent(1);
+        // añadir altura de 25 a todas las filas
+        if ($rowIndex > 1) {
+            $spreadsheet->getRowDimension($rowIndex)->setRowHeight(25);
+        }
+    }
+
     BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
     $MicroTime = microtime(true);
     $NombreArchivo = "Reporte_Horas_" . $MicroTime . ".xls";
@@ -340,7 +337,7 @@ try {
     $writer = new Xls($documento);
     # Le pasamos la ruta de guardado
     $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
-    $writer->save('archivos/' . $NombreArchivo);
+    $writer->save(__DIR__ . '/archivos/' . $NombreArchivo);
     // $writer->save('php://output');
 
     $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo);
@@ -348,7 +345,7 @@ try {
     exit;
 
 } catch (\Exception $e) {
-    $data = array('status' => 'error');
+    $data = ['status' => 'error', 'message' => $e->getMessage()];
     echo json_encode($data);
     exit;
 }
