@@ -1048,6 +1048,33 @@ const lenguaje_dt = (resultados = 'resultados') => {
     }
     return language;
 }
+const lenguaje_dt_short2 = () => {
+    const language = {
+        "bProcessing": "Actualizando . . .",
+        "sLengthMenu": "_MENU_",
+        "sZeroRecords": "",
+        "sEmptyTable": "",
+        "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Registros",
+        "sInfoEmpty": "No se encontraron resultados",
+        "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix": "",
+        "sSearch": "",
+        "sUrl": "",
+        "sInfoThousands": ",",
+        "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+        "oPaginate": {
+            "sFirst": "<i class='bi bi-chevron-double-left'></i>",
+            "sLast": "<i class='bi bi-chevron-double-right'></i>",
+            "sNext": "<i class='bi bi-chevron-right'></i>",
+            "sPrevious": "<i class='bi bi-chevron-left'></i>"
+        },
+        "oAria": {
+            "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+        }
+    }
+    return language;
+}
 
 const dt_custom_search = (selector, table, placeholder = 'Buscar...', ms = 1000) => {
     let searchTimeout;
@@ -1454,30 +1481,30 @@ const refererURL = () => {
             console.warn('sessionStorage no disponible');
             return;
         }
-        
+
         if (typeof LS_REFERER_URL === 'undefined') {
             console.warn('LS_REFERER_URL no definido');
             return;
         }
-        
+
         // Validar window.location
         const url = window?.location?.href;
         if (!url) {
             console.warn('URL no disponible');
             return;
         }
-        
+
         // Truncar URL si es muy larga
         const encodedUrl = encodeURIComponent(url);
         const maxLength = 1000;
-        
+
         const key = LS_REFERER_URL;
-        const value = encodedUrl.length > maxLength 
-            ? encodedUrl.substring(0, maxLength) 
+        const value = encodedUrl.length > maxLength
+            ? encodedUrl.substring(0, maxLength)
             : encodedUrl;
-            
+
         sessionStorage.setItem(key, value);
-        
+
     } catch (error) {
         if (error.name === 'QuotaExceededError') {
             console.warn('sessionStorage lleno, no se pudo guardar la URL');

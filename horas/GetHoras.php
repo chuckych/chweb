@@ -1,5 +1,7 @@
 <?php
-require __DIR__ . '/../config/session_start.php';
+if (session_status() == PHP_SESSION_NONE) {
+    require __DIR__ . '/../config/session_start.php';
+}
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '/../config/index.php';
 ultimoacc();
@@ -36,7 +38,7 @@ $Calculos = (!$Calculos == 1) ? "AND TIPOHORA.THoColu > 0" : '';
 
 $sql_query = "SELECT FICHAS1.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', FICHAS1.FicFech AS 'FicFech', dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF) AS 'Horario', FICHAS1.FicHora AS 'Hora', TIPOHORA.THoDesc AS 'HoraDesc', TIPOHORA.THoDesc2 AS 'HoraDesc2', FICHAS1.FicHsHe AS 'FicHsHe', FICHAS1.FicHsAu AS 'FicHsAu', (dbo.fn_STRMinutos(FICHAS1.FicHsAu)) AS 'MinFicHsAu',FICHAS1.FicHsAu2 AS 'FicHsAu2', (dbo.fn_STRMinutos(FICHAS1.FicHsAu2)) AS 'MinFicHsAu2', FICHAS1.FicObse AS 'Observ', TIPOHORACAUSA.THoCCodi AS 'Motivo', TIPOHORACAUSA.THoCDesc AS 'DescMotivo', FICHAS1.FicEsta AS 'Estado', TIPOHORA.THoColu, dbo.fn_DiaDeLaSemana(FICHAS1.FicFech) AS 'Dia' FROM FICHAS1 INNER JOIN FICHAS ON FICHAS1.FicLega=FICHAS.FicLega AND FICHAS1.FicFech=FICHAS.FicFech AND FICHAS1.FicTurn=FICHAS.FicTurn INNER JOIN PERSONAL ON FICHAS1.FicLega=PERSONAL.LegNume INNER JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi WHERE FICHAS1.FicLega='$legajo' AND FICHAS1.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $Calculos $FilterEstruct $FiltrosFichas";
 
-// print_r($sql_query); exit;
+// error_log($sql_query);
 
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;

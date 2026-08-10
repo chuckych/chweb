@@ -4563,3 +4563,16 @@ function iconEncabezados(string $modulo)
 
     return $mapModulos[$modulo] ?? '';
 }
+/**
+ * Safely reduces an array using a callback function, returning an initial value if the array is empty.
+ * @param array $array
+ * @param mixed $callback
+ * @param mixed $initial
+ */
+function array_reduce_safe(array $array, $callback, $initial = [])
+{
+    if (!is_array($array) || empty($array)) {
+        return $initial;
+    }
+    return array_reduce($array, $callback, $initial);
+}

@@ -163,7 +163,7 @@ const getHoras = () => {
             "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
             "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         ajax: {
-            url: "/" + $("#_homehost").val() + "/horas/GetHoras.php",
+            url: "/" + _homehost + "/app-data/custom/hor-horas",
             type: "POST",
             "data": function (data) {
                 data.Per = $("#Per").val();
@@ -249,9 +249,7 @@ const getHoras = () => {
         info: true,
         searching: false,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-        },
+        language: lenguaje_dt_short2(),
     });
     $('#GetHoras').on('init.dt', function (settings, json) {
         $('#trash_all').removeClass('invisible');
@@ -285,7 +283,7 @@ const getHorasFecha = () => {
             "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
             "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         ajax: {
-            url: "/" + $("#_homehost").val() + "/horas/GetHorasFecha.php",
+            url: "/" + _homehost + "/app-data/custom/hor-horas-fecha",
             type: "POST",
             "data": function (data) {
                 data._f = $("#_f").val();
@@ -372,9 +370,7 @@ const getHorasFecha = () => {
         info: true,
         searching: false,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-        },
+        language: lenguaje_dt_short2(),
     });
     $('#GetHorasFecha').on('draw.dt', function () {
         $(".dataTables_info").addClass('text-secondary');
@@ -420,7 +416,7 @@ const getPersonal = () => {
         >
             `,
         ajax: {
-            url: "/" + $("#_homehost").val() + "/horas/GetPersonalFichas1.php",
+            url: "/" + _homehost + "/app-data/custom/hor-per-fichas1",
             type: "POST",
             "data": function (data) {
                 data._l = $("#_l").val();
@@ -458,9 +454,7 @@ const getPersonal = () => {
         responsive: false,
         info: true,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-        },
+        language: lenguaje_dt_short2(),
     });
     $('#GetPersonal').on('init.dt', function (settings, json) {
         $("#GetPersonal thead").remove();
@@ -506,7 +500,7 @@ const getFechas = () => {
         >
             `,
         ajax: {
-            url: "/" + $("#_homehost").val() + "/horas/GetFechasFichas1.php",
+            url: "/" + _homehost + "/app-data/custom/hor-fechas",
             type: "POST",
             "data": function (data) {
                 data.Per = $("#Per").val();
@@ -542,9 +536,7 @@ const getFechas = () => {
         responsive: false,
         info: true,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-        },
+        language: lenguaje_dt_short2(),
     });
     $('#GetFechas').on('init.dt', function (settings, json) {
         $("#GetFechas thead").remove();

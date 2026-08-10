@@ -7,7 +7,7 @@ function GetFicExcel() {
     $.ajax({
         type: 'POST',
         dataType: "json",
-        url: "HorXLS.php",
+        url: "/" + _homehost + "/app-data/custom/hor-excel",
         'data': {
             _f: $("#_f").val(),
             Per: $("#Per").val(),

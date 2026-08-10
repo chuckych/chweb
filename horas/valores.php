@@ -40,7 +40,7 @@ $Tipo = empty(($_POST['Tipo'])) ? "" : $Tipo;
 
 $HoraMin = test_input($_POST['HoraMin']);
 $HoraMax = test_input($_POST['HoraMax']);
-$FiltroHoraMin = "AND dbo.fn_STRMinutos(FICHAS1.FicHsAu)  BETWEEN dbo.fn_STRMinutos('$HoraMin') AND dbo.fn_STRMinutos('$HoraMax')";
+$FiltroHoraMin = "AND dbo.fn_STRMinutos(FICHAS1.FicHsAu2) BETWEEN dbo.fn_STRMinutos('$HoraMin') AND dbo.fn_STRMinutos('$HoraMax')";
 $FiltroHoraMax = "AND dbo.fn_STRMinutos(FICHAS1.FicHsAu2) BETWEEN dbo.fn_STRMinutos('$HoraMin') AND dbo.fn_STRMinutos('$HoraMax')";
 $HoraMinMax = (test_input($_POST['SHoras'] == 1)) ? $FiltroHoraMin : $FiltroHoraMax;
 
