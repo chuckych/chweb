@@ -655,7 +655,7 @@ class Horarios
     {
         try {
             $conn = $this->conect->check_connection($connDB);
-            $getCache = $this->tools->return_cache('HORARIOS', 'fechaHoraHorarios', 'horarios', $conn);
+            // $getCache = $this->tools->return_cache('HORARIOS', 'fechaHoraHorarios', 'horarios', $conn);
 
             // if ($getCache->data) {
             //     return $getCache->data;
@@ -674,8 +674,8 @@ class Horarios
             // $result = array_column($result, 'HorDesc', 'HorCodi');
             $result = $result ? array_column($result, 'HorDesc', 'HorCodi') : [];
 
-            $this->log->cache($result, 'horarios');
-            $this->log->cache($getCache->FHora, 'fechaHoraHorarios', '.txt');
+            // $this->log->cache($result, 'horarios');
+            // $this->log->cache($getCache->FHora, 'fechaHoraHorarios', '.txt');
             return $result;
         } catch (\Throwable $th) {
             $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
@@ -686,7 +686,7 @@ class Horarios
     {
         try {
             $conn = $this->conect->check_connection($connDB);
-            $getCache = $this->tools->return_cache('ROTACION', 'fechaHoraRotaciones', 'rotaciones', $conn);
+            //$getCache = $this->tools->return_cache('ROTACION', 'fechaHoraRotaciones', 'rotaciones', $conn);
 
             // if ($getCache->data) {
             //     return $getCache->data;
@@ -703,8 +703,8 @@ class Horarios
 
             $result = $result ? array_column($result, 'RotDesc', 'RotCodi') : [];
 
-            $this->log->cache($result, 'rotaciones');
-            $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
+            // $this->log->cache($result, 'rotaciones');
+            // $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
             return $result;
         } catch (\Throwable $th) {
             $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
@@ -1301,11 +1301,11 @@ class Horarios
         $conn = $this->conect->check_connection($connDB);
         try {
 
-            $getCache = $this->tools->return_cache('HORARIOS', 'fechaHoraHorarios', 'horariosFull', $conn);
-            if ($getCache->data) {
-                $total = $getCache->total;
-                return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
-            }
+            // $getCache = $this->tools->return_cache('HORARIOS', 'fechaHoraHorarios', 'horariosFull', $conn);
+            // if ($getCache->data) {
+            //     $total = $getCache->total;
+            //     return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
+            // }
 
             $sql = "SELECT * FROM HORARIOS";
             $stmt = $conn->prepare($sql);
@@ -1373,8 +1373,8 @@ class Horarios
                 }
             }
 
-            $this->log->cache($horarios ?? [], 'horariosFull');
-            $this->log->cache($getCache->FHora ?? '', 'fechaHoraHorarios', '.txt');
+            // $this->log->cache($horarios ?? [], 'horariosFull');
+            // $this->log->cache($getCache->FHora ?? '', 'fechaHoraHorarios', '.txt');
 
             $this->resp->respuesta($horarios ?? [], count($horarios ?? []), 'OK', 200, 0, count($horarios ?? []), 0);
         } catch (\PDOException $e) {
@@ -1389,12 +1389,12 @@ class Horarios
     {
         $conn = $this->conect->check_connection();
 
-        $getCache = $this->tools->return_cache('ROTACION', 'fechaHoraRotaciones', 'rotacionesFull', $conn);
+        // $getCache = $this->tools->return_cache('ROTACION', 'fechaHoraRotaciones', 'rotacionesFull', $conn);
 
-        if ($getCache->data) {
-            $total = $getCache->total;
-            return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
-        }
+        // if ($getCache->data) {
+        //     $total = $getCache->total;
+        //     return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
+        // }
 
         $sql = "SELECT * FROM ROTACIO1";
         $sql .= " INNER JOIN ROTACION ON ROTACIO1.RotCodi = ROTACION.RotCodi";
@@ -1437,8 +1437,8 @@ class Horarios
             }
         }
         $rota = array_values($rota);
-        $this->log->cache($rota, 'rotacionesFull');
-        $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
+        // $this->log->cache($rota, 'rotacionesFull');
+        // $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
         $this->resp->respuesta($rota ?? [], count($rota ?? []), 'OK', 200, 0, count($rota ?? []), 0);
     }
     public function get_horale_1(string $Legajo, $connDB = '', array $ListHorarios = [], bool $return = false)
