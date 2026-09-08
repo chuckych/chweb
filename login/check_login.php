@@ -45,8 +45,8 @@ if (!($_POST['user'] ?? '') || !($_POST['clave'] ?? '')) {
 	header('Location:/' . HOMEHOST . '/login/?error');
 	exit;
 }
-$userLogin = isset($_GET['conf']) ? $_GET['conf'] : strip_tags(strtolower($_POST['user'] ?? ''));
-$passLogin = isset($_GET['conf']) ? $_GET['conf'] : strip_tags($_POST['clave'] ?? '');
+$userLogin = $_GET['conf'] ?? strip_tags(strtolower($_POST['user'] ?? ''));
+$passLogin = $_GET['conf'] ?? strip_tags($_POST['clave'] ?? '');
 $userLogin = test_input($userLogin);
 $userLogin = filter_input(INPUT_POST, 'user', FILTER_DEFAULT);
 $passLogin = filter_input(INPUT_POST, 'clave', FILTER_DEFAULT);
@@ -57,7 +57,40 @@ try {
 
 	$a = simple_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1"); // Traigo el valor de la version de la DB mysql
 
-	$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user', usuarios.user_ad FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario= :user AND usuarios.estado = '0' LIMIT 1";
+	$verDB = intval($a['valores']); // valor de la version de la DB mysql
+
+	$cols = [
+		"usuarios.usuario AS 'usuario'",
+		"usuarios.clave AS 'clave'",
+		"usuarios.nombre AS 'nombre'",
+		"usuarios.legajo AS 'legajo'",
+		"usuarios.id AS 'id'",
+		"usuarios.rol AS 'id_rol'",
+		"usuarios.cliente AS 'id_cliente'",
+		"clientes.nombre AS 'cliente'",
+		"roles.nombre AS 'rol'",
+		"roles.recid AS 'recid_rol'",
+		"roles.id AS 'id_rol'",
+		"clientes.host AS 'host'",
+		"clientes.db AS 'db'",
+		"clientes.user AS 'user'",
+		"clientes.pass AS 'pass'",
+		"clientes.auth AS 'auth'",
+		"clientes.recid AS 'recid_cliente'",
+		"clientes.tkmobile AS 'tkmobile'",
+		"clientes.WebService AS 'WebService'",
+		"usuarios.recid AS 'recid_user'"
+	];
+
+	if ($verDB >= 20251016) {
+		$cols[] = "usuarios.user_ad AS 'user_ad'";
+	}
+
+	$cols = array_map('trim', $cols); // Asegura que no haya espacios en los elementos del array
+	$cols = array_filter($cols); // Elimina elementos vacíos del array
+	$cols = implode(", ", $cols); // Convierte el array de columnas en una cadena separada por comas
+
+	$sql = "SELECT $cols FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario= :user AND usuarios.estado = '0' LIMIT 1";
 	$stmt = $connpdo->prepare($sql); // prepara la consulta
 	$stmt->bindParam(':user', $userLogin, PDO::PARAM_STR); // enlaza el parámetro :user con el valor de $userLogin
 	$stmt->execute(); // ejecuta la consulta
@@ -71,7 +104,7 @@ try {
 }
 
 // Si el usuario no es de AD, se procede con la autenticación normal
-$authenticated = (($row['user_ad'] ?? '') === '1') ?
+$authenticated = (($row['user_ad'] ?? '0') === '1') ?
 	auth_ad($passLogin, $row) :
 	password_verify($passLogin ?? '', $row['clave'] ?? ''); // Verifica la contraseña utilizando password_verify
 
@@ -107,57 +140,44 @@ if ($authenticated) {
 
 	$pathLog = __DIR__ . '/../logs/info/' . date('Ymd') . '_cambios_db.log';
 
-	if (!checkTable('params')) {
-		pdoQuery("CREATE TABLE IF NOT EXISTS params(modulo TINYINT NULL DEFAULT NULL, descripcion VARCHAR(50) NULL DEFAULT NULL, valores TEXT NULL DEFAULT NULL, cliente TINYINT NULL DEFAULT NULL)");
-		if (checkTable('params')) {
-			fileLog("Se creo la tabla \"params\"", $pathLog); // escribir en el log
-		} else {
-			fileLog("No se creo tabla: \"listaparams_estruct\"", $pathLog); // escribir en el log
-		}
-	}
-
 	if (!count_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1")) { // Si no existe el registro
 		pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (0, 'Ver DB', 20210101, 0)");
 		fileLog("Se inserto el parámetro: \"Ver DB\"", $pathLog); // escribir en el log
 	}
 
-	$a = simple_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1"); // Traigo el valor de la version de la DB mysql
-
-	$verDB = intval($a['valores']); // valor de la version de la DB mysql
-	// $a = simpleQueryData("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1", $link); // Traigo el valor de la version de la DB mysql
-
-	//require_once __DIR__ . '/table_estruct.php'; // crear tablas en la DB
 	require_once __DIR__ . '/cambios.php'; // Cambios en la DB
 
 	$_SESSION['VER_DB_LOCAL'] = $verDB; // Version de la DB local
 
-
-	// 	$verDB = intval($a['valores']); // valor de la version de la DB mysql
-	// require_once __DIR__ . '/cambios.php'; // Cambios en la DB
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
-	function sesionListas($id_rol, $lista, $nombreSesion)
+	function sesionListas(int $id_rol, int $lista, string $nombreSesion)
 	{
 		$dataLista = dataLista($lista, $id_rol);
 		$dataLista = implode(',', $dataLista);
 		$_SESSION[$nombreSesion] = $dataLista;
 	}
-	sesionListas($row['id_rol'], 1, 'ListaNov'); // Sesión lista de novedades
-	sesionListas($row['id_rol'], 2, 'ListaONov'); // Sesión lista de otras Novedades
-	sesionListas($row['id_rol'], 3, 'ListaHorarios'); // Sesión lista de horarios
-	sesionListas($row['id_rol'], 4, 'ListaRotaciones'); // Sesión lista de rotaciones
-	sesionListas($row['id_rol'], 5, 'ListaTipoHora'); // Sesión lista de tipos de horas
+	sesionListas(intval($row['id_rol']), 1, 'ListaNov'); // Sesión lista de novedades
+	sesionListas(intval($row['id_rol']), 2, 'ListaONov'); // Sesión lista de otras Novedades
+	sesionListas(intval($row['id_rol']), 3, 'ListaHorarios'); // Sesión lista de horarios
+	sesionListas(intval($row['id_rol']), 4, 'ListaRotaciones'); // Sesión lista de rotaciones
+	sesionListas(intval($row['id_rol']), 5, 'ListaTipoHora'); // Sesión lista de tipos de horas
 
 	// $abm = simpleQueryData("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1", $link); // Traigo los permisos del rol
 	$abm = simple_pdoQuery("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1"); // Traigo los permisos del rol
 
-	$ABMRol = []; // Array de permisos del rol
-	if ($abm) { // Si hay permisos
-		$ABMRol = ['aFic' => $abm['aFic'], 'mFic' => $abm['mFic'], 'bFic' => $abm['bFic'], 'aNov' => $abm['aNov'], 'mNov' => $abm['mNov'], 'bNov' => $abm['bNov'], 'aHor' => $abm['aHor'], 'mHor' => $abm['mHor'], 'bHor' => $abm['bHor'], 'aONov' => $abm['aONov'], 'mONov' => $abm['mONov'], 'bONov' => $abm['bONov'], 'Proc' => $abm['Proc'], 'aCit' => $abm['aCit'], 'mCit' => $abm['mCit'], 'bCit' => $abm['bCit'], 'aTur' => $abm['aTur'], 'mTur' => $abm['mTur'], 'bTur' => $abm['bTur']];
-	} else { // Si no hay permisos
-		$ABMRol = ['aFic' => '0', 'mFic' => '0', 'bFic' => '0', 'aNov' => '0', 'mNov' => '0', 'bNov' => '0', 'aHor' => '0', 'mHor' => '0', 'bHor' => '0', 'aONov' => '0', 'mONov' => '0', 'bONov' => '0', 'Proc' => '0', 'aCit' => '0', 'mCit' => '0', 'bCit' => '0', 'aTur' => '0', 'mTur' => '0', 'bTur' => '0'];
+	$keys = ['aFic', 'mFic', 'bFic', 'aNov', 'mNov', 'bNov', 'aHor', 'mHor', 'bHor', 'aONov', 'mONov', 'bONov', 'Proc', 'aCit', 'mCit', 'bCit', 'aTur', 'mTur', 'bTur'];
+
+	$ABMRol = [];
+	if ($abm) {
+		foreach ($keys as $key) {
+			$ABMRol[$key] = $abm[$key] ?? '0';
+		}
+	} else {
+		$ABMRol = array_fill_keys($keys, '0');
 	}
+
 	$data_mod = array_pdoQuery("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo` = `modulos`.`id` WHERE `mod_roles`.`recid_rol` ='$row[recid_rol]'"); // Traigo los módulos asociados al rol
 
 	$data_mod = array_map(function ($item) {
@@ -169,17 +189,13 @@ if ($authenticated) {
 
 	$_SESSION["MODS_ROL"] = $data_mod; // Guardo en la session los módulos asociados al rol
 	$_SESSION["ABM_ROL"] = $ABMRol; // Guardo en la session los permisos del rol
-	$_SESSION["USER_AD"] = $row['user_ad']; // Guardo en la session los permisos del rol
+	$_SESSION["USER_AD"] = $row['user_ad'] ?? '0'; // Guardo en la session los permisos del rol
 
 	$arrModProy = array_pdoQuery("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo`=`modulos`.`id` WHERE `mod_roles`.`recid_rol`='$row[recid_rol]' and `modulos` .`idtipo`=6");
 
-	if ($arrModProy) {
-		$_SESSION["MODS_ROL_PROY"] = $arrModProy; // Guardo en la session los módulos asociados al rol
-	} else {
-		$_SESSION["MODS_ROL_PROY"] = 'error'; // Guardo en la session los módulos asociados al rol
-	}
+	$_SESSION["MODS_ROL_PROY"] = ($arrModProy) ? $arrModProy : 'error';
 
-	function estructura_recid_rol($recid_rol, $e, $data)
+	function estructura_recid_rol(string $recid_rol,string  $e, string $data)
 	{
 		E_ALL();
 		require __DIR__ . '/../config/conect_mysql.php';
@@ -244,7 +260,7 @@ if ($authenticated) {
 		mysqli_close($link);
 		return $data;
 	}
-	function estructUsuario($uid, $lista)
+	function estructUsuario(int $uid, int $lista)
 	{
 		$v = dataListaEstruct($lista, $uid);
 		$v = implode(',', $v);
@@ -253,6 +269,7 @@ if ($authenticated) {
 	}
 
 	$_SESSION['EstrUser'] = estructUsuario(intval($row['id']), 8);
+	
 	if ($row["recid_cliente"] == 'kxo7w2q-') { // solo para la cuenta de SKF 'kxo7w2q-'
 		$checkEstruct = count_pdoQuery("select 1 from lista_estruct where uid = '$row[id]'");
 		if ($checkEstruct > 0) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
@@ -283,7 +300,7 @@ if ($authenticated) {
 	}
 
 
-	$_SESSION["CONEXION_MS"] = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
+	$_SESSION["CONEXION_MS"] = ['host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']];
 	$_SESSION["secure_auth_ch"] = true;
 	$_SESSION["user"] = strtolower($row['usuario']);
 	$_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s");

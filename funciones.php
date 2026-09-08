@@ -89,7 +89,6 @@ function secure_auth_ch()
     $HTTP_REFERER = $_SERVER['HTTP_REFERER'] ?? '';
     // comparamos el tiempo transcurrido 
     if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) { // Si el tiempo transcurrido es mayor a la variable LIMIT_SESION
-        error_log($HTTP_REFERER);
         // Si pasaron 60 minutos o más
         session_destroy(); // Destruye la sesión
         // destruyo la sesión
@@ -4390,7 +4389,7 @@ function redirectToLogin(): void
     $trace = buildTraceContext();
     $referer = sanitizeReferer($_SERVER['HTTP_REFERER'] ?? '');
     $location = "{$host}/login/";
-    error_log($referer);
+    // error_log($referer);
 
     if ($referer) {
         $location .= '?l=' . urlencode($referer);
@@ -4398,7 +4397,7 @@ function redirectToLogin(): void
 
     session_destroy();
     sleep(1); // Pequeña pausa para asegurar que la sesión se cierre antes de redirigir
-    error_log(buildRedirectLogMessage($trace, $referer));
+    // error_log(buildRedirectLogMessage($trace, $referer));
     header('location:' . $location);
     exit;
 }
