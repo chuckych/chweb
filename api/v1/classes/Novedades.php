@@ -370,11 +370,11 @@ class Novedades
                 'Obse' => ['varchar40'],
                 'Causa' => ['smallint'],
                 'Cate' => ['smallint'],
-                'Usua' => 'API',
+                'Usua' => ['varchar10'],
             ];
 
             $FechaHoraActual = date('YmdHis') . substr((string) microtime(), 1, 8); // Fecha y hora actual
-            $customValueKey = array( // Valores por defecto
+            $customValueKey = [ // Valores por defecto
                 'Lega' => "0",
                 'Fecha' => '00000000',
                 'Nove' => "0",
@@ -385,8 +385,8 @@ class Novedades
                 'Causa' => "0",
                 'FechaHora' => '',
                 'Cate' => "0",
-                'Usua' => '',
-            );
+                'Usua' => 'API',
+            ];
             $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
 
             foreach ($datos as $dato) { // Recorro los datos recibidos
