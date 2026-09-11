@@ -50,7 +50,7 @@ class Horas
             $datos = $this->validarInputs();
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sql = "UPDATE FICHAS1 SET FicHsAu2 = :HsAu, FicEsta = :Esta, FicCaus = :Moti, FicObse = :Obse, FechaHora = :FechaHora, FicValor = :Valor WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicHora = :Hora";
+            $sql = "UPDATE FICHAS1 SET FicHsAu2 = :HsAu, FicEsta = :Esta, FicCaus = :Moti, FicObse = :Obse, FechaHora = :FechaHora, FicValor = :Valor, FicUsua = :Usua WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicHora = :Hora";
             $stmt = $conn->prepare($sql);
 
             $totalAffectedRows = 0;
@@ -66,6 +66,7 @@ class Horas
                 $stmt->bindValue(':Fecha', $dato['Fecha'], \PDO::PARAM_STR);
                 $stmt->bindValue(':Hora', $dato['Hora'], \PDO::PARAM_INT);
                 $stmt->bindValue(':Valor', $dato['Valor'], \PDO::PARAM_STR);
+                $stmt->bindValue(':Usua', $dato['Usua'], \PDO::PARAM_STR);
                 $stmt->execute(); // Ejecuto la consulta
                 $totalAffectedRows += $stmt->rowCount(); // Cuento la cantidad de filas afectadas
             }
@@ -766,10 +767,11 @@ class Horas
             'Obse' => ['varcharMax'],
             'Moti' => ['smallint'],
             'Valor' => ['decima12.2'],
+            'Usua' => ['varchar10'],
         ];
 
         $FechaHoraActual = date('YmdHis') . substr((string) microtime(), 1, 8); // Fecha y hora actual
-        $customValueKey = array( // Valores por defecto
+        $customValueKey = [ // Valores por defecto
             'Lega' => "0",
             'Fecha' => '00000000',
             'Hora' => "0",
@@ -778,8 +780,9 @@ class Horas
             'Obse' => '',
             'Moti' => "0",
             'Valor' => "0",
-            'FechaHora' => ''
-        );
+            'FechaHora' => '',
+            'Usua' => 'API',
+        ];
         $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
 
         foreach ($datos as $dato) { // Recorro los datos recibidos
