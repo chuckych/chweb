@@ -44,7 +44,7 @@ class Novedades
         $inicio = microtime(true);
         $datos = $this->validarInputs();
 
-        $this->query = array('start' => 0, 'length' => 9999); // Para que no se pagine
+        $this->query = ['start' => 0, 'length' => 9999]; // Para que no se pagine
         $dataNovedades = $this->data(true);
 
         $procesar = Flight::request()->query['procesar'] ?? false;
@@ -54,12 +54,10 @@ class Novedades
         try {
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sql = "UPDATE FICHAS3 SET FicNove = :NoveM, FicNoTi= :FicNoTi, FicHoras = :Horas, FicEsta = :Esta, FicCaus = :Causa, FicObse = :Obse, FechaHora = :FechaHora, FicCate = :Cate WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicNove = :Nove";
+            $sql = "UPDATE FICHAS3 SET FicNove = :NoveM, FicNoTi= :FicNoTi, FicHoras = :Horas, FicEsta = :Esta, FicCaus = :Causa, FicObse = :Obse, FechaHora = :FechaHora, FicCate = :Cate, FicUsua = :Usua WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicNove = :Nove";
             $stmt = $conn->prepare($sql);
 
             $totalAffectedRows = 0;
-
-            // print_r($datos) . exit;
 
             foreach ($datos as $dato) { // Recorro los datos
 
@@ -77,6 +75,7 @@ class Novedades
                 $stmt->bindValue(':Nove', $dato['Nove'], \PDO::PARAM_INT);
                 $stmt->bindValue(':FicNoTi', $tipoNovedad, \PDO::PARAM_INT);
                 $stmt->bindValue(':Cate', $dato['Cate'], \PDO::PARAM_INT);
+                $stmt->bindValue(':Usua', $dato['Usua'], \PDO::PARAM_STR);
                 $stmt->execute(); // Ejecuto la consulta
                 $totalAffectedRows += $stmt->rowCount(); // Cuento la cantidad de filas afectadas
             }
@@ -370,7 +369,8 @@ class Novedades
                 'Esta' => ['allowed012'],
                 'Obse' => ['varchar40'],
                 'Causa' => ['smallint'],
-                'Cate' => ['smallint']
+                'Cate' => ['smallint'],
+                'Usua' => 'API',
             ];
 
             $FechaHoraActual = date('YmdHis') . substr((string) microtime(), 1, 8); // Fecha y hora actual
@@ -384,7 +384,8 @@ class Novedades
                 'Obse' => '',
                 'Causa' => "0",
                 'FechaHora' => '',
-                'Cate' => "0"
+                'Cate' => "0",
+                'Usua' => '',
             );
             $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
 
@@ -993,117 +994,117 @@ class Novedades
     {
         $datos = $this->getData;
 
-            if ($this->tools->jsonNoValido()) {
-                $errores[] = $this->tools->jsonNoValido();
-                throw new \Exception("Formato JSON invalido", 400);
-            }
+        if ($this->tools->jsonNoValido()) {
+            $errores[] = $this->tools->jsonNoValido();
+            throw new \Exception("Formato JSON invalido", 400);
+        }
 
-            if (!$datos) {
-                throw new \Exception("No se recibieron datos", 400);
-            }
+        if (!$datos) {
+            throw new \Exception("No se recibieron datos", 400);
+        }
 
-            $FechIni = $datos['FechIni'] ?? '';
-            $FechFin = $datos['FechFin'] ?? '';
-            $LegApNo = $datos['LegApNo'] ?? '';
-            $LegDocu = $datos['LegDocu'] ?? [];
-            $LegRegCH = $datos['LegRegCH'] ?? [];
-            $LegTipo = $datos['LegTipo'] ?? [];
-            $LegaD = $datos['LegaD'] ?? '';
-            $LegaH = $datos['LegaH'] ?? '';
-            $Lega = $datos['Lega'] ?? [];
-            $Empr = $datos['Empr'] ?? [];
-            $Plan = $datos['Plan'] ?? [];
-            $Conv = $datos['Conv'] ?? [];
-            $Sec2 = $datos['Sec2'] ?? [];
-            $Sect = $datos['Sect'] ?? [];
-            $Grup = $datos['Grup'] ?? [];
-            $Sucu = $datos['Sucu'] ?? [];
-            $NovT = $datos['NovT'] ?? [];
-            $NovS = $datos['NovS'] ?? [];
-            $NovA = $datos['NovA'] ?? [];
-            $NovI = $datos['NovI'] ?? [];
-            $DiaL = $datos['DiaL'] ?? [];
-            $DiaF = $datos['DiaF'] ?? [];
-            $Nove = $datos['Nove'] ?? [];
-            $NoTi = $datos['NoTi'] ?? [];
-            $Estruct = $datos['Estruct'] ?? '';
+        $FechIni = $datos['FechIni'] ?? '';
+        $FechFin = $datos['FechFin'] ?? '';
+        $LegApNo = $datos['LegApNo'] ?? '';
+        $LegDocu = $datos['LegDocu'] ?? [];
+        $LegRegCH = $datos['LegRegCH'] ?? [];
+        $LegTipo = $datos['LegTipo'] ?? [];
+        $LegaD = $datos['LegaD'] ?? '';
+        $LegaH = $datos['LegaH'] ?? '';
+        $Lega = $datos['Lega'] ?? [];
+        $Empr = $datos['Empr'] ?? [];
+        $Plan = $datos['Plan'] ?? [];
+        $Conv = $datos['Conv'] ?? [];
+        $Sec2 = $datos['Sec2'] ?? [];
+        $Sect = $datos['Sect'] ?? [];
+        $Grup = $datos['Grup'] ?? [];
+        $Sucu = $datos['Sucu'] ?? [];
+        $NovT = $datos['NovT'] ?? [];
+        $NovS = $datos['NovS'] ?? [];
+        $NovA = $datos['NovA'] ?? [];
+        $NovI = $datos['NovI'] ?? [];
+        $DiaL = $datos['DiaL'] ?? [];
+        $DiaF = $datos['DiaF'] ?? [];
+        $Nove = $datos['Nove'] ?? [];
+        $NoTi = $datos['NoTi'] ?? [];
+        $Estruct = $datos['Estruct'] ?? '';
 
-            $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
-            $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
-
-
-            $datosRecibidos = array( // Valores por defecto
-                'FechIni' => empty($FechIni) ? '' : $FechIni,
-                'FechFin' => empty($FechFin) ? '' : $FechFin,
-                'LegApNo' => empty($LegApNo) ? '' : $LegApNo,
-                'LegDocu' => !is_array($LegDocu) ? [] : $LegDocu,
-                'LegRegCH' => !is_array($LegRegCH) ? [] : $LegRegCH,
-                'LegTipo' => !is_array($LegTipo) ? [] : $LegTipo,
-                'LegaD' => empty($LegaD) ? '' : $LegaD,
-                'LegaH' => empty($LegaH) ? '' : $LegaH,
-                'Lega' => !is_array($Lega) ? [] : $Lega,
-                'Empr' => !is_array($Empr) ? [] : $Empr,
-                'Plan' => !is_array($Plan) ? [] : $Plan,
-                'Conv' => !is_array($Conv) ? [] : $Conv,
-                'Sec2' => !is_array($Sec2) ? [] : $Sec2,
-                'Sect' => !is_array($Sect) ? [] : $Sect,
-                'Grup' => !is_array($Grup) ? [] : $Grup,
-                'Sucu' => !is_array($Sucu) ? [] : $Sucu,
-                'NovT' => !is_array($NovT) ? [] : $NovT,
-                'NovS' => !is_array($NovS) ? [] : $NovS,
-                'NovA' => !is_array($NovA) ? [] : $NovA,
-                'NovI' => !is_array($NovI) ? [] : $NovI,
-                'DiaL' => !is_array($DiaL) ? [] : $DiaL,
-                'DiaF' => !is_array($DiaF) ? [] : $DiaF,
-                'Nove' => !is_array($Nove) ? [] : $Nove,
-                'NoTi' => !is_array($NoTi) ? [] : $NoTi,
-                'Estruct' => empty($Estruct) ? 0 : $Estruct,
-                'start' => empty($start) ? 0 : ($start),
-                'length' => empty($length) ? 5 : ($length),
-            );
+        $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
+        $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
 
 
-            if (!is_array($datos)) {
-                throw new \Exception("No se recibieron datos", 1);
-            }
+        $datosRecibidos = array( // Valores por defecto
+            'FechIni' => empty($FechIni) ? '' : $FechIni,
+            'FechFin' => empty($FechFin) ? '' : $FechFin,
+            'LegApNo' => empty($LegApNo) ? '' : $LegApNo,
+            'LegDocu' => !is_array($LegDocu) ? [] : $LegDocu,
+            'LegRegCH' => !is_array($LegRegCH) ? [] : $LegRegCH,
+            'LegTipo' => !is_array($LegTipo) ? [] : $LegTipo,
+            'LegaD' => empty($LegaD) ? '' : $LegaD,
+            'LegaH' => empty($LegaH) ? '' : $LegaH,
+            'Lega' => !is_array($Lega) ? [] : $Lega,
+            'Empr' => !is_array($Empr) ? [] : $Empr,
+            'Plan' => !is_array($Plan) ? [] : $Plan,
+            'Conv' => !is_array($Conv) ? [] : $Conv,
+            'Sec2' => !is_array($Sec2) ? [] : $Sec2,
+            'Sect' => !is_array($Sect) ? [] : $Sect,
+            'Grup' => !is_array($Grup) ? [] : $Grup,
+            'Sucu' => !is_array($Sucu) ? [] : $Sucu,
+            'NovT' => !is_array($NovT) ? [] : $NovT,
+            'NovS' => !is_array($NovS) ? [] : $NovS,
+            'NovA' => !is_array($NovA) ? [] : $NovA,
+            'NovI' => !is_array($NovI) ? [] : $NovI,
+            'DiaL' => !is_array($DiaL) ? [] : $DiaL,
+            'DiaF' => !is_array($DiaF) ? [] : $DiaF,
+            'Nove' => !is_array($Nove) ? [] : $Nove,
+            'NoTi' => !is_array($NoTi) ? [] : $NoTi,
+            'Estruct' => empty($Estruct) ? 0 : $Estruct,
+            'start' => empty($start) ? 0 : ($start),
+            'length' => empty($length) ? 5 : ($length),
+        );
 
-            $rules = [ // Reglas de validación
-                'FechIni' => ['required', 'date'],
-                'FechFin' => ['required', 'date'],
-                'LegApNo' => ['varchar40'],
-                'LegDocu' => ['arrInt'],
-                'LegRegCH' => ['arrSmallint'],
-                'LegTipo' => ['arrSmallint'],
-                'LegaD' => ['intempty'],
-                'LegaH' => ['intempty'],
-                'Lega' => ['arrInt'],
-                'Empr' => ['arrSmallint'],
-                'Plan' => ['arrSmallint'],
-                'Conv' => ['arrSmallint'],
-                'Sec2' => ['arrSmallint'],
-                'Sect' => ['arrSmallint'],
-                'Grup' => ['arrSmallint'],
-                'Sucu' => ['arrSmallint'],
-                'NovT' => ['arrAllowed01'],
-                'NovS' => ['arrAllowed01'],
-                'NovA' => ['arrAllowed01'],
-                'NovI' => ['arrAllowed01'],
-                'DiaL' => ['arrAllowed01'],
-                'DiaF' => ['arrAllowed01'],
-                'Nove' => ['arrSmallint'],
-                'NoTi' => ['arrSmallint'],
-                'Estruct' => ['allowed01'],
-                'start' => ['intempty'],
-                'length' => ['intempty'],
-            ];
 
-            $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
-            $validator->validate(); // Valido los datos
-            return $datosRecibidos;
+        if (!is_array($datos)) {
+            throw new \Exception("No se recibieron datos", 1);
+        }
+
+        $rules = [ // Reglas de validación
+            'FechIni' => ['required', 'date'],
+            'FechFin' => ['required', 'date'],
+            'LegApNo' => ['varchar40'],
+            'LegDocu' => ['arrInt'],
+            'LegRegCH' => ['arrSmallint'],
+            'LegTipo' => ['arrSmallint'],
+            'LegaD' => ['intempty'],
+            'LegaH' => ['intempty'],
+            'Lega' => ['arrInt'],
+            'Empr' => ['arrSmallint'],
+            'Plan' => ['arrSmallint'],
+            'Conv' => ['arrSmallint'],
+            'Sec2' => ['arrSmallint'],
+            'Sect' => ['arrSmallint'],
+            'Grup' => ['arrSmallint'],
+            'Sucu' => ['arrSmallint'],
+            'NovT' => ['arrAllowed01'],
+            'NovS' => ['arrAllowed01'],
+            'NovA' => ['arrAllowed01'],
+            'NovI' => ['arrAllowed01'],
+            'DiaL' => ['arrAllowed01'],
+            'DiaF' => ['arrAllowed01'],
+            'Nove' => ['arrSmallint'],
+            'NoTi' => ['arrSmallint'],
+            'Estruct' => ['allowed01'],
+            'start' => ['intempty'],
+            'length' => ['intempty'],
+        ];
+
+        $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+        $validator->validate(); // Valido los datos
+        return $datosRecibidos;
     }
     public function totales()
     {
-        
+
         try {
             $inicio = microtime(true);
             $datos = $this->validarInputsTotales(); // Valido los datos
