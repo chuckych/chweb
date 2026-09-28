@@ -21,7 +21,7 @@ function GetFicExcel() {
             _dr: $("#_dr").val(),
             _l: $("#_l").val(),
             Thora: $("#Thora").val(),
-            SHoras: $("#SHoras").val(),
+            SHoras : $("input[name='SHoras']:checked").val(),
             HoraMin: $("#HoraMin").val(),
             HoraMax: $("#HoraMax").val(),
             Calculos: $("#Calculos").val(),

@@ -61,7 +61,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         Thora: $("#Thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         ThColu: ls.get(TH_COLU)
@@ -127,7 +127,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         Thora: $("#Thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         ThColu: ls.get(TH_COLU)
@@ -193,7 +193,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         Thora: $("#Thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         ThColu: ls.get(TH_COLU)
@@ -259,7 +259,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         Thora: $("#Thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         ThColu: ls.get(TH_COLU)
@@ -325,7 +325,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         Thora: $("#Thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         ThColu: ls.get(TH_COLU)
@@ -391,7 +391,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         thora: $("#thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         ThColu: ls.get(TH_COLU)
@@ -457,7 +457,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         thora: $("#thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         ThColu: ls.get(TH_COLU)
@@ -523,7 +523,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         thora: $("#thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         ThColu: ls.get(TH_COLU)
@@ -589,7 +589,7 @@ $(document).ready(function () {
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
                         // thora  : $("#thora").val(),
-                        SHoras: $("#SHoras").val(),
+                        SHoras : $("input[name='SHoras']:checked").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         Calculos: $("#Calculos").val(),

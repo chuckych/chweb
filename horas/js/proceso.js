@@ -191,7 +191,7 @@ const getHoras = () => {
                 data._dr = $("#_dr").val();
                 data._l = $("#_l").val();
                 data.Thora = $("#Thora").val();
-                data.SHoras = $("#SHoras").val();
+                data.SHoras = $("input[name='SHoras']:checked").val();
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
                 data.Calculos = $("#Calculos").val();
@@ -313,7 +313,7 @@ const getHorasFecha = () => {
                 data._dr = $("#_dr").val();
                 data._l = $("#_l").val();
                 data.Thora = $("#Thora").val();
-                data.SHoras = $("#SHoras").val();
+                data.SHoras = $("input[name='SHoras']:checked").val();
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
                 data.Calculos = $("#Calculos").val();
@@ -446,7 +446,7 @@ const getPersonal = () => {
                 data.Sucur = $("#Sucur").val();
                 data._dr = $("#_dr").val();
                 data.Thora = $("#Thora").val();
-                data.SHoras = $("#SHoras").val();
+                data.SHoras = $("input[name='SHoras']:checked").val();
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
                 data.ThColu = ls.get(TH_COLU);
@@ -531,7 +531,7 @@ const getFechas = () => {
                 data._dr = $("#_dr").val();
                 data._l = $("#_l").val();
                 data.Thora = $("#Thora").val();
-                data.SHoras = $("#SHoras").val();
+                data.SHoras = $("input[name='SHoras']:checked").val();
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
                 data.ThColu = ls.get(TH_COLU);

@@ -18,7 +18,6 @@ $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
 $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre' FROM FICHAS1 INNER JOIN PERSONAL ON FICHAS1.FicLega=PERSONAL.LegNume INNER JOIN FICHAS ON FICHAS1.FicLega=FICHAS.FicLega WHERE PERSONAL.LegFeEg='17530101' AND FICHAS1.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FiltrosFichas $FilterEstruct GROUP BY PERSONAL.LegNume, PERSONAL.LegApNo ";
-// print_r($sql_query); exit;
 
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
