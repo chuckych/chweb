@@ -63,7 +63,8 @@ $(document).ready(function () {
                         Thora: $("#Thora").val(),
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
-                        HoraMax: $("#HoraMax").val()
+                        HoraMax: $("#HoraMax").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {
@@ -128,7 +129,8 @@ $(document).ready(function () {
                         Thora: $("#Thora").val(),
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
-                        HoraMax: $("#HoraMax").val()
+                        HoraMax: $("#HoraMax").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {
@@ -193,7 +195,8 @@ $(document).ready(function () {
                         Thora: $("#Thora").val(),
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
-                        HoraMax: $("#HoraMax").val()
+                        HoraMax: $("#HoraMax").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {
@@ -258,7 +261,8 @@ $(document).ready(function () {
                         Thora: $("#Thora").val(),
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
-                        HoraMax: $("#HoraMax").val()
+                        HoraMax: $("#HoraMax").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {
@@ -323,7 +327,8 @@ $(document).ready(function () {
                         Thora: $("#Thora").val(),
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
-                        HoraMax: $("#HoraMax").val()
+                        HoraMax: $("#HoraMax").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {
@@ -388,7 +393,8 @@ $(document).ready(function () {
                         thora: $("#thora").val(),
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
-                        HoraMax: $("#HoraMax").val()
+                        HoraMax: $("#HoraMax").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {
@@ -453,7 +459,8 @@ $(document).ready(function () {
                         thora: $("#thora").val(),
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
-                        HoraMax: $("#HoraMax").val()
+                        HoraMax: $("#HoraMax").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {
@@ -518,7 +525,8 @@ $(document).ready(function () {
                         thora: $("#thora").val(),
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
-                        HoraMax: $("#HoraMax").val()
+                        HoraMax: $("#HoraMax").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {
@@ -584,7 +592,8 @@ $(document).ready(function () {
                         SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
-                        Calculos: $("#Calculos").val()
+                        Calculos: $("#Calculos").val(),
+                        ThColu: ls.get(TH_COLU)
                     }
                 },
                 processResults: function (data) {

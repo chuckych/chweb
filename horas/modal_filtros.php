@@ -1,6 +1,5 @@
 <!-- Modal -->
-<div class="modal fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel"
-    aria-hidden="true">
+<div class="modal fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-body">
@@ -14,40 +13,46 @@
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Empresa -->
-                        <label for="Emp" class="mb-1 fontq"><?=$labelEmprPlu?></label>
-                        <select class="form-control selectjs_empresa" id="Emp" name="Emp" data-label="<?=$labelEmprPlu?>">
+                        <label for="Emp" class="mb-1 fontq"><?= $labelEmprPlu ?? 'Empresas' ?></label>
+                        <select class="form-control selectjs_empresa" id="Emp" name="Emp"
+                            data-label="<?= $labelEmprPlu ?? 'Empresas' ?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Planta -->
-                        <label for="Plan" class="mb-1 w100 fontq"><?=$labelPlanPlu?></label>
-                        <select class="form-control selectjs_plantas" id="Plan" name="Plan" data-label="<?=$labelPlanPlu?>">
+                        <label for="Plan" class="mb-1 w100 fontq"><?= $labelPlanPlu ?? 'Plantas' ?></label>
+                        <select class="form-control selectjs_plantas" id="Plan" name="Plan"
+                            data-label="<?= $labelPlanPlu ?? 'Plantas' ?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Sector -->
-                        <label for="Sect" class="mb-1 w100 fontq"><?=$labelSectPlu?></label>
-                        <select class="form-control selectjs_sectores" id="Sect" name="Sect" data-label="<?=$labelSectPlu?>">
+                        <label for="Sect" class="mb-1 w100 fontq"><?= $labelSectPlu ?? 'Sectores' ?></label>
+                        <select class="form-control selectjs_sectores" id="Sect" name="Sect"
+                            data-label="<?= $labelSectPlu ?? 'Sectores' ?>">
                         </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-4">
                         <!-- Sección -->
-                        <label for="Sec2" class="mb-1 w100 fontq"><?=$labelSeccPlu?></label>
-                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2" data-label="<?=$labelSeccPlu?>">
+                        <label for="Sec2" class="mb-1 w100 fontq"><?= $labelSeccPlu ?? 'Secciones' ?></label>
+                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2"
+                            data-label="<?= $labelSeccPlu ?? 'Secciones' ?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Grupos -->
-                        <label for="Grup" class="mb-1 w100 fontq"><?=$labelGrupPlu?></label>
-                        <select class="form-control selectjs_grupos" id="Grup" name="Grup" data-label="<?=$labelGrupPlu?>">
+                        <label for="Grup" class="mb-1 w100 fontq"><?= $labelGrupPlu ?? 'Grupos' ?></label>
+                        <select class="form-control selectjs_grupos" id="Grup" name="Grup"
+                            data-label="<?= $labelGrupPlu ?? 'Grupos' ?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Sucursal -->
-                        <label for="Sucur" class="mb-1 w100 fontq"><?=$labelSucuPlu?></label>
-                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" data-label="<?=$labelSucuPlu?>">
+                        <label for="Sucur" class="mb-1 w100 fontq"><?= $labelSucuPlu ?? 'Sucursales' ?></label>
+                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur"
+                            data-label="<?= $labelSucuPlu ?? 'Sucursales' ?>">
                         </select>
                     </div>
                 </div>

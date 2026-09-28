@@ -24,6 +24,7 @@ FusNuloPOST("Thora", '');
 FusNuloPOST("SHoras", '1');
 FusNuloPOST("Calculos", '2');
 
+$ThColu = intval($_POST['ThColu']) ?? 0;
 
 $Per = ($_POST['Per']);
 $Emp = ($_POST['Emp']);

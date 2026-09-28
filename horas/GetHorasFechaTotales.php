@@ -31,14 +31,14 @@ $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$Calculos = (!$Calculos == 1) ? "AND TIPOHORA.THoColu > 0" : '';
+$Calculos = $ThColu !== 1 ? '' : "AND TIPOHORA.THoColu > 0";
 
 $sql_query = "SELECT FICHAS1.FicHora AS 'FicHora', TIPOHORA.THoDesc AS 'THoDesc',
 SUM(dbo.fn_STRMinutos(FICHAS1.FicHsHe)) AS 'FicHsHe', 
 SUM(dbo.fn_STRMinutos(FICHAS1.FicHsAu)) AS 'FicHsAu', 
 SUM(dbo.fn_STRMinutos(FICHAS1.FicHsAu2)) AS 'FicHsAu2' FROM FICHAS1 INNER JOIN FICHAS ON FICHAS1.FicLega=FICHAS.FicLega AND FICHAS1.FicFech=FICHAS.FicFech AND FICHAS1.FicTurn=FICHAS.FicTurn INNER JOIN PERSONAL ON FICHAS1.FicLega=PERSONAL.LegNume INNER JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi WHERE FICHAS1.FicFech='$Fecha' $Calculos $FilterEstruct $FiltrosFichas GROUP BY FICHAS1.FicHora, TIPOHORA.THoDesc";
 
-// print_r($sql_query); exit;
+error_log($sql_query);
 
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;

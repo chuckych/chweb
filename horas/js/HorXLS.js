@@ -25,6 +25,7 @@ function GetFicExcel() {
             HoraMin: $("#HoraMin").val(),
             HoraMax: $("#HoraMax").val(),
             Calculos: $("#Calculos").val(),
+            ThColu: ls.get(TH_COLU)
         },
         beforeSend: function () {
             ActiveBTN(true, "#btnExcel", 'Exportando', IconExcel)

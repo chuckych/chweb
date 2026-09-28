@@ -13,7 +13,7 @@ require __DIR__ . '/../config/conect_mssql.php';
 E_ALL();
 require __DIR__ . '/valores.php';
 
-$params = $columns = $totalRecords = $data = array();
+$params = $columns = $totalRecords = $data = [];
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
@@ -32,14 +32,12 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlTot .= $where_condition;
     $sqlRec .= $where_condition;
 }
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 $sqlRec .= " ORDER BY FICHAS1.FicFech OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
-
-// print_r($sqlRec); exit;
 
 while ($row = sqlsrv_fetch_array($queryRecords)) {
 
@@ -47,11 +45,11 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
     $FicFech = $row['FicFech']->format('d/m/Y');
     $FicFechStr = $row['FicFech']->format('Ymd');
 
-    $data[] = array(
-        'FicFech' => '<span class="animate__animated animate__fadeIn">' . $FicFech . '</span><input type="hidden" class="" id="_f" value=' . $FicFechStr . '>',
-        'Dia' => '<span class="animate__animated animate__fadeIn">' . $Dia . '</span>',
+    $data[] = [
+        'FicFech' => "<span class=\"fadeIn\">$FicFech</span><input type=\"hidden\" class=\"\" id=\"_f\" value=$FicFechStr>",
+        'Dia' => "<span class=\"fadeIn\">$Dia</span>",
         'null' => '',
-    );
+    ];
 }
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);

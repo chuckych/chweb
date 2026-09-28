@@ -15,7 +15,7 @@
     </style>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
@@ -65,6 +65,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-12 d-flex justify-content-sm-end justify-content-center">
+                    <div class="custom-control custom-switch d-inline-flex align-items-center gap5 my-2">
+                        <input type="checkbox" class="custom-control-input" id="thcolu">
+                        <label class="custom-control-label" for="thcolu">
+                            <div style="margin-top: 3px;">Todas las Horas</div>
+                        </label>
+                    </div>
+                </div>
             </div>
             <div id="tablas2">
                 <div class="row bg-white pb-sm-3" id="pagLega" style="display:none">
@@ -99,8 +107,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-none mt-2 mb-4 shadow-sm border radius animate__animated animate__fadeIn"
-                    id="div-horas-total">
+                <div class="mt-2 mb-4 shadow-sm border radius fadeIn" id="div-horas-total">
                     <div class="row">
                         <div class="col-12">
                             <p class="p-3 pb-0 pt-3 m-0 font09 bg-light border-bottom" id="totales-title">Totales:</p>

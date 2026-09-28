@@ -122,7 +122,7 @@ function call_api()
     }
 }
 
-function get_data($url)
+function get_data(string $url)
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
         session_write_close();
@@ -253,10 +253,10 @@ Flight::route('GET /devices', function () { // Ruta para obtener los dispositivo
     $endpointGetCache = "$baseDevices/cache_$recid.txt"; // Endpoint para obtener la cache
     $output = get_data($endpointGetCache) ?? []; // Obtener la cache
 
-    if (!$output) { // Si no hay cache
-        actualizar_cache($endpointSetCache); // Actualizar la cache
-        $output = get_data($endpointGetCache) ?? []; // Obtener la cache
-    }
+    // if (!$output) { // Si no hay cache
+    //     actualizar_cache($endpointSetCache); // Actualizar la cache
+    //     $output = get_data($endpointGetCache) ?? []; // Obtener la cache
+    // }
 
     $data = ($output) ? (unserialize(stripcslashes($output))) : ''; // Deserializer la cache
     Flight::json(['data' => $data ?? '']); // Responder con la cache

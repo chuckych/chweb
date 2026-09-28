@@ -301,12 +301,11 @@ class Horas
             $ColFiltroMinMax = $MinMaxH ? "FICHAS1.FicHsAu2" : "FICHAS1.FicHsAu";
             $wc[] = ($datos["HoraMin"]) ? " $ColFiltroMinMax >= '$HoraMin'" : '';
             $wc[] = ($datos["HoraMax"]) ? " $ColFiltroMinMax <= '$HoraMax'" : '';
+            $wc[] = ($datos["ThColu"] === 1) ? " TIPOHORA.THoColu > 0" : '';
             // $wc[] = ($datos["HoraMin"]) ? " dbo.fn_STRMinutos($ColFiltroMinMax) >= dbo.fn_STRMinutos('$HoraMin')" : '';
             // $wc[] = ($datos["HoraMax"]) ? " dbo.fn_STRMinutos($ColFiltroMinMax) <= dbo.fn_STRMinutos('$HoraMax')" : '';
             $wc = array_filter($wc); // Elimino los valores vacíos del array $wc
-            $wc = array_values($wc); // Reordeno los índices del array $wc   
-
-            // Flight::json($wc) . exit;
+            $wc = array_values($wc); // Reordeno los índices del array $wc               
 
             /** vamos a consultar las horas que hay en la tabla de tipos Horas */
             $whereConditions = "";
@@ -320,7 +319,7 @@ class Horas
             $sql .= $whereConditions;
             $sql .= " ORDER BY FicHora";
 
-            // print_r($sql) . exit;
+            // \error_log(print_r($sql, true));
 
             $stmt = $conn->prepare($sql);
             $ApNo = "%{$datos['LegApNo']}%";
@@ -1087,12 +1086,13 @@ class Horas
         $HoraMax = $datos['HoraMax'] ?? ''; // Hora maxima
         $MinMaxH = $datos['MinMaxH'] ?? 0; // Si se quiere el mínimo y máximo de horas
         $Estruct = $datos['Estruct'] ?? 0; //  Estructura a consultar 0 = Personal, 1 = Fichas.
+        $ThColu = $datos['ThColu'] ?? 0;
 
         $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
         $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
 
 
-        $datosRecibidos = array( // Valores por defecto
+        $datosRecibidos = [ // Valores por defecto
             'FechIni' => empty($FechIni) ? '' : $FechIni,
             'FechFin' => empty($FechFin) ? '' : $FechFin,
             'LegApNo' => empty($LegApNo) ? '' : $LegApNo,
@@ -1119,9 +1119,10 @@ class Horas
             'MinMaxH' => empty($MinMaxH) ? 0 : ($MinMaxH),
             'Estruct' => empty($Estruct) ? 0 : ($Estruct),
             'HsTrAT' => empty($HsTrAT) ? '' : ($HsTrAT),
+            'ThColu' => empty($ThColu) ? 0 : ($ThColu),
             'start' => empty($start) ? 0 : ($start),
             'length' => empty($length) ? 5 : ($length),
-        );
+        ];
 
         if (!is_array($datos)) {
             throw new \Exception("No se recibieron datos", 1);
@@ -1154,6 +1155,7 @@ class Horas
             'MinMaxH' => ['allowed01'],
             'HsTrAT' => ['allowed01'],
             'Estruct' => ['allowed01'],
+            'ThColu' => ['intempty'],
             'start' => ['intempty'],
             'length' => ['intempty'],
         ];

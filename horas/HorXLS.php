@@ -188,7 +188,8 @@ foreach ($Letras as $col) {
 $spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 
 $numeroDeFila = 2;
-$Calculos = (!$Calculos == 1) ? "AND TIPOHORA.THoColu > 0" : '';
+
+$Calculos = $ThColu !== 1 ? '' : "AND TIPOHORA.THoColu > 0";
 
 $FicUsua = $_SESSION['DBDATA'] > 7000000000 ? 'Fichas1.FicUsua,' : '';
 

@@ -18,9 +18,10 @@ $DescCodi = 'TIPOHORA.THoCodi';
 $Col = 'TIPOHORA';
 $ColData = 'FICHAS1';
 $FiltroQ = (!empty($q)) ? "AND CONCAT($id, $Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$q%'" : '';
-$Calculos = (!$Calculos == 1) ? "AND TIPOHORA.THoColu > 0" : '';
-$query = "SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData INNER JOIN FICHAS ON $ColData.FicLega=FICHAS.FicLega AND $ColData.FicFech = FICHAS.FicFech AND $ColData.FicTurn=FICHAS.FicTurn INNER JOIN $Col ON $id = $DescCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $Calculos $FilterEstruct $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
-// print_r($query); exit;
+
+$query = "SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData INNER JOIN FICHAS ON $ColData.FicLega=FICHAS.FicLega AND $ColData.FicFech = FICHAS.FicFech AND $ColData.FicTurn=FICHAS.FicTurn INNER JOIN $Col ON $id = $DescCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
+
+error_log($query);
 
 $params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

@@ -14,26 +14,26 @@ $params = $_REQUEST;
 if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     $legajo = test_input(FusNuloPOST('_l', 'vacio'));
 } else {
-    $json_data = array(
+    $json_data = [
         "draw" => intval($params['draw']),
         "recordsTotal" => 0,
         "recordsFiltered" => 0,
         "data" => $data
-    );
+    ];
     echo json_encode($json_data);
     exit;
 }
 
 require __DIR__ . '/valores.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$Calculos = (!$Calculos == 1) ? "AND TIPOHORA.THoColu > 0" : '';
+$Calculos = $ThColu !== 1 ? '' : "AND TIPOHORA.THoColu > 0";
 
 $sql_query = "SELECT
 FICHAS1.FicHora AS 'FicHora', TIPOHORA.THoDesc AS 'THoDesc',

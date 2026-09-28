@@ -1,5 +1,29 @@
 const homehost = $("#_homehost").val();
 const LS_FILTROS = homehost + '_filtro_horas_';
+const TH_COLU = homehost + '_th_colu';
+
+
+function ActualizaTablas() {
+    document.getElementById('div-horas-total').style.display = 'none';
+    document.getElementById('tabla-horas-total').innerHTML = '';
+    loaderIn('table', true);
+    let verPor = document.querySelector('input[name="VPor"]:checked').value;
+    ls.set(LS_FILTROS + 'VPor', parseInt(verPor));
+    if (verPor === '1') {
+        getFechas();
+    } else {
+        getPersonal();
+    };
+};
+const GET_TH_COLU = ls.get(TH_COLU) ?? 0;
+
+const swithThColu = document.getElementById('thcolu');
+swithThColu.checked = GET_TH_COLU === 0;
+swithThColu.addEventListener('change', function () {
+    ls.set(TH_COLU, this.checked ? 0 : 1);
+    ActualizaTablas();
+});
+
 const spinnerLoad = `<div class="spinner-border font07" role="status" style="width: 15px; height:15px" ></div>`;
 const loading = () => {
     $.notifyClose();
@@ -61,19 +85,9 @@ const dateRange = async () => {
         },
     });
 }
-function ActualizaTablas() {
-    loaderIn('table', true);
-    let verPor = document.querySelector('input[name="VPor"]:checked').value;
-    ls.set(LS_FILTROS + 'VPor', parseInt(verPor));
-    if (verPor === '1') {
-        getFechas();
-    } else {
-        getPersonal();
-    };
-};
 
 $('input[name="VPor"]').on('change', function () {
-    $('#tablas2').addClass('invisible').removeClass('animate__animated animate__fadeIn');
+    $('#tablas2').addClass('invisible').removeClass('fadeIn');
     loading()
     ActualizaTablas()
     CheckSesion()
@@ -83,21 +97,21 @@ const toggleTablas = (tipo) => {
 
     if (tipo === 1) {
 
-        $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn');
+        $('#tablas').removeClass('invisible').addClass('fadeIn');
         loaderIn('#tablas', false);
-        $('#pagLega').hide().removeClass('animate__animated animate__fadeIn');
-        $('#GetHorasTable').hide().removeClass('animate__animated animate__fadeIn');
-        $('#pagFech').show().addClass('animate__animated animate__fadeIn');
-        $('#GetHorasFechaTable').show().addClass('animate__animated animate__fadeIn');
+        $('#pagLega').hide().removeClass('fadeIn');
+        $('#GetHorasTable').hide().removeClass('fadeIn');
+        $('#pagFech').show().addClass('fadeIn');
+        $('#GetHorasFechaTable').show().addClass('fadeIn');
 
     } else {
 
-        $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn');
+        $('#tablas').removeClass('invisible').addClass('fadeIn');
         loaderIn('#tablas', false);
-        $('#pagFech').hide().removeClass('animate__animated animate__fadeIn');
-        $('#GetHorasFechaTable').hide().removeClass('animate__animated animate__fadeIn');
-        $('#GetHorasTable').show().addClass('animate__animated animate__fadeIn');
-        $('#pagLega').show().addClass('animate__animated animate__fadeIn');
+        $('#pagFech').hide().removeClass('fadeIn');
+        $('#GetHorasFechaTable').hide().removeClass('fadeIn');
+        $('#GetHorasTable').show().addClass('fadeIn');
+        $('#pagLega').show().addClass('fadeIn');
     }
 }
 onOpenSelect2()
@@ -181,6 +195,7 @@ const getHoras = () => {
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
                 data.Calculos = $("#Calculos").val();
+                data.ThColu = ls.get(TH_COLU);
             },
             error: function () {
                 $("#GetHoras_processing").css("display", "none");
@@ -258,7 +273,7 @@ const getHoras = () => {
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
         $(".Filtros").prop('disabled', false);
-        $('#tablas2').removeClass('invisible').addClass('animate__animated animate__fadeIn');
+        $('#tablas2').removeClass('invisible').addClass('fadeIn');
         $.notifyClose();
         loaderIn('table', false);
     });
@@ -302,6 +317,7 @@ const getHorasFecha = () => {
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
                 data.Calculos = $("#Calculos").val();
+                data.ThColu = ls.get(TH_COLU);
             },
             error: function () {
                 $("#GetHorasFecha_processing").css("display", "none");
@@ -378,7 +394,7 @@ const getHorasFecha = () => {
         setTimeout(function () {
             $(".Filtros").prop('disabled', false);
         }, 500);
-        $('#tablas2').removeClass('invisible').addClass('animate__animated animate__fadeIn');
+        $('#tablas2').removeClass('invisible').addClass('fadeIn');
         $.notifyClose();
         loaderIn('table', false);
     });
@@ -433,6 +449,7 @@ const getPersonal = () => {
                 data.SHoras = $("#SHoras").val();
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
+                data.ThColu = ls.get(TH_COLU);
             },
             error: function () {
                 $("#GetPersonal_processing").css("display", "none");
@@ -517,6 +534,7 @@ const getFechas = () => {
                 data.SHoras = $("#SHoras").val();
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
+                data.ThColu = ls.get(TH_COLU);
             },
             error: function () {
                 $("#GetFecha_processing").css("display", "none");
@@ -583,12 +601,14 @@ $('#_dr').on('apply.daterangepicker', function (ev, picker) {
 const getHorasTotales = async (jsonData) => {
     try {
         let rs = await axios.post('../app-data/horas/totales/', jsonData);
+
         if (rs.data.length === 0) {
+            document.getElementById('div-horas-total').style.display = 'none';
+            document.getElementById('tabla-horas-total').innerHTML = '';
             return false;
         }
 
-        let el = document.getElementById('div-horas-total');
-        el.classList.replace('d-none', 'show');
+        document.getElementById('div-horas-total').style.display = 'block';
 
         return rs.data ?? [];
     } catch (error) {
@@ -624,6 +644,7 @@ const tableTotalesLegajo = () => {
         HoraMax: ls.get(LS_FILTROS + '#HoraMax') ?? '',
         MinMaxH: ls.get(LS_FILTROS + '#SHoras') ?? '',
         Hora: ls.get(LS_FILTROS + '.selectjs_thora') ?? [],
+        ThColu: ls.get(TH_COLU) ?? 1,
         length: 100
     };
 
@@ -697,13 +718,17 @@ const tableTotalesFecha = () => {
         HoraMax: ls.get(LS_FILTROS + '#HoraMax') ?? '',
         MinMaxH: ls.get(LS_FILTROS + '#SHoras') ?? '',
         Hora: ls.get(LS_FILTROS + '.selectjs_thora') ?? [],
+        ThColu: ls.get(TH_COLU) ?? 1,
         length: 10000
     };
 
     getHorasTotales(jsonData).then((rs) => {
+
         if (rs === false) {
             return;
         }
+
+
         let tiposHoras = rs.tiposHoras ?? false;
 
         if (tiposHoras === false) {
@@ -785,14 +810,18 @@ const tableTotalesFecha2 = () => {
         HoraMax: ls.get(LS_FILTROS + '#HoraMax') ?? '',
         MinMaxH: ls.get(LS_FILTROS + '#SHoras') ?? '',
         Hora: ls.get(LS_FILTROS + '.selectjs_thora') ?? [],
+        ThColu: ls.get(TH_COLU) ?? 1,
         length: 10000
     };
 
     getHorasTotales(jsonData).then((rs) => {
+
         if (rs === false) {
             document.getElementById('tabla-horas-total2').innerHTML = '';
             return;
         }
+
+
         let tiposHoras = rs.tiposHoras ?? false;
         if (tiposHoras === false) {
             document.getElementById('tabla-horas-total2').innerHTML = '';

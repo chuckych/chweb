@@ -334,6 +334,8 @@ Flight::route('POST /horas/totales', function () {
     $payload['Sucu'] = $payload['Sucu'] ?? [];
     $payload['Lega'] = $payload['Lega'] ?? [];
     $payload['LegTipo'] = $payload['LegTipo'] ?? [];
+    $payload['LegTipo'] = $payload['LegTipo'] ?? [];
+    $payload['ThColu'] = $payload['ThColu'] ?? 0;
 
     $emprRol = ($_SESSION['EmprRol']) ? explode(',', $_SESSION['EmprRol']) : [];
     $planRol = ($_SESSION['PlanRol']) ? explode(',', $_SESSION['PlanRol']) : [];
