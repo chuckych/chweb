@@ -319,8 +319,6 @@ class Horas
             $sql .= $whereConditions;
             $sql .= " ORDER BY FicHora";
 
-            // \error_log(print_r($sql, true));
-
             $stmt = $conn->prepare($sql);
             $ApNo = "%{$datos['LegApNo']}%";
             ($datos['LegApNo']) ? $stmt->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
@@ -412,6 +410,7 @@ class Horas
             $sql .= " FROM FICHAS1";
             $sql .= " INNER JOIN FICHAS ON FICHAS1.FicLega = FICHAS.FicLega AND FICHAS1.FicFech = FICHAS.FicFech AND FICHAS1.FicTurn = FICHAS.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
+            $sql .= " LEFT JOIN TIPOHORA ON FICHAS1.FicHora = TIPOHORA.THoCodi";
             $sql .= " WHERE FicHora > 0";
             $sql .= " AND FICHAS1.FicFech BETWEEN '$FechIni' AND '$FechFin'";
             // $sql .= " AND DATEPART(dw, FICHAS1.FicFech) IN (2, 3, 4, 5, 6, 7)";
@@ -420,7 +419,8 @@ class Horas
             $sql .= ", $groupByEstruct";
             $sql .= " ORDER BY FICHAS1.FicLega";
             $sql .= " OFFSET $datos[start] ROWS FETCH NEXT $datos[length] ROWS ONLY"; // Paginación
-            // print_r($sql) . exit;
+
+            // \error_log(print_r($sql, true));
 
             $stmt1 = $conn->prepare($sql);
             ($datos['LegApNo']) ? $stmt1->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
@@ -437,19 +437,19 @@ class Horas
             $sql .= " FROM FICHAS";
             $sql .= " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
+            $sql .= " LEFT JOIN TIPOHORA ON FICHAS1.FicHora = TIPOHORA.THoCodi";
             $sql .= " WHERE FicHora > 0";
             $sql .= " AND FICHAS1.FicFech BETWEEN '$FechIni' AND '$FechFin'";
             $sql .= $whereConditions;
-            // print_r($sql) . exit;
+
             $stmt2 = $conn->prepare($sql);
 
             ($datos['LegApNo']) ? $stmt2->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
 
             $stmt2->execute(); // Ejecuto la consulta
             $total = $stmt2->fetch(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
-            $stmt->closeCursor(); // Cierro el cursor
-            $stmt1->closeCursor(); // Cierro el cursor
             $stmt2->closeCursor(); // Cierro el cursor
+            $stmt1->closeCursor(); // Cierro el cursor
 
             $datHsATyTR = []; // Array que va a contener las horas trabajadas y a trabajar si es que se quieren mostrar
             $nuevo_array = [];
@@ -502,9 +502,6 @@ class Horas
                         $EnMinutos2 = (intval($elemento['Horas2_' . $numero]));
                         $EnMinutos1 = (intval($elemento['Horas1_' . $numero]));
                         $sumaDeMinutos = $EnMinutos + $EnMinutos2;
-                        // if ($sumaDeMinutos == 0) {
-                        //     continue;
-                        // }
 
                         $horasEnDecimal = $this->minutosAHorasDecimal(intval($elemento['Horas_' . $numero]));
                         $horasEnDecimal2 = $this->minutosAHorasDecimal(intval($elemento['Horas2_' . $numero]));
