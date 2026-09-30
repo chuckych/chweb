@@ -327,7 +327,7 @@ class ADAuthenticator
      * Lista todos los usuarios del dominio
      * Requiere credenciales con permisos de lectura
      */
-    public function listUsers($adminUser, $adminPass, $filter = null)
+    public function listUsers($adminUser, $adminPass, $filter = null, $pageSize = 500)
     {
         $ldapConn = ldap_connect($this->server, $this->port);
 
@@ -348,33 +348,161 @@ class ADAuthenticator
         // Filtro para usuarios activos
         $defaultFilter = "(&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
         $searchFilter = $filter ?? $defaultFilter;
+        $normalizedPageSize = (int) $pageSize;
+        if ($normalizedPageSize <= 0) {
+            $normalizedPageSize = 500;
+        }
 
         $attributes = ['samaccountname', 'mail', 'displayname', 'department'];
 
-        $search = ldap_search($ldapConn, $this->baseDn, $searchFilter, $attributes);
+        $legacyPaging = is_callable('ldap_control_paged_result') && is_callable('ldap_control_paged_result_response');
+        $usersByKey = [];
+        $cookie = '';
+        $page = 0;
+        $maxPages = 1000;
+        $seenCookies = [];
 
-        if (!$search) {
-            throw new \Exception("Error en búsqueda: " . ldap_error($ldapConn));
+        try {
+            do {
+                $page++;
+                $search = $this->searchUsersPage($ldapConn, $searchFilter, $attributes, $normalizedPageSize, $cookie, $legacyPaging);
+
+                if (!$search) {
+                    throw new \Exception("Error en búsqueda LDAP (página {$page}): " . ldap_error($ldapConn));
+                }
+
+                $entries = ldap_get_entries($ldapConn, $search);
+                if (!isset($entries['count'])) {
+                    throw new \Exception("Respuesta LDAP inválida en página {$page}");
+                }
+
+                for ($i = 0; $i < $entries['count']; $i++) {
+                    $username = $entries[$i]['samaccountname'][0] ?? null;
+                    $dn = $entries[$i]['dn'] ?? null;
+
+                    $uniqueKey = null;
+                    if (!empty($username)) {
+                        $uniqueKey = 'u:' . strtolower((string) $username);
+                    } elseif (!empty($dn)) {
+                        $uniqueKey = 'dn:' . strtolower((string) $dn);
+                    }
+
+                    if ($uniqueKey === null) {
+                        continue;
+                    }
+
+                    if (!isset($usersByKey[$uniqueKey])) {
+                        $usersByKey[$uniqueKey] = [
+                            'username' => $username,
+                            'email' => $entries[$i]['mail'][0] ?? null,
+                            'nombre' => $entries[$i]['displayname'][0] ?? null,
+                            'departamento' => $entries[$i]['department'][0] ?? null
+                        ];
+                    }
+                }
+
+                $cookie = $this->extractPagedResultCookie($ldapConn, $search, $legacyPaging);
+
+                if ($cookie !== '') {
+                    $cookieKey = base64_encode($cookie);
+                    if (isset($seenCookies[$cookieKey])) {
+                        throw new \Exception("Bucle de paginación detectado: cookie repetida en página {$page}");
+                    }
+                    $seenCookies[$cookieKey] = true;
+                }
+
+                if ($page >= $maxPages && $cookie !== '') {
+                    throw new \Exception("Se alcanzó el máximo de páginas ({$maxPages}) sin finalizar la paginación LDAP");
+                }
+            } while ($cookie !== '');
+
+            return array_values($usersByKey);
+        } finally {
+            if ($legacyPaging && (is_resource($ldapConn) || $ldapConn instanceof \LDAP\Connection)) {
+                $resetPagedResultFn = 'ldap_control_paged_result';
+                @$resetPagedResultFn($ldapConn, 0);
+            }
+            @ldap_unbind($ldapConn);
         }
-
-        $entries = ldap_get_entries($ldapConn, $search);
-        $users = [];
-
-        file_put_contents('ldap_debug.log', print_r($entries, true)); // Línea para depuración
-
-        for ($i = 0; $i < $entries['count']; $i++) {
-            $users[] = [
-                'username' => $entries[$i]['samaccountname'][0] ?? null,
-                'email' => $entries[$i]['mail'][0] ?? null,
-                'nombre' => $entries[$i]['displayname'][0] ?? null,
-                'departamento' => $entries[$i]['department'][0] ?? null
-            ];
-        }
-
-        ldap_unbind($ldapConn);
-
-        return $users;
     }
+
+    private function searchUsersPage($ldapConn, $searchFilter, array $attributes, int $pageSize, string $cookie, bool $legacyPaging)
+    {
+        if ($legacyPaging) {
+            $setPagedResultFn = 'ldap_control_paged_result';
+            if (!@$setPagedResultFn($ldapConn, $pageSize, true, $cookie)) {
+                throw new \Exception("No se pudo configurar el control de paginación LDAP");
+            }
+
+            return @ldap_search($ldapConn, $this->baseDn, $searchFilter, $attributes);
+        }
+
+        $pagedControlOid = defined('LDAP_CONTROL_PAGEDRESULTS') ? LDAP_CONTROL_PAGEDRESULTS : '1.2.840.113556.1.4.319';
+        $controls = [[
+            'oid' => $pagedControlOid,
+            'iscritical' => true,
+            'value' => [
+                'size' => $pageSize,
+                'cookie' => $cookie
+            ]
+        ]];
+
+        return @ldap_search($ldapConn, $this->baseDn, $searchFilter, $attributes, 0, 0, 0, LDAP_DEREF_NEVER, $controls);
+    }
+
+    private function extractPagedResultCookie($ldapConn, $searchResult, bool $legacyPaging): string
+    {
+        if ($legacyPaging) {
+            $cookie = '';
+            $getPagedResultCookieFn = 'ldap_control_paged_result_response';
+            if (!@$getPagedResultCookieFn($ldapConn, $searchResult, $cookie)) {
+                throw new \Exception("No se pudo obtener la cookie de paginación LDAP");
+            }
+            return (string) $cookie;
+        }
+
+        $errCode = 0;
+        $matchedDn = null;
+        $errorMessage = null;
+        $referrals = [];
+        $controls = [];
+
+        if (!@ldap_parse_result($ldapConn, $searchResult, $errCode, $matchedDn, $errorMessage, $referrals, $controls)) {
+            throw new \Exception("No se pudo parsear la respuesta LDAP de paginación");
+        }
+
+        if ($errCode !== 0) {
+            $detail = $errorMessage ?: ldap_err2str($errCode);
+            throw new \Exception("Error LDAP al procesar paginación: {$detail} ({$errCode})");
+        }
+
+        $pagedControlOid = defined('LDAP_CONTROL_PAGEDRESULTS') ? LDAP_CONTROL_PAGEDRESULTS : '1.2.840.113556.1.4.319';
+        if (isset($controls[$pagedControlOid])) {
+            return $this->readCookieFromControl($controls[$pagedControlOid]);
+        }
+
+        foreach ($controls as $control) {
+            if (is_array($control) && ($control['oid'] ?? null) === $pagedControlOid) {
+                return $this->readCookieFromControl($control);
+            }
+        }
+
+        return '';
+    }
+
+    private function readCookieFromControl(array $control): string
+    {
+        if (isset($control['value']) && is_array($control['value']) && array_key_exists('cookie', $control['value'])) {
+            return (string) $control['value']['cookie'];
+        }
+
+        if (array_key_exists('cookie', $control)) {
+            return (string) $control['cookie'];
+        }
+
+        return '';
+    }
+
     private function verificar_extension_ldap(): void
     {
         if (!extension_loaded('ldap')) {
