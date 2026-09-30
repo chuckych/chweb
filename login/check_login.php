@@ -41,10 +41,12 @@ if ($guarda == "on") {
 		'samesite' => $sameSite // Establece el valor de SameSite
 	]);
 }
+
 if (!($_POST['user'] ?? '') || !($_POST['clave'] ?? '')) {
 	header('Location:/' . HOMEHOST . '/login/?error');
 	exit;
 }
+
 $userLogin = $_GET['conf'] ?? strip_tags(strtolower($_POST['user'] ?? ''));
 $passLogin = $_GET['conf'] ?? strip_tags($_POST['clave'] ?? '');
 $userLogin = test_input($userLogin);
@@ -102,7 +104,6 @@ try {
 	fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
 	exit; // termina la ejecución
 }
-
 // Si el usuario no es de AD, se procede con la autenticación normal
 $authenticated = (($row['user_ad'] ?? '0') === '1') ?
 	auth_ad($passLogin, $row) :

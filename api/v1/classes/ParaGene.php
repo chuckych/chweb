@@ -6,6 +6,8 @@ use Classes\Response;
 use Classes\Log;
 use Classes\ConnectSqlSrv;
 use Classes\Tools;
+use Classes\InputValidator;
+use Classes\ValidationException;
 use Flight;
 use flight\net\Request;
 
@@ -84,6 +86,113 @@ class ParaGene
             throw $e;
         }
     }
+
+    /**
+     * Actualiza etiquetas de la tabla PARAGENE para ParCodi = 0.
+     */
+    public function update()
+    {
+        $inicio = microtime(true);
+        $idCompany = defined('ID_COMPANY') ? ID_COMPANY : 0;
+
+        $etiquetas = $this->getData['Etiquetas'] ?? $this->getData;
+
+        if (!is_array($etiquetas) || empty($etiquetas)) {
+            $this->resp->respuesta([], 0, 'No se recibieron datos de Etiquetas', 400, $inicio, 0, $idCompany);
+            return;
+        }
+
+        $rules = [
+            'EmprSin' => ['required', 'varchar10'],
+            'EmprPlu' => ['required', 'varchar10'],
+            'PlanSin' => ['required', 'varchar10'],
+            'PlanPlu' => ['required', 'varchar10'],
+            'SucuSin' => ['required', 'varchar10'],
+            'SucuPlu' => ['required', 'varchar10'],
+            'GrupSin' => ['required', 'varchar10'],
+            'GrupPlu' => ['required', 'varchar10'],
+            'SectSin' => ['required', 'varchar10'],
+            'SectPlu' => ['required', 'varchar10'],
+            'SeccSin' => ['required', 'varchar10'],
+            'SeccPlu' => ['required', 'varchar10'],
+        ];
+
+        try {
+            (new InputValidator($etiquetas, $rules))->validate();
+        } catch (ValidationException $e) {
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, $idCompany);
+            return;
+        }
+
+        try {
+            $conn = $this->conect->conn();
+
+            $sqlExists = "SELECT COUNT(*) AS total FROM PARAGENE WHERE ParCodi = 0";
+            $stmtExists = $conn->prepare($sqlExists);
+            $stmtExists->execute();
+            $exists = (int) ($stmtExists->fetchColumn() ?? 0);
+
+            if ($exists === 0) {
+                throw new \Exception('No existe el registro ParCodi = 0 en PARAGENE', 404);
+            }
+
+            $sql = "UPDATE PARAGENE SET
+                        ParEmprSin = :ParEmprSin,
+                        ParEmprPlu = :ParEmprPlu,
+                        ParPlanSin = :ParPlanSin,
+                        ParPlanPlu = :ParPlanPlu,
+                        ParSucuSin = :ParSucuSin,
+                        ParSucuPlu = :ParSucuPlu,
+                        ParGrupSin = :ParGrupSin,
+                        ParGrupPlu = :ParGrupPlu,
+                        ParSectSin = :ParSectSin,
+                        ParSectPlu = :ParSectPlu,
+                        ParSeccSin = :ParSeccSin,
+                        ParSeccPlu = :ParSeccPlu
+                    WHERE ParCodi = 0";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':ParEmprSin', (string) $etiquetas['EmprSin'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParEmprPlu', (string) $etiquetas['EmprPlu'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParPlanSin', (string) $etiquetas['PlanSin'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParPlanPlu', (string) $etiquetas['PlanPlu'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParSucuSin', (string) $etiquetas['SucuSin'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParSucuPlu', (string) $etiquetas['SucuPlu'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParGrupSin', (string) $etiquetas['GrupSin'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParGrupPlu', (string) $etiquetas['GrupPlu'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParSectSin', (string) $etiquetas['SectSin'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParSectPlu', (string) $etiquetas['SectPlu'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParSeccSin', (string) $etiquetas['SeccSin'], \PDO::PARAM_STR);
+            $stmt->bindValue(':ParSeccPlu', (string) $etiquetas['SeccPlu'], \PDO::PARAM_STR);
+            $stmt->execute();
+
+            $rs = [
+                'Etiquetas' => [
+                    'EmprSin' => (string) $etiquetas['EmprSin'],
+                    'EmprPlu' => (string) $etiquetas['EmprPlu'],
+                    'PlanSin' => (string) $etiquetas['PlanSin'],
+                    'PlanPlu' => (string) $etiquetas['PlanPlu'],
+                    'SucuSin' => (string) $etiquetas['SucuSin'],
+                    'SucuPlu' => (string) $etiquetas['SucuPlu'],
+                    'GrupSin' => (string) $etiquetas['GrupSin'],
+                    'GrupPlu' => (string) $etiquetas['GrupPlu'],
+                    'SectSin' => (string) $etiquetas['SectSin'],
+                    'SectPlu' => (string) $etiquetas['SectPlu'],
+                    'SeccSin' => (string) $etiquetas['SeccSin'],
+                    'SeccPlu' => (string) $etiquetas['SeccPlu'],
+                ],
+            ];
+
+            $this->resp->respuesta($rs, 1, 'OK', 200, $inicio, 1, $idCompany);
+        } catch (\PDOException $e) {
+            $this->log->trace('ParaGene::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al actualizar parametros generales', 400);
+        } catch (\Exception $e) {
+            $this->log->trace('ParaGene::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
+        }
+    }
+
     public function liquid()
     {
         $inicio = microtime(true);
@@ -112,6 +221,7 @@ class ParaGene
     {
         $sql = "SELECT * FROM PARAGENE";
         $Data = $this->conect->executeQueryWhithParams($sql);
+        $rs = [];
         foreach ($Data as &$element) {
             $rs = [
                 'Etiquetas' => [

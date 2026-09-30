@@ -21,6 +21,8 @@ if (in_array($requestedEndpoint, $noValidateSession)) {
     $noValidate = true;
     $requestData = $request->data->getData() ?? [];
     $_SESSION['RECID_CLIENTE'] = $requestData['recid_cliente'] ?? '';
+    // En login_ad no hay sesión completa; recalculamos host con el recid recibido.
+    $_SESSION['HOST_CHWEB'] = gethostCHWeb();
 }
 
 
@@ -32,9 +34,15 @@ if (!$_SESSION && !$noValidate) {
 // sleep(1);
 $token = sha1(($_SESSION['RECID_CLIENTE'] ?? ''));
 
-define('HOSTCHWEB', gethostCHWeb());
-// define('URLAPI', HOSTCHWEB . "/" . HOMEHOST);
-define('URLAPI', api_internal_base_url() . "/" . HOMEHOST);
+$hostCHWeb = (string) ($_SESSION['HOST_CHWEB'] ?? gethostCHWeb() ?? '');
+if ($hostCHWeb === '') {
+    $hostCHWeb = host();
+}
+
+define('HOSTCHWEB', $hostCHWeb);
+$_SESSION['HOST_CHWEB'] = $_SESSION['HOST_CHWEB'] ?? HOSTCHWEB;
+define('URLAPI', rtrim(HOSTCHWEB, '/') . "/" . ltrim(HOMEHOST, '/'));
+
 function dataSession()
 {
     return [
@@ -99,6 +107,9 @@ function local_api(string $endpoint, $payload = [], $method = 'GET', $queryParam
     try {
         if (!$endpoint) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
+        }
+        if (!preg_match('#^https?://#i', $endpoint)) {
+            throw new Exception('API CH: ' . date('Y-m-d H:i:s') . " Endpoint inválido: {$endpoint}");
         }
         return $client->call($endpoint, $payload, $method, $queryParams);
     } catch (\Exception $e) {

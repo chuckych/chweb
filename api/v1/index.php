@@ -86,6 +86,7 @@ Flight::route('POST /estructuras/alta', [$estructuras, 'create']);
 Flight::route('GET /novedades/data', [$novedades, 'data']);
 Flight::route('/paragene', [$ParaGene, 'get']);
 Flight::route('GET /parametros/paragene', [$ParaGene, 'get']);
+Flight::route('PUT /parametros/paragene', [$ParaGene, 'update']);
 Flight::route('GET /parametros/dbdata', [$ParaGene, 'dbData']);
 Flight::route('GET /parametros/liquid', [$ParaGene, 'liquid']);
 Flight::route('GET /horarios/', [$horarios, 'get_horarios']);

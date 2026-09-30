@@ -761,7 +761,8 @@ class Clientes
         }
     }
 
-    private function sanitize_dbpass(string $pass){
+    private function sanitize_dbpass(string $pass)
+    {
         $pass = \trim($pass);
         $pass = str_replace('%nbsp;', '', $pass);
         return $pass;
