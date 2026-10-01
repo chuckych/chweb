@@ -132,6 +132,74 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    const get_etiquetas_ch_payload = () => {
+        return {
+            'EmprSin': ($('#etqEmprSin').val() ?? '').trim(),
+            'EmprPlu': ($('#etqEmprPlu').val() ?? '').trim(),
+            'PlanSin': ($('#etqPlanSin').val() ?? '').trim(),
+            'PlanPlu': ($('#etqPlanPlu').val() ?? '').trim(),
+            'SucuSin': ($('#etqSucuSin').val() ?? '').trim(),
+            'SucuPlu': ($('#etqSucuPlu').val() ?? '').trim(),
+            'GrupSin': ($('#etqGrupSin').val() ?? '').trim(),
+            'GrupPlu': ($('#etqGrupPlu').val() ?? '').trim(),
+            'SectSin': ($('#etqSectSin').val() ?? '').trim(),
+            'SectPlu': ($('#etqSectPlu').val() ?? '').trim(),
+            'SeccSin': ($('#etqSeccSin').val() ?? '').trim(),
+            'SeccPlu': ($('#etqSeccPlu').val() ?? '').trim(),
+        };
+    }
+
+    const set_etiquetas_ch_payload = (etiquetas = {}) => {
+        $('#etqEmprSin').val(etiquetas.EmprSin ?? '');
+        $('#etqEmprPlu').val(etiquetas.EmprPlu ?? '');
+        $('#etqPlanSin').val(etiquetas.PlanSin ?? '');
+        $('#etqPlanPlu').val(etiquetas.PlanPlu ?? '');
+        $('#etqSucuSin').val(etiquetas.SucuSin ?? '');
+        $('#etqSucuPlu').val(etiquetas.SucuPlu ?? '');
+        $('#etqGrupSin').val(etiquetas.GrupSin ?? '');
+        $('#etqGrupPlu').val(etiquetas.GrupPlu ?? '');
+        $('#etqSectSin').val(etiquetas.SectSin ?? '');
+        $('#etqSectPlu').val(etiquetas.SectPlu ?? '');
+        $('#etqSeccSin').val(etiquetas.SeccSin ?? '');
+        $('#etqSeccPlu').val(etiquetas.SeccPlu ?? '');
+    }
+
+    const load_etiquetas_ch = async (data) => {
+        if (!data || !data.id) return;
+
+        set_etiquetas_ch_payload({});
+
+        const mssqlConnected = await test_conect({
+            host: data.host,
+            db: data.db,
+            user: data.user,
+            pass: data.pass,
+            id: data.id,
+        }, { returnBool: true, dontNotify: true });
+
+        if (!mssqlConnected) {
+            return;
+        }
+
+        try {
+            const res = await axios.get('../../app-data/_local/clientes/' + data.id + '/paragene', {
+                params: {
+                    recid: data.recid ?? ''
+                }
+            });
+
+            if ((res.data?.RESPONSE_CODE ?? '') !== '200 OK') {
+                throw new Error(res.data?.MESSAGE ?? 'No se pudieron obtener las Etiquetas CH');
+            }
+
+            const etiquetas = res.data?.DATA?.Etiquetas ?? {};
+            set_etiquetas_ch_payload(etiquetas);
+        } catch (err) {
+            notify(err.message ?? 'No se pudieron obtener las Etiquetas CH', 'warning', 5000, 'right');
+        }
+    }
+
     const edit_cliente = (data) => {
         ls.set(LS_ID_CLIENTE, data.id ?? '');
         if (!data) return;
@@ -146,6 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.stopImmediatePropagation();
         });
         $('#tab-ad').show();
+        $('#EtiquetasCH-tab').closest('li').show();
         $('#divTokenAPI').show();
         $('#modalFormCuenta').modal('show')
         $('#modalFormCuenta input').attr('autocomplete', 'on')
@@ -168,6 +237,8 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#baseDNAD').val(data.baseDNAD ?? '');
         $('#serviceUserAD').val(data.serviceUserAD ?? '');
         $('#servicePassAD').val(data.servicePassAD ?? '');
+
+        set_etiquetas_ch_payload(data ?? {});
 
         // Marcar estado de Active Directory
         const activeAD = data.activeAD ?? '0';
@@ -212,6 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#WebService').val(data.WebService);
         $('#ApiMobileHRP').val(data.ApiMobileHRP);
         $('#ApiMobileHRPApp').val(data.UrlAppMobile);
+        load_etiquetas_ch(data);
         // on change activeAD trigger change
         $('#activeAD').off('change').on('change', function () {
             $(this).trigger('change');
@@ -227,6 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
         axios.put('../../app-data/_local/clientes/' + ID, {
             'Nombre': $('#nombre').val(),
             'Ident': $('#ident').val(),
+            'Recid': $('#recid').val(),
             'Host': $('#hostCHWeb').val(),
             'DBHost': $('#host').val(),
             'DBName': $('#db').val(),
@@ -245,9 +318,14 @@ document.addEventListener('DOMContentLoaded', function () {
             'baseDNAD': $('#baseDNAD').val(),
             'serviceUserAD': $('#serviceUserAD').val(),
             'servicePassAD': $('#servicePassAD').val(),
+            'Etiquetas': get_etiquetas_ch_payload(),
         }).then(res => {
             $.notifyClose();
             if ((res.data.MESSAGE ?? '') == 'OK') {
+                const warningEtiquetas = (res.data.WARNING_ETIQUETAS ?? '').toString().trim();
+                if (warningEtiquetas) {
+                    notify(warningEtiquetas, 'warning', 7000, 'right')
+                }
                 notify('Cuenta actualizada correctamente', 'success', 5000, 'right')
                 dt_clientes("#tableClientes")
                 $('#modalFormCuenta').modal('hide')
@@ -310,6 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
         addCuenta?.addEventListener('click', (e) => {
             $('#divTokenAPI').hide();
             $('#tab-ad').hide();
+            $('#EtiquetasCH-tab').closest('li').hide();
             $('#myTab a:first').tab('show'); // seleccionar el primer tab
             $('#modalFormCuenta').modal('show');
             $('#modalFormCuenta input').attr('autocomplete', 'on');

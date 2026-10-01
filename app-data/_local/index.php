@@ -85,6 +85,43 @@ function normalize_local_api_arg_to_array($value): array
     return [];
 }
 
+function normalize_local_api_arg_to_string($value): string
+{
+    if (is_string($value) || is_numeric($value)) {
+        return trim((string) $value);
+    }
+
+    return '';
+}
+
+function extract_etiquetas_paragene_from_payload(array $payload): array
+{
+    $keys = ['EmprSin', 'EmprPlu', 'PlanSin', 'PlanPlu', 'SucuSin', 'SucuPlu', 'GrupSin', 'GrupPlu', 'SectSin', 'SectPlu', 'SeccSin', 'SeccPlu'];
+    $source = (isset($payload['Etiquetas']) && is_array($payload['Etiquetas'])) ? $payload['Etiquetas'] : $payload;
+
+    $etiquetas = [];
+    $missing = [];
+    $filled = 0;
+
+    foreach ($keys as $key) {
+        $value = normalize_local_api_arg_to_string($source[$key] ?? '');
+        $etiquetas[$key] = $value;
+
+        if ($value === '') {
+            $missing[] = $key;
+        } else {
+            $filled++;
+        }
+    }
+
+    return [
+        'etiquetas' => $etiquetas,
+        'missing' => $missing,
+        'filled' => $filled,
+        'total' => count($keys),
+    ];
+}
+
 function local_api(string $endpoint, $payload = [], $method = 'GET', $queryParams = [])
 {
     static $client = null;
@@ -103,6 +140,7 @@ function local_api(string $endpoint, $payload = [], $method = 'GET', $queryParam
     $payload = normalize_local_api_arg_to_array($argumento[1] ?? []);
     $method = strtoupper((string) ($argumento[2] ?? 'GET'));
     $queryParams = normalize_local_api_arg_to_array($argumento[3] ?? []);
+    $recid = normalize_local_api_arg_to_string($argumento[4] ?? '');
 
     try {
         if (!$endpoint) {
@@ -111,7 +149,7 @@ function local_api(string $endpoint, $payload = [], $method = 'GET', $queryParam
         if (!preg_match('#^https?://#i', $endpoint)) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . " Endpoint inválido: {$endpoint}");
         }
-        return $client->call($endpoint, $payload, $method, $queryParams);
+        return $client->call($endpoint, $payload, $method, $queryParams, $recid);
     } catch (\Exception $e) {
         error_log('local_api: ' . $e->getMessage());
         return false;
@@ -169,10 +207,81 @@ Flight::route('GET /usuarios', function () {
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
+Flight::route('GET /clientes/@id/paragene', function ($id) {
+    $queryParams = Flight::request()->query->getData() ?? [];
+    $recidCliente = normalize_local_api_arg_to_string($queryParams['recid'] ?? '');
+
+    if ($recidCliente === '') {
+        $urlCliente = URLAPI . "/api/_local/clientes?id={$id}";
+        $requestCliente = local_api($urlCliente, [], 'GET', []);
+        $arrayCliente = is_string($requestCliente) ? json_decode($requestCliente, true) : [];
+        $recidCliente = normalize_local_api_arg_to_string($arrayCliente['DATA'][0]['recid'] ?? '');
+    }
+
+    if ($recidCliente === '') {
+        Flight::json([
+            'RESPONSE_CODE' => '400 Bad Request',
+            'MESSAGE' => 'No se pudo resolver la cuenta para obtener Etiquetas CH',
+            'DATA' => [],
+        ], 400);
+        return;
+    }
+
+    $urlParagene = URLAPI . '/api/v1/parametros/paragene';
+    $requestParagene = local_api($urlParagene, [], 'GET', [], $recidCliente);
+    $arrayParagene = is_string($requestParagene) ? json_decode($requestParagene, true) : [];
+
+    if (!is_array($arrayParagene)) {
+        Flight::json([
+            'RESPONSE_CODE' => '500 Internal Server Error',
+            'MESSAGE' => 'No se pudo obtener respuesta de Etiquetas CH',
+            'DATA' => [],
+        ], 500);
+        return;
+    }
+
+    Flight::json($arrayParagene);
+});
 Flight::route('PUT /clientes/@id', function ($id) use ($requestData) {
     $url = URLAPI . "/api/_local/clientes/{$id}";
     $request = local_api($url, $requestData, 'PUT', []);
     $arrayData = json_decode($request, true);
+
+    if (!is_array($arrayData)) {
+        Flight::json($arrayData);
+        return;
+    }
+
+    $warningEtiquetas = '';
+
+    if (($arrayData['RESPONSE_CODE'] ?? '') === '200 OK') {
+        $etiquetasData = extract_etiquetas_paragene_from_payload($requestData);
+        $recidCliente = normalize_local_api_arg_to_string($requestData['Recid'] ?? ($requestData['AppCode'] ?? ''));
+
+        // Solo intentamos sincronizar si se cargaron campos de etiquetas en la edición.
+        if (($etiquetasData['filled'] ?? 0) > 0) {
+            if ($recidCliente === '') {
+                $warningEtiquetas = 'Cuenta actualizada. No se pudo sincronizar Etiquetas CH: recid de cuenta no disponible.';
+            } elseif (!empty($etiquetasData['missing'])) {
+                $warningEtiquetas = 'Cuenta actualizada. No se sincronizaron Etiquetas CH: faltan campos requeridos.';
+            } else {
+                $urlParagene = URLAPI . '/api/v1/parametros/paragene';
+                $payloadParagene = ['Etiquetas' => $etiquetasData['etiquetas']];
+                $requestParagene = local_api($urlParagene, $payloadParagene, 'PUT', [], $recidCliente);
+                $arrayParagene = is_string($requestParagene) ? json_decode($requestParagene, true) : [];
+
+                if (($arrayParagene['RESPONSE_CODE'] ?? '') !== '200 OK') {
+                    $msgParagene = $arrayParagene['MESSAGE'] ?? 'Error desconocido';
+                    $warningEtiquetas = 'Cuenta actualizada. No se pudieron sincronizar Etiquetas CH: ' . $msgParagene;
+                }
+            }
+        }
+    }
+
+    if ($warningEtiquetas !== '') {
+        $arrayData['WARNING_ETIQUETAS'] = $warningEtiquetas;
+    }
+
     Flight::json($arrayData);
 });
 Flight::route('POST /clientes', function () use ($requestData) {
