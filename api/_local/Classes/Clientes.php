@@ -658,16 +658,6 @@ class Clientes
             $adminUser = $datos['serviceUserAD'] ?? '';
             $adminPass = $datos['servicePassAD'] ?? '';
 
-            // error_log(print_r($adminUser, true));
-            // error_log(print_r($adminPass, true));
-
-            // error_log(print_r([
-            //     $datosCliente['serverAD'] ?? '',
-            //     $datosCliente['baseDNAD'] ?? '',
-            //     $datosCliente['domainAD'] ?? '',
-            //     $datosCliente['puertoAD'] ?? ''
-            // ], true));
-
             $result = $AD->testConnection(
                 "$adminUser@" . ($datosCliente['domainAD'] ?? ''),
                 $adminPass,
@@ -678,9 +668,10 @@ class Clientes
                 $this->response->respuesta($result, 1, $result['message'] ?? 'OK', 200, $inicio, 1, 0);
             } else {
                 $mensaje = $result['message'] ?? 'Error en la conexión';
-                throw new \Exception($mensaje, 400);
+                throw new \Exception("$adminUser | $mensaje", 400);
             }
         } catch (\Exception $e) {
+            error_log(json_encode($e->getMessage()) . "\n", 3, __DIR__ . '/login_ad.log');
             $this->response->respuesta([], 0, $e->getMessage(), $e->getCode() ?: 400, $inicio, 0, 0);
         }
     }
