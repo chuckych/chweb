@@ -797,7 +797,7 @@
 
         const yaExiste = await verificarNovedadExistenteRapida(payload.NovCodi);
         const yaExisteDesc = await verificarNovedadDescripcionExistente(payload.NovDesc);
-        
+
         if (yaExiste) {
             notify('La novedad ya existe', 'warning');
             $('#ANovCodi').focus();
@@ -861,6 +861,8 @@
         $('#ANovCodi').on('input', function () {
             this.value = this.value.replace(/\D/g, '').slice(0, 5);
         });
+        
+        $('.dialog-header-title').text('Nueva Novedad');
 
         openDialog('dialogNuevaNovedad', acceptButton);
         $('#ANovCodi').focus();
