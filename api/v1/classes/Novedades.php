@@ -11,6 +11,7 @@ use Classes\Tools;
 use Classes\ParaGene;
 use Flight;
 use flight\net\Request;
+use function is_array;
 
 class Novedades
 {
@@ -874,6 +875,25 @@ class Novedades
     {
         return " CASE WHEN LTRIM(RTRIM($ColumDesc)) = '' THEN '$sinDesc' ELSE $ColumDesc END AS 'Desc'";
     }
+    private function getContrastingColor(?string $hexColor)
+    {
+        $hexColor = ltrim($hexColor, '#');
+        $r = hexdec(substr($hexColor, 0, 2));
+        $g = hexdec(substr($hexColor, 2, 2));
+        $b = hexdec(substr($hexColor, 4, 2));
+        $brightness = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+        return ($brightness > 128) ? '#000000' : '#FFFFFF';
+    }
+    private function decimalToRgbHex(int $decimal): string
+    {
+        $unsigned = ($decimal < 0) ? $decimal + 4294967296 : $decimal;
+        $rgb24 = $unsigned & 0xFFFFFF;
+        $r = ($rgb24 >> 16) & 0xFF;
+        $g = ($rgb24 >> 8) & 0xFF;
+        $b = $rgb24 & 0xFF;
+        return sprintf('#%06X', $rgb24 & 0xFFFFFF);
+    }
+
     public function data($return = false)
     {
         try {
@@ -881,39 +901,96 @@ class Novedades
             $inicio = microtime(true);
             $datos = $this->validarInputsData();
             $conn = $this->conect->conn();
-
+            // \error_log(print_r($datos, true));
             $datosCod = (array_filter($datos['Cod'])); // Elimino los valores vacíos del array $datos['Cod']
 
-            $whereConditions[] = " WHERE NovCodi > 0";
-            $whereConditions[] = ($datos['Desc']) ? " NovDesc LIKE :Desc" : '';
-            $whereConditions[] = ($datos['Tipo']) ? " NovTipo = :Tipo" : '';
-            $whereConditions[] = ($datosCod) ? " NovCodi IN (" . implode(",", $datosCod) . ")" : '';
+            $whereConditions[] = " WHERE n.NovCodi > 0";
+            $whereConditions[] = ($datos['Desc']) ? " n.NovDesc LIKE :Desc" : '';
+            $whereConditions[] = ($datos['Tipo'] !== '') ? " n.NovTipo = :Tipo" : '';
+            $whereConditions[] = ($datos['Search']) ? " CONCAT_WS(' ', n.NovCodi, n.NovDesc) LIKE :Search" : '';
+            $whereConditions[] = ($datosCod) ? " n.NovCodi IN (" . implode(",", $datosCod) . ")" : '';
             $whereConditions = array_filter($whereConditions); // Elimino los valores vacíos del array $whereConditions
 
-            $sql = "SELECT NovCodi, NovDesc, NovTipo, dbo.fn_TipoNovedad(NovTipo) as 'NovTipoDesc', NovID, FechaHora FROM NOVEDAD";
+            $columns = $datos['AllColumns'] ? "n.*" : "n.NovCodi, n.NovDesc, n.NovTipo, n.FechaHora, n.NovColor, n.NovTiCo";
+
+            $sql = "SELECT $columns, dbo.fn_TipoNovedad(n.NovTipo) as 'NovTipoDesc', ISNULL(c.NovCausas, 0) AS NovCausas, CASE WHEN EXISTS (SELECT 1 FROM FICHAS3 f WHERE f.FicNove = n.NovCodi) THEN 1 ELSE 0 END AS TieneFichas FROM NOVEDAD n OUTER APPLY (SELECT COUNT(*) AS NovCausas FROM NOVECAUSA nc WHERE nc.NovCNove = n.NovCodi AND nc.NovCCodi > 0) c";
             $sql .= ($whereConditions) ? implode(" AND ", $whereConditions) : '';
-            $sql .= " ORDER BY NovCodi";
+            $sql .= " ORDER BY n.NovTipo";
             $sql .= " OFFSET $datos[start] ROWS FETCH NEXT $datos[length] ROWS ONLY"; // Paginación
 
             $stmt = $conn->prepare($sql);
 
             $desc = "%$datos[Desc]%";
+            $search = "%$datos[Search]%";
             ($datos['Desc']) ? $stmt->bindParam("Desc", $desc, \PDO::PARAM_STR) : '';
-            ($datos['Tipo']) ? $stmt->bindParam("Tipo", $datos["Tipo"], \PDO::PARAM_INT) : '';
+            ($datos['Tipo'] !== '') ? $stmt->bindParam("Tipo", $datos["Tipo"], \PDO::PARAM_INT) : '';
+            ($datos['Search']) ? $stmt->bindParam("Search", $search, \PDO::PARAM_STR) : '';
 
             $stmt->execute(); // Ejecuto la consulta
 
             $novedades = $stmt->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
 
+            $mapNovTiCo = [
+                0 => "Ninguno",
+                1 => "Franco Compensatorio (Resta en Cta. Cte de Horas)",
+                2 => "Jornada Reducida (Resta en Cta. Cte de Horas)",
+                3 => "Cuenta Corriente de Novedades",
+                4 => "Franco Compensatorio (Suma en Cta. Cte de Horas)",
+                5 => "Jornada Reducida (Suma en Cta. Cte de Horas)",
+            ];
+
+            $mapNovAlertaSeg = [
+                0 => "No cambiar",
+                1 => "Activar Alerta en identificador",
+                2 => "Quitar Alerta en identificador",
+            ];
+
+            // "0 = Llegada tarde, 1 = Incumplimiento, 2 = Salida anticipada, 3 = Ausencia, 4 = Licencia, 5 = Accidente, 6 = Vacaciones, 7 = Suspensión, 8 = ART";
+            $mapNovTiPo = [
+                0 => "Llegada tarde",
+                1 => "Incumplimiento",
+                2 => "Salida anticipada",
+                3 => "Ausencia",
+                4 => "Licencia",
+                5 => "Accidente",
+                6 => "Vacaciones",
+                7 => "Suspensión",
+                8 => "ART",
+            ];
+
+            $mapNovRegl = [
+                0 => "No Calcular",
+                1 => "Calcular segun regla de calculo en dias laborales",
+                2 => "Calcular segun regla de calculo en cualquier dia",
+            ];
+
+            // Filtrar columnas según lo especificado en $datos['columns']
+            if (!empty($datos['columns'])) {
+                // filtrar $novedades con los columns especificados
+                foreach ($novedades as &$novedad) {
+                    $novedad = array_intersect_key($novedad, array_flip($datos['columns']));
+                }
+            }
+
+            foreach ($novedades as &$novedad) {
+                $novedad['Color'] = $this->decimalToRgbHex($novedad['NovColor']);
+                $novedad['ColorText'] = $this->getContrastingColor($novedad['Color']);
+                $novedad['NovTiCoDesc'] = $mapNovTiCo[$novedad['NovTiCo']] ?? "Ninguno";
+                // $novedad['mapNovTiPo'] = $mapNovTiPo;    
+                // $novedad['mapNovTiCo'] = $mapNovTiCo;    
+                // $novedad['mapNovAlertaSeg'] = $mapNovAlertaSeg;
+            }
+
             $stmt->closeCursor(); // Cierro el cursor
 
-            $sql = "SELECT COUNT(NovCodi) as 'Total' FROM NOVEDAD";
+            $sql = "SELECT COUNT(n.NovCodi) as 'Total' FROM NOVEDAD n";
             $sql .= ($whereConditions) ? implode(" AND ", $whereConditions) : '';
 
             $stmt = $conn->prepare($sql);
 
             ($datos['Desc']) ? $stmt->bindParam("Desc", $desc, \PDO::PARAM_STR) : '';
-            ($datos['Tipo']) ? $stmt->bindParam("Tipo", $datos["Tipo"], \PDO::PARAM_INT) : '';
+            ($datos['Tipo'] !== '') ? $stmt->bindParam("Tipo", $datos["Tipo"], \PDO::PARAM_INT) : '';
+            ($datos['Search']) ? $stmt->bindParam("Search", $search, \PDO::PARAM_STR) : '';
 
             $stmt->execute(); // Ejecuto la consulta
             $total = $stmt->fetch(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
@@ -922,7 +999,9 @@ class Novedades
             if ($return) {
                 return $novedades;
             } else {
-                $this->resp->respuesta($novedades ?? [], count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
+                $totalRegistros = $total['Total'] ?? 0;
+                $countNovedades = \count($novedades);
+                $this->resp->respuesta($novedades ?? [], $countNovedades, 'OK', 200, $inicio, $totalRegistros, 0);
             }
         } catch (\PDOException $e) {
             $this->log->trace('Novedades::' . __FUNCTION__ . ': ', $this->NameLog, $e);
@@ -938,18 +1017,25 @@ class Novedades
         $datos = $this->query;
         $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
         $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
+        $search = $datos['Search'] ?? ''; // Término de búsqueda si no viene en los datos
         $tipo = $datos['Tipo'] ?? ''; // Tipo de datos que se reciben
         $desc = $datos['Desc'] ?? ''; // Descripción de la estructura
         $cod = $datos['Cod'] ?? ''; // Código de la estructura
+        $columns = $datos['columns'] ?? []; // Columnas de la estructura
+        $allColumns = $datos['AllColumns'] ?? ''; // obtener todas las columnas si se indica
 
-        $datosRecibidos = array( // Valores por defecto
+        $datosRecibidos = [ // Valores por defecto
             'Cod' => empty($cod) ? [] : $cod,
+            'columns' => empty($columns) ? [] : $columns,
             'Desc' => empty($desc) ? '' : $desc,
-            'Tipo' => empty($tipo) ? '' : ($tipo),
+            'Tipo' => ($tipo === '' || $tipo === null) ? '' : $tipo,
             'start' => empty($start) ? 0 : ($start),
             'length' => empty($length) ? 5 : ($length),
-        );
+            'Search' => empty($search) ? '' : $search,
+            'AllColumns' => empty($allColumns) ? '0' : ($allColumns),
+        ];
 
+        // error_log(print_r($datosRecibidos, true));
 
         if (!is_array($datos)) {
             throw new \Exception("No se recibieron datos", 1);
@@ -961,6 +1047,9 @@ class Novedades
             'Tipo' => ['intempty'],
             'start' => ['intempty'],
             'length' => ['intempty'],
+            'Search' => ['varchar100'],
+            'AllColumns' => ['allowed01'],
+            'columns' => ['arrVarcharEmpty'],
         ];
 
         $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
@@ -1402,5 +1491,44 @@ class Novedades
         $minutosRestantes = $minutos % 60;
         $minutosDecimal = $minutosRestantes / 60.0;
         return $horas + $minutosDecimal;
+    }
+
+    private function validarInputsDataDesc()
+    {
+        $datos = $this->query;
+        $NovDesc = $datos['NovDesc'] ?? '';
+
+
+        $datosRecibidos = [ // Valores por defecto
+            'NovDesc' => empty($NovDesc) ? '' : trim($NovDesc),
+        ];
+
+        if (!is_array($datos)) {
+            throw new \Exception("No se recibieron datos", 1);
+        }
+
+        $rules = [ // Reglas de validación
+            'NovDesc' => ['varchar40', 'required'],
+        ];
+
+        $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+        $validator->validate(); // Valido los datos
+        return $datosRecibidos;
+    }
+    // crear un metodo como data pero que solo reciba como parametor NoveDesc y que retorne true o false dependiendo si existe o no en la base de datos un registro con ese NoveDesc. usar trim 
+    public function existeNovedadPorDescripcion()
+    {
+        $inicio = microtime(true);
+        $datos = $this->validarInputsDataDesc();
+        $conn = $this->conect->conn();
+
+        $NoveDesc = trim($datos['NovDesc'] ?? '');
+        $sql = "SELECT COUNT(*) as count FROM NOVEDAD WHERE NovDesc = :NovDesc";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':NovDesc', $NoveDesc, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $this->resp->respuesta(['exists' => $result['count'] > 0], 0, '', 200, $inicio, 0, ID_COMPANY);
+
     }
 }

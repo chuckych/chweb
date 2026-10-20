@@ -128,6 +128,10 @@ $mapConfiguracion = [
         'url' => '/' . HOMEHOST . '/configuracion/rotaciones/',
         'title' => 'Rotaciones',
     ],
+    'Novedades Config' => [
+        'url' => '/' . HOMEHOST . '/configuracion/novedades/',
+        'title' => 'Novedades',
+    ],
 ];
 
 ?>
@@ -330,6 +334,7 @@ $mapConfiguracion = [
                                         && ($Modulo2 != 'Estructura')
                                         && ($Modulo2 != 'Horarios Config')
                                         && ($Modulo2 != 'Rotación Config')
+                                        && ($Modulo2 != 'Novedades Config')
                                         && ($Modulo2 != 'Mobile HRP')
                                         && ($Modulo2 != 'Dashboard')
                                         && ($Modulo2 != 'Horarios')

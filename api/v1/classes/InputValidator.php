@@ -3,10 +3,9 @@
 namespace Classes;
 
 use DateTime;
-
-class ValidationException extends \Exception
-{
-}
+use function in_array;
+use function is_array;
+use function is_string;
 
 class InputValidator
 {
@@ -84,14 +83,20 @@ class InputValidator
             'allowed012' => "El campo $field debe tener un valor permitido. [0, 1, 2]",
             'allowed1a7' => "El campo $field debe tener un valor permitido. [1, 2, 3, 4, 5, 6, 7]",
             'allowed0a3' => "El campo $field debe tener un valor permitido. [0, 1, 2, 3]",
+            'allowed0a5' => "El campo $field debe tener un valor permitido. [0, 1, 2, 3, 4, 5]",
             'allowed0a100' => "El campo $field debe tener un valor permitido. [0, 1, 2, ..., 100]",
+            'allowed0a9999' => "El campo $field debe tener un valor permitido. [0, 1, 2, ..., 9999]",
+            'allowed0a999' => "El campo $field debe tener un valor permitido. [0, 1, 2, ..., 999]",
+            'allowed1a12' => "El campo $field debe tener un valor permitido. [1, 2, 3, ..., 12]",
             'arrAllowed01' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
             'arrAllowed01Opt' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
             'arrAllowed012' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2]",
             'arrAllowed1a7' => "El campo $field debe ser un arreglo con valores permitidos. [1, 2, 3, 4, 5, 6, 7]",
+            'arrAllowed0a8' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2, 3, 4, 5, 6, 7, 8]",
             'arrInt' => "El campo $field debe ser un arreglo de números enteros",
             'arrSmallint' => "El campo $field debe ser un arreglo de números enteros y menor a 32767",
             'arrSmallintEmpty' => "El campo $field debe ser un arreglo de números y menor a 32767",
+            'arrVarcharEmpty' => "El campo $field debe ser un arreglo de cadenas de texto o vacío",
             'boolean' => "El campo $field debe ser un valor booleano",
             'date' => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd",
             'futuredate' => "El campo $field debe ser una fecha futura válida con formato yyyy-mm-dd",
@@ -107,10 +112,12 @@ class InputValidator
             'required' => "El campo $field es requerido",
             'requiredPermittedCero' => "El campo $field es requerido, pero se permite el valor cero",
             'smallint' => "El campo $field debe ser un número entero y menor a 32767",
+            'tiponov' => "El campo $field debe ser un valor permitido: " . $this->validTipoNov(),
             'smallintEmpty' => "El campo $field debe ser un número entero y menor a 32767 o vacío",
             'time' => "El campo $field debe ser una hora válida con formato hh:mm",
             'timeEmpty' => "El campo $field debe ser una hora válida con formato hh:mm o vacío",
             'varchar1' => "El campo $field debe tener una longitud menor a 1 caracteres",
+            'varchar3' => "El campo $field debe tener una longitud menor a 3 caracteres",
             'varchar10' => "El campo $field debe tener una longitud menor a 10 caracteres",
             'varchar100' => "El campo $field debe tener una longitud menor a 100 caracteres",
             'varchar200' => "El campo $field debe tener una longitud menor a 200 caracteres",
@@ -133,18 +140,19 @@ class InputValidator
     {
         $value = $this->data[$field] ?? null;
 
-        $smallintOpt = array(
-            'options' => array(
+        $smallintOpt = [
+            'options' => [
                 'min_range' => 0,
                 'max_range' => 32767,
-            ),
-        );
-        $intOpt = array(
-            'options' => array(
+            ],
+        ];
+        $intOpt = [
+            'options' => [
                 'min_range' => 1,
                 'max_range' => 2147483647,
-            ),
-        );
+            ],
+        ];
+
         switch ($rule) {
             case 'required':
                 if (empty($value)) {
@@ -212,73 +220,78 @@ class InputValidator
                 }
                 break;
             case 'varchar40':
-                // if (strlen($value) > 40) {
-                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                // }
                 if ($value !== null && strlen($value) > 40) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varchar10':
-                // if (strlen($value) > 10) {
-                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                // }
                 if ($value !== null && strlen($value) > 10) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varchar20':
-                // if (strlen($value) > 20) {
-                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                // }
                 if ($value !== null && strlen($value) > 20) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varchar1':
-                // if (strlen($value) > 1) {
-                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                // }
                 if ($value !== null && strlen($value) > 1) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
+                break;
+            case 'varchar3':
+                if ($value !== null && strlen($value) > 3) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
             case 'varchar100':
-                // if (strlen($value) > 100) {
-                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                // }
                 if ($value !== null && strlen($value) > 100) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varchar200':
-                // if (strlen($value) > 200) {
-                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                // }
                 if ($value !== null && strlen($value) > 200) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varcharMax':
-                // if (strlen($value) > 2147483647) {
-                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                // }
                 if ($value !== null && strlen($value) > 2147483647) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
 
             case 'allowed012':
-                if (!in_array($value, ['0', '1', '2'])) {
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(0, 2), true)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
+            case 'allowed0a9999':
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(0, 9999), true)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
+            case 'allowed0a999':
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(0, 999), true)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
+            case 'allowed1a12':
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(1, 12), true)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'allowed01':
-                if ($value && !in_array($value, ['0', '1'])) {
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(0, 1), true)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'arrAllowed012':
-                $value = $value ?? [];
+                $value ??= [];
                 if (!is_array($value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
@@ -289,28 +302,36 @@ class InputValidator
                 }
                 break;
             case 'arrAllowed1a7':
-                $valor = $value ?? [];
-                if (!is_array($valor)) {
+                $value ??= [];
+                if (!is_array($value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
-                foreach ($valor as $val) {
+                foreach ($value as $val) {
                     if (!in_array($val, ['1', '2', '3', '4', '5', '6', '7'])) {
                         throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                     }
                 }
                 break;
             case 'allowed0a100':
-                if ($value && (!is_numeric($value) || $value < 0 || $value > 100)) {
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(0, 100), true)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'allowed0a3':
-                if ($value && (!is_numeric($value) || $value < 0 || $value > 3)) {
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(0, 3), true)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
+            case 'allowed0a5':
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(0, 5), true)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'arrAllowed01':
-                $value = $value ?? [];
+                $value ??= [];
                 if (!is_array($value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
@@ -321,7 +342,7 @@ class InputValidator
                 }
                 break;
             case 'arrAllowed01Opt':
-                $value = $value ?? [];
+                $value ??= [];
                 foreach ($value as $val) {
                     if (!in_array($val, ['0', '1'])) {
                         throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
@@ -333,13 +354,19 @@ class InputValidator
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
+            case 'tiponov':
+                $valueInt = filter_var($value, FILTER_VALIDATE_INT);
+                if ($valueInt === false || !in_array($valueInt, range(0, 8), true)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
             case 'smallintEmpty':
                 if ($value && filter_var($value, FILTER_VALIDATE_INT, $smallintOpt) === false) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'arrSmallint':
-                $value = $value ?? [];
+                $value ??= [];
                 if (!is_array($value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
@@ -350,10 +377,20 @@ class InputValidator
                 }
                 break;
             case 'arrSmallintEmpty':
-                $value = $value ?? [];
+                $value ??= [];
                 if (is_array($value)) {
                     foreach ($value as $val) {
                         if ($val && filter_var($val, FILTER_VALIDATE_INT, $smallintOpt) === false) {
+                            throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                        }
+                    }
+                }
+                break;
+            case 'arrVarcharEmpty':
+                $value ??= [];
+                if (is_array($value)) {
+                    foreach ($value as $val) {
+                        if ($val && !is_string($val)) {
                             throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                         }
                     }
@@ -372,7 +409,7 @@ class InputValidator
                 }
                 break;
             case 'arrInt':
-                $value = $value ?? [];
+                $value ??= [];
                 if (!is_array($value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
@@ -421,5 +458,15 @@ class InputValidator
             }
         }
         return false;
+    }
+
+    /**
+     * Summary of validTipoNov
+     * Retorna una cadena con las opciones de tipo de novedad en el formato "clave = valor" separadas por comas. Ejemplo: "0 = Llegada tarde, 1 = Incumplimiento, 2 = Salida anticipada, 3 = Ausencia, 4 = Licencia, 5 = Accidente, 6 = Vacaciones, 7 = Suspensión, 8 = ART"
+     * @return string
+     */
+    private function validTipoNov()
+    {
+        return "0 = Llegada tarde, 1 = Incumplimiento, 2 = Salida anticipada, 3 = Ausencia, 4 = Licencia, 5 = Accidente, 6 = Vacaciones, 7 = Suspensión, 8 = ART";
     }
 }

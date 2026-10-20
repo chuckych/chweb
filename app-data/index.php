@@ -1849,7 +1849,7 @@ Flight::route('POST /ws_procesar', function () {
                 ];
             }
         }
-        
+
         if ($payload['procesar_por'] === '1') {
             // crear un string a partir del payload con su clave valor separado por comas, omitiendo la clave Legajos, fechaDesde y FechaHasta
             $datos = [];
@@ -1940,7 +1940,7 @@ Flight::route('POST /cierres/generar', function () {
                 ];
             }
         }
-        
+
         // if ($payload['procesar_por'] === '1') {
         //     // crear un string a partir del payload con su clave valor separado por comas, omitiendo la clave Legajos, fechaDesde y FechaHasta
         //     $datos = [];
@@ -2032,7 +2032,7 @@ Flight::route('POST /ws_fichar_horario', function () {
                 ];
             }
         }
-        
+
         if ($payload['procesar_por'] === '1') {
             // crear un string a partir del payload con su clave valor separado por comas, omitiendo la clave Legajos, FechaDesde y FechaHasta
             $datos = [];
@@ -2058,63 +2058,63 @@ Flight::route('POST /ws_fichar_horario', function () {
 
 Flight::route('POST|GET /custom/@file', function ($file) {
     $mapFiles = [
-        'arrpersonal'       => __DIR__ . '/../novedades/array_personal.php',
-        'peremp'            => __DIR__ . '/../data/getPerEmpresas.php',
-        'perplan'           => __DIR__ . '/../data/getPerPlantas.php',
-        'persect'           => __DIR__ . '/../data/getPerSectores.php',
-        'persecc'           => __DIR__ . '/../data/getPerSecciones.php',
-        'pergrup'           => __DIR__ . '/../data/getPerGrupos.php',
-        'persucu'           => __DIR__ . '/../data/getPerSucursales.php',
-        'cierre'            => __DIR__ . '/../data/GetCierre.php',
-        'tipo-horas'        => __DIR__ . '/../data/getListTipoHora.php',
-        'novedades'         => __DIR__ . '/../data/getListNovedades.php',
-        'novecausa'         => __DIR__ . '/../data/getListNoveCausa.php',
-        'onovedades'        => __DIR__ . '/../data/getListOtrasNovedades.php',
-        'proc-proceso'      => __DIR__ . '/../procesar/procesando.php',
-        'nov-getper'        => __DIR__ . '/../novedades/GetPersonal.php',
-        'nov-getnove'       => __DIR__ . '/../novedades/GetNovedades.php',
+        'arrpersonal' => __DIR__ . '/../novedades/array_personal.php',
+        'peremp' => __DIR__ . '/../data/getPerEmpresas.php',
+        'perplan' => __DIR__ . '/../data/getPerPlantas.php',
+        'persect' => __DIR__ . '/../data/getPerSectores.php',
+        'persecc' => __DIR__ . '/../data/getPerSecciones.php',
+        'pergrup' => __DIR__ . '/../data/getPerGrupos.php',
+        'persucu' => __DIR__ . '/../data/getPerSucursales.php',
+        'cierre' => __DIR__ . '/../data/GetCierre.php',
+        'tipo-horas' => __DIR__ . '/../data/getListTipoHora.php',
+        'novedades' => __DIR__ . '/../data/getListNovedades.php',
+        'novecausa' => __DIR__ . '/../data/getListNoveCausa.php',
+        'onovedades' => __DIR__ . '/../data/getListOtrasNovedades.php',
+        'proc-proceso' => __DIR__ . '/../procesar/procesando.php',
+        'nov-getper' => __DIR__ . '/../novedades/GetPersonal.php',
+        'nov-getnove' => __DIR__ . '/../novedades/GetNovedades.php',
         'nov-getnove-fecha' => __DIR__ . '/../novedades/GetNovedadesFecha.php',
-        'nov-getfechas'     => __DIR__ . '/../novedades/GetFechas.php',
-        'nov-modal-editar'  => __DIR__ . '/../novedades/modal_editar.html',
-        'hor-per-fichas1'   => __DIR__ . '/../horas/GetPersonalFichas1.php',
-        'hor-fechas'        => __DIR__ . '/../horas/GetFechasFichas1.php',
-        'hor-horas'         => __DIR__ . '/../horas/GetHoras.php',
-        'hor-horas-fecha'   => __DIR__ . '/../horas/GetHorasFecha.php',
-        'hor-excel'         => __DIR__ . '/../horas/HorXLS.php',
-        'gen-per-fichas'    => __DIR__ . '/../general/GetPersonalFichas.php',
+        'nov-getfechas' => __DIR__ . '/../novedades/GetFechas.php',
+        'nov-modal-editar' => __DIR__ . '/../novedades/modal_editar.html',
+        'hor-per-fichas1' => __DIR__ . '/../horas/GetPersonalFichas1.php',
+        'hor-fechas' => __DIR__ . '/../horas/GetFechasFichas1.php',
+        'hor-horas' => __DIR__ . '/../horas/GetHoras.php',
+        'hor-horas-fecha' => __DIR__ . '/../horas/GetHorasFecha.php',
+        'hor-excel' => __DIR__ . '/../horas/HorXLS.php',
+        'gen-per-fichas' => __DIR__ . '/../general/GetPersonalFichas.php',
         'gen-fechas-fichas' => __DIR__ . '/../general/GetFechasFichas.php',
-        'gen-general'       => __DIR__ . '/../general/GetGeneral.php',
+        'gen-general' => __DIR__ . '/../general/GetGeneral.php',
         'gen-general-fecha' => __DIR__ . '/../general/GetGeneralFecha.php',
-        'gen-citacion'      => __DIR__ . '/../general/GetCitacion.php',
-        'gen-fichas2'       => __DIR__ . '/../general/GetFichas2.php',
-        'gen-fichadas'      => __DIR__ . '/../general/GetFichadas.php',
-        'gen-novedades'     => __DIR__ . '/../general/GetNovedades.php',
-        'gen-onovedades'    => __DIR__ . '/../general/GetOtrasNovedades.php',
-        'gen-horas'         => __DIR__ . '/../general/GetHoras.php',
-        'gen-sel-emp'       => __DIR__ . '/../general/getSelect/getEmpFichas.php',
-        'gen-sel-pla'       => __DIR__ . '/../general/getSelect/getPlanFichas.php',
-        'gen-sel-sec'       => __DIR__ . '/../general/getSelect/getSectFichas.php',
-        'gen-sel-se2'       => __DIR__ . '/../general/getSelect/getSec2Fichas.php',
-        'gen-sel-gru'       => __DIR__ . '/../general/getSelect/getGrupFichas.php',
-        'gen-sel-suc'       => __DIR__ . '/../general/getSelect/getSucFichas.php',
-        'gen-sel-leg'       => __DIR__ . '/../general/getSelect/getLegajosFichas.php',
-        'gen-sel-legdeha'   => __DIR__ . '/../general/getSelect/getLegajosFichasDeHa.php',
-        'gen-sel-tipoper'   => __DIR__ . '/../general/getSelect/getTipoPerFichas.php',
+        'gen-citacion' => __DIR__ . '/../general/GetCitacion.php',
+        'gen-fichas2' => __DIR__ . '/../general/GetFichas2.php',
+        'gen-fichadas' => __DIR__ . '/../general/GetFichadas.php',
+        'gen-novedades' => __DIR__ . '/../general/GetNovedades.php',
+        'gen-onovedades' => __DIR__ . '/../general/GetOtrasNovedades.php',
+        'gen-horas' => __DIR__ . '/../general/GetHoras.php',
+        'gen-sel-emp' => __DIR__ . '/../general/getSelect/getEmpFichas.php',
+        'gen-sel-pla' => __DIR__ . '/../general/getSelect/getPlanFichas.php',
+        'gen-sel-sec' => __DIR__ . '/../general/getSelect/getSectFichas.php',
+        'gen-sel-se2' => __DIR__ . '/../general/getSelect/getSec2Fichas.php',
+        'gen-sel-gru' => __DIR__ . '/../general/getSelect/getGrupFichas.php',
+        'gen-sel-suc' => __DIR__ . '/../general/getSelect/getSucFichas.php',
+        'gen-sel-leg' => __DIR__ . '/../general/getSelect/getLegajosFichas.php',
+        'gen-sel-legdeha' => __DIR__ . '/../general/getSelect/getLegajosFichasDeHa.php',
+        'gen-sel-tipoper' => __DIR__ . '/../general/getSelect/getTipoPerFichas.php',
         'gen-sel-novedades' => __DIR__ . '/../general/getSelect/getNovNovedades.php',
-        'gen-post'          => __DIR__ . '/../general/insert.php',
-        'onov-getleg'       => __DIR__ . '/../informes/inforonov/getSelect/getLegajosFichas.php',
-        'onov-getemp'       => __DIR__ . '/../informes/inforonov/getSelect/getEmpFichas.php',
-        'onov-getnove'      => __DIR__ . '/../informes/inforonov/getSelect/getFicNove.php',
-        'onov-getgru'       => __DIR__ . '/../informes/inforonov/getSelect/getGrupFichas.php',
-        'onov-getpla'       => __DIR__ . '/../informes/inforonov/getSelect/getPlanFichas.php',
-        'onov-getsec2'      => __DIR__ . '/../informes/inforonov/getSelect/getSec2Fichas.php',
-        'onov-getsec'       => __DIR__ . '/../informes/inforonov/getSelect/getSectFichas.php',
-        'onov-getsuc'       => __DIR__ . '/../informes/inforonov/getSelect/getSucFichas.php',
-        'onov-gettipoper'   => __DIR__ . '/../informes/inforonov/getSelect/getTipoPerFichas.php',
-        'onov-reporte'      => __DIR__ . '/../informes/inforonov/reporte/reporteonov.php',
-        'session'           => __DIR__ . '/../sesion.php',
-        'status_ws'         => __DIR__ . '/../status_ws.php',
-        'dt-es-2'           => __DIR__ . '/../js/DataTableSpanishShort2.json',
+        'gen-post' => __DIR__ . '/../general/insert.php',
+        'onov-getleg' => __DIR__ . '/../informes/inforonov/getSelect/getLegajosFichas.php',
+        'onov-getemp' => __DIR__ . '/../informes/inforonov/getSelect/getEmpFichas.php',
+        'onov-getnove' => __DIR__ . '/../informes/inforonov/getSelect/getFicNove.php',
+        'onov-getgru' => __DIR__ . '/../informes/inforonov/getSelect/getGrupFichas.php',
+        'onov-getpla' => __DIR__ . '/../informes/inforonov/getSelect/getPlanFichas.php',
+        'onov-getsec2' => __DIR__ . '/../informes/inforonov/getSelect/getSec2Fichas.php',
+        'onov-getsec' => __DIR__ . '/../informes/inforonov/getSelect/getSectFichas.php',
+        'onov-getsuc' => __DIR__ . '/../informes/inforonov/getSelect/getSucFichas.php',
+        'onov-gettipoper' => __DIR__ . '/../informes/inforonov/getSelect/getTipoPerFichas.php',
+        'onov-reporte' => __DIR__ . '/../informes/inforonov/reporte/reporteonov.php',
+        'session' => __DIR__ . '/../sesion.php',
+        'status_ws' => __DIR__ . '/../status_ws.php',
+        'dt-es-2' => __DIR__ . '/../js/DataTableSpanishShort2.json',
     ];
     if (isset($mapFiles[$file])) {
         require $mapFiles[$file];
@@ -2820,6 +2820,187 @@ Flight::route('POST /horario/importar-xls', function () {
         Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
     }
 });
+
+Flight::route('POST /datatables/novedades', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+    $draw = $payloadRaw['draw'] ?? 0;
+    $columns = array_column($payloadRaw['columns'] ?? [], 'data');
+    $columns = array_filter($columns);
+    $NovTipo = $payloadRaw['NovTipo'] ?? '';
+
+    $payload = [
+        'Search' => $payloadRaw['search']['value'] ?? '',
+        'start' => $payloadRaw['start'] ?? 0,
+        'length' => $payloadRaw['length'] ?? 9999,
+        'columns' => $columns ?? [],
+        'Cod[]' => $payloadRaw['NovCodi'] ?? [],
+        'Tipo' => ($NovTipo === '' || $NovTipo === null) ? '' : $NovTipo,
+        'AllColumns' => $payloadRaw['AllColumns'] ?? 0,
+    ];
+
+
+    if (isset($payloadRaw['NovCodi']) && is_array($payloadRaw['NovCodi'])) {
+        unset($payload['Cod[]']);
+        $payload['Cod'] = $payloadRaw['NovCodi'];
+    }
+
+    // error_log(json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    $endpoint = URLAPI . "/api/v1/novedades/data";
+    $novedades = ch_api($endpoint, [], 'GET', $payload);
+    $novedades = json_decode($novedades ?? [], true);
+    $result = $novedades ?? [];
+    $jsonData = [
+        'draw' => $draw,
+        'recordsFiltered' => $result['COUNT'] ?? 0,
+        'recordsTotal' => $result['TOTAL'] ?? 0,
+        'data' => $result['DATA'] ?? [],
+    ];
+    Flight::json($jsonData ?? []);
+});
+
+Flight::route('POST /novedad/existe', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+
+    $payload = [
+        'NovDesc' => $payloadRaw['NovDesc'] ?? '',
+    ];
+
+    $endpoint = URLAPI . "/api/v1/novedades/existe";
+    $novedades = ch_api($endpoint, [], 'GET', $payload);
+    $novedades = json_decode($novedades ?? [], true);
+    $result = $novedades ?? [];
+    Flight::json($result ?? []);
+});
+
+Flight::route('GET /novecausa/@novCNove', function ($novCNove) {
+    $endpoint = URLAPI . "/api/v1/novecausa/{$novCNove}";
+    $response = ch_api($endpoint, [], 'GET', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+Flight::route('POST /novecausa', function () {
+    $endpoint = URLAPI . "/api/v1/novecausa";
+    $data = Flight::request()->data ?? [];
+    $data = method_exists($data, 'getData') ? $data->getData() : (array) $data;
+    $response = ch_api($endpoint, $data, 'POST', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+Flight::route('DELETE /novecausa/@novCNove/@novCCodi', function ($novCNove, $novCCodi) {
+    $endpoint = URLAPI . "/api/v1/novecausa/{$novCNove}/{$novCCodi}";
+    $response = ch_api($endpoint, [], 'DELETE', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+    Flight::json($result);
+});
+Flight::route('GET /novedad1/@novCodi', function ($novCodi) {
+    $endpoint = URLAPI . "/api/v1/novedad1/{$novCodi}";
+    $response = ch_api($endpoint, [], 'GET', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+Flight::route('POST /novedad1', function () {
+    $endpoint = URLAPI . "/api/v1/novedad1";
+    $data = Flight::request()->data ?? [];
+    $data = method_exists($data, 'getData') ? $data->getData() : (array) $data;
+    $response = ch_api($endpoint, $data, 'POST', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+Flight::route('POST /novedad-config', function () {
+    $endpoint = URLAPI . "/api/v1/novedad";
+    $data = Flight::request()->data ?? [];
+    $data = method_exists($data, 'getData') ? $data->getData() : (array) $data;
+
+    $user = $_SESSION['NOMBRE_SESION'] ?? '';
+    if (isset($data[0]) && is_array($data[0])) {
+        foreach ($data as &$item) {
+            if (!isset($item['User']) || $item['User'] === '') {
+                $item['User'] = $user;
+            }
+        }
+        unset($item);
+    } else {
+        if (!isset($data['User']) || $data['User'] === '') {
+            $data['User'] = $user;
+        }
+    }
+
+    $response = ch_api($endpoint, $data, 'POST', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+Flight::route('DELETE /novedad-config/@novCodi', function ($novCodi) {
+    $endpoint = URLAPI . "/api/v1/novedad/{$novCodi}";
+    $data = [
+        'User' => $_SESSION['NOMBRE_SESION'] ?? '',
+    ];
+    $response = ch_api($endpoint, $data, 'DELETE', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+Flight::route('DELETE /novedad1/@novCodi/@novItem', function ($novCodi, $novItem) {
+    $endpoint = URLAPI . "/api/v1/novedad1/{$novCodi}/{$novItem}";
+    $response = ch_api($endpoint, [], 'DELETE', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+
+Flight::route('GET /novedad2/@novCodi', function ($novCodi) {
+    $endpoint = URLAPI . "/api/v1/novedad2/{$novCodi}";
+    $response = ch_api($endpoint, [], 'GET', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+
+Flight::route('POST /novedad2', function () {
+    $endpoint = URLAPI . "/api/v1/novedad2";
+    $data = Flight::request()->data ?? [];
+    $data = method_exists($data, 'getData') ? $data->getData() : (array) $data;
+
+    if (!isset($data['User']) || $data['User'] === '') {
+        $data['User'] = $_SESSION['NOMBRE_SESION'] ?? '';
+    }
+
+    $response = ch_api($endpoint, $data, 'POST', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+
+Flight::route('DELETE /novedad2/@novCodi/@novHora', function ($novCodi, $novHora) {
+    $endpoint = URLAPI . "/api/v1/novedad2/{$novCodi}/{$novHora}";
+    $data = [
+        'User' => $_SESSION['NOMBRE_SESION'] ?? '',
+    ];
+    $response = ch_api($endpoint, $data, 'DELETE', []);
+    $response = json_decode($response ?? '[]', true);
+    $result = is_array($response) ? $response : [];
+
+    Flight::json($result);
+});
+
 
 Flight::map('Forbidden', function ($mensaje) {
     Flight::jsonHalt(['status' => 'error', 'message' => $mensaje], 403);

@@ -1147,3 +1147,13 @@ if ($verDB < 20260723) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog);
 }
+
+if ($verDB < 20261012) {
+    $verDB = 20261012; // nueva version de la DB. modificar también en la función verDBLocal() del archivo de funciones.php
+    insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, descripcion, orden, estado, idtipo) VALUES ('52', 'N0v3d4d3', 'Novedades Config', 'Configuración de Novedades', 14, '0', 3)");
+    fileLog("Se inserto el modulo: \"Novedades Config\"", $pathLog); // escribir en el log
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
+    updateModulosCache();
+    fileLog("Se actualizó la cache de módulos", $pathLog);
+}

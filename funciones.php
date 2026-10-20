@@ -37,7 +37,7 @@ function version($html = false)
 
 function verDBLocal(): int
 {
-    return 20260723; // Version de la base de datos local
+    return 20261012; // Version de la base de datos local
 }
 function checkDBIntegrity()
 {
@@ -1663,7 +1663,7 @@ function nov_cta_cte()
             'peri' => false
         ];
     }
-    return $array;
+    return $array ?? [];
 }
 function super_unique($array, $key)
 {
@@ -2972,7 +2972,7 @@ function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
         $arrayFechas[] = array('FechaIni' => FechaFormatVar($fecha1, 'd-m-Y'), 'FechaFin' => FechaFormatVar($fecha2, 'd-m-Y'));
         $fecha_inicial = date("Ymd", strtotime($fecha2 . "+ 1 days"));
     }
-    return $arrayFechas;
+    return $arrayFechas ?? [];
 }
 // Obtiene la version de la base de datos
 function getVerDBCH_old($link)
@@ -3257,7 +3257,7 @@ function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objet
     foreach ($r as $key => $value) {
         $v[] = $value;
     }
-    return $v;
+    return $v ?? [];
 }
 function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto 
 {
@@ -3392,7 +3392,7 @@ function write_apiKeysFile()
         ];
     }
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";
-    foreach ($assoc as $key => $elem) {
+    foreach ($assoc ?? [] as $key => $elem) {
         $content .= "[" . $key . "]\n";
         foreach ($elem as $key2 => $elem2) {
             if (is_array($elem2)) {

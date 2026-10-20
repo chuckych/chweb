@@ -501,13 +501,14 @@ function select2Ajax(selector, placeholder, clear, selclose, url) {
         }
     })
 }
-function select2Simple(selector, placeholder, clear, selclose, width = '') {
+function select2Simple(selector, placeholder, clear, selclose, width = '', parent = 'body') {
     $(selector).select2({
         placeholder: $(selector).data("label") || placeholder,
         minimumResultsForSearch: 10,
         allowClear: clear,
         selectOnClose: selclose,
-        width: width
+        width: width, 
+        dropdownParent: parent
     })
 }
 function Select2Value(id, text, selector) {
@@ -1332,7 +1333,7 @@ const DT_SPANISH = {
     "sLengthMenu": "_MENU_",
     "sZeroRecords": "No se encontraron resultados",
     "sEmptyTable": "No se encontraron resultados",
-    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+    "sInfo": "Mostrando registros del _START_ al _END_",
     "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
     "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
     "sInfoPostFix": "",
