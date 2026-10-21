@@ -2859,7 +2859,6 @@ Flight::route('POST /datatables/novedades', function () {
     ];
     Flight::json($jsonData ?? []);
 });
-
 Flight::route('POST /novedad/existe', function () {
     $request = Flight::request();
     $payloadRaw = $request->data ?? [];
@@ -2875,7 +2874,6 @@ Flight::route('POST /novedad/existe', function () {
     $result = $novedades ?? [];
     Flight::json($result ?? []);
 });
-
 Flight::route('GET /novecausa/@novCNove', function ($novCNove) {
     $endpoint = URLAPI . "/api/v1/novecausa/{$novCNove}";
     $response = ch_api($endpoint, [], 'GET', []);
@@ -2891,6 +2889,29 @@ Flight::route('POST /novecausa', function () {
     $response = ch_api($endpoint, $data, 'POST', []);
     $response = json_decode($response ?? '[]', true);
     $result = is_array($response) ? $response : [];
+    $insertados = $result['DATA']['insertados'] ?? [];
+    $actualizados = $result['DATA']['actualizados'] ?? [];
+
+    // ------------- Auditar ------------- //
+    try {
+        $audTipos = [
+            'A' => $insertados,
+            'M' => $actualizados,
+        ];
+
+        foreach ($audTipos as $accion => $items) {
+            foreach ($items as $item) {
+                $causa = $item['NovCCodi'] ?? '';
+                $desc = $item['NovCDesc'] ?? '';
+                $novedad = $item['NovCNove'] ?? '';
+                audito_ch($accion, "Causa ($causa) $desc. Novedad ($novedad)", '52');
+            }
+        }
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+    }
+    // ------------- Fin Auditar ------------- //
+
 
     Flight::json($result);
 });
@@ -2899,6 +2920,18 @@ Flight::route('DELETE /novecausa/@novCNove/@novCCodi', function ($novCNove, $nov
     $response = ch_api($endpoint, [], 'DELETE', []);
     $response = json_decode($response ?? '[]', true);
     $result = is_array($response) ? $response : [];
+    // ------------- Auditar ------------- //
+    try {
+        $RESPONSE_CODE = $result['RESPONSE_CODE'] ?? '';
+        $DATA = $result['DATA'] ?? [];
+
+        if ($RESPONSE_CODE === '200 OK') {
+            audito_ch('B', "Causa ($DATA[NovCCodi]). Novedad ($DATA[NovCNove])", '52');
+        }
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+    }
+    // ------------- Fin Auditar ------------- //
     Flight::json($result);
 });
 Flight::route('GET /novedad1/@novCodi', function ($novCodi) {
@@ -2916,6 +2949,28 @@ Flight::route('POST /novedad1', function () {
     $response = ch_api($endpoint, $data, 'POST', []);
     $response = json_decode($response ?? '[]', true);
     $result = is_array($response) ? $response : [];
+
+    // ------------- Auditar ------------- //
+    try {
+        $insertados = $result['DATA']['insertados'] ?? [];
+        $actualizados = $result['DATA']['actualizados'] ?? [];
+
+        $audTipos = [
+            'A' => $insertados,
+            'M' => $actualizados,
+        ];
+
+        foreach ($audTipos as $accion => $items) {
+            foreach ($items as $item) {
+                $NovCodi = $item['NovCodi'] ?? '';
+                $NovCoAd = $item['NovCoAd'] ?? '';
+                audito_ch($accion, "Novedad adicional ($NovCoAd). Novedad ($NovCodi)", '52');
+            }
+        }
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+    }
+    // ------------- Fin Auditar ------------- //
 
     Flight::json($result);
 });
@@ -2942,6 +2997,28 @@ Flight::route('POST /novedad-config', function () {
     $response = json_decode($response ?? '[]', true);
     $result = is_array($response) ? $response : [];
 
+    // ------------- Auditar ------------- //
+    try {
+        $insertados = $result['DATA']['insertados'] ?? [];
+        $actualizados = $result['DATA']['actualizados'] ?? [];
+
+        $audTipos = [
+            'A' => $insertados,
+            'M' => $actualizados,
+        ];
+
+        foreach ($audTipos as $accion => $items) {
+            foreach ($items as $item) {
+                $NovCodi = $item['NovCodi'] ?? '';
+                $NovDesc = $item['NovDesc'] ?? '';
+                audito_ch($accion, "Novedad ($NovCodi) $NovDesc", '52');
+            }
+        }
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+    }
+    // ------------- Fin Auditar ------------- //
+
     Flight::json($result);
 });
 Flight::route('DELETE /novedad-config/@novCodi', function ($novCodi) {
@@ -2953,6 +3030,19 @@ Flight::route('DELETE /novedad-config/@novCodi', function ($novCodi) {
     $response = json_decode($response ?? '[]', true);
     $result = is_array($response) ? $response : [];
 
+    // ------------- Auditar ------------- //
+    try {
+        $RESPONSE_CODE = $result['RESPONSE_CODE'] ?? '';
+        $DATA = $result['DATA'] ?? [];
+
+        if ($RESPONSE_CODE === '200 OK') {
+            audito_ch('B', "Novedad ($DATA[NovCodi])", '52');
+        }
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+    }
+    // ------------- Fin Auditar ------------- //
+
     Flight::json($result);
 });
 Flight::route('DELETE /novedad1/@novCodi/@novItem', function ($novCodi, $novItem) {
@@ -2961,9 +3051,21 @@ Flight::route('DELETE /novedad1/@novCodi/@novItem', function ($novCodi, $novItem
     $response = json_decode($response ?? '[]', true);
     $result = is_array($response) ? $response : [];
 
+    // ------------- Auditar ------------- //
+    try {
+        $RESPONSE_CODE = $result['RESPONSE_CODE'] ?? '';
+        $DATA = $result['DATA'] ?? [];
+
+        if ($RESPONSE_CODE === '200 OK') {
+            audito_ch('B', "Novedad Adicional en Novedad ($DATA[NovCodi])", '52');
+        }
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+    }
+    // ------------- Fin Auditar ------------- //
+
     Flight::json($result);
 });
-
 Flight::route('GET /novedad2/@novCodi', function ($novCodi) {
     $endpoint = URLAPI . "/api/v1/novedad2/{$novCodi}";
     $response = ch_api($endpoint, [], 'GET', []);
@@ -2972,7 +3074,6 @@ Flight::route('GET /novedad2/@novCodi', function ($novCodi) {
 
     Flight::json($result);
 });
-
 Flight::route('POST /novedad2', function () {
     $endpoint = URLAPI . "/api/v1/novedad2";
     $data = Flight::request()->data ?? [];
@@ -2986,9 +3087,30 @@ Flight::route('POST /novedad2', function () {
     $response = json_decode($response ?? '[]', true);
     $result = is_array($response) ? $response : [];
 
+    // ------------- Auditar ------------- //
+    try {
+        $insertados = $result['DATA']['insertados'] ?? [];
+        $actualizados = $result['DATA']['actualizados'] ?? [];
+
+        $audTipos = [
+            'A' => $insertados,
+            'M' => $actualizados,
+        ];
+
+        foreach ($audTipos as $accion => $items) {
+            foreach ($items as $item) {
+                $NovCodi = $item['NovCodi'] ?? '';
+                $NovHora = $item['NovHora'] ?? '';
+                audito_ch($accion, "Novedad Adic. Según Hora ($NovHora). Novedad ($NovCodi)", '52');
+            }
+        }
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+    }
+    // ------------- Fin Auditar ------------- //
+
     Flight::json($result);
 });
-
 Flight::route('DELETE /novedad2/@novCodi/@novHora', function ($novCodi, $novHora) {
     $endpoint = URLAPI . "/api/v1/novedad2/{$novCodi}/{$novHora}";
     $data = [
@@ -2997,6 +3119,21 @@ Flight::route('DELETE /novedad2/@novCodi/@novHora', function ($novCodi, $novHora
     $response = ch_api($endpoint, $data, 'DELETE', []);
     $response = json_decode($response ?? '[]', true);
     $result = is_array($response) ? $response : [];
+
+    // ------------- Auditar ------------- //
+    try {
+        $RESPONSE_CODE = $result['RESPONSE_CODE'] ?? '';
+        $DATA = $result['DATA'] ?? [];
+
+        if ($RESPONSE_CODE === '200 OK') {
+            $NovCodi = $DATA['NovCodi'] ?? '';
+            $NovHora = $DATA['NovHora'] ?? '';
+            audito_ch('B', "Novedad Adic. Según Hora ($NovHora). Novedad ($NovCodi)", '52');
+        }
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+    }
+    // ------------- Fin Auditar ------------- //
 
     Flight::json($result);
 });

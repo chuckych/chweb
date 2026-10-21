@@ -84,7 +84,7 @@ class Novedad1
 						$this->auditor->add([['AudUser' => $audUser, 'AudTipo' => 'M', 'AudDato' => 'Novedad1 ' . $item['NovCodi'] . '/' . $item['NovItem']]]);
 						$actualizados[] = [
 							'NovCodi' => $item['NovCodi'],
-							'NovItem' => $item['NovItem'],
+							'NovCoAd' => $item['NovCoAd'],
 						];
 						continue;
 					}
@@ -98,12 +98,12 @@ class Novedad1
 					$this->auditor->add([['AudUser' => $audUser, 'AudTipo' => 'A', 'AudDato' => 'Novedad1 ' . $item['NovCodi'] . '/' . $item['NovItem']]]);
 					$insertados[] = [
 						'NovCodi' => $item['NovCodi'],
-						'NovItem' => $item['NovItem'],
+						'NovCoAd' => $item['NovCoAd'],
 					];
 				} catch (ValidationException $e) {
 					$errores[] = [
 						'NovCodi' => $item['NovCodi'] ?? null,
-						'NovItem' => $item['NovItem'] ?? null,
+						'NovCoAd' => $item['NovCoAd'] ?? null,
 						'error' => $e->getMessage(),
 					];
 				}
