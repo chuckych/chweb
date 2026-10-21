@@ -901,11 +901,11 @@ class Novedades
             $inicio = microtime(true);
             $datos = $this->validarInputsData();
             $conn = $this->conect->conn();
-            // \error_log(print_r($datos, true));
             $datosCod = (array_filter($datos['Cod'])); // Elimino los valores vacíos del array $datos['Cod']
 
             $whereConditions[] = " WHERE n.NovCodi > 0";
             $whereConditions[] = ($datos['Desc']) ? " n.NovDesc LIKE :Desc" : '';
+            $whereConditions[] = ($datos['NovAu']) ? " n.NovTipo >= 3" : '';
             $whereConditions[] = ($datos['Tipo'] !== '') ? " n.NovTipo = :Tipo" : '';
             $whereConditions[] = ($datos['Search']) ? " CONCAT_WS(' ', n.NovCodi, n.NovDesc) LIKE :Search" : '';
             $whereConditions[] = ($datosCod) ? " n.NovCodi IN (" . implode(",", $datosCod) . ")" : '';
@@ -1021,11 +1021,13 @@ class Novedades
         $tipo = $datos['Tipo'] ?? ''; // Tipo de datos que se reciben
         $desc = $datos['Desc'] ?? ''; // Descripción de la estructura
         $cod = $datos['Cod'] ?? ''; // Código de la estructura
+        $novAu = $datos['NovAu'] ?? 0; // Novedades de ausencia NovTipo >=3
         $columns = $datos['columns'] ?? []; // Columnas de la estructura
         $allColumns = $datos['AllColumns'] ?? ''; // obtener todas las columnas si se indica
 
         $datosRecibidos = [ // Valores por defecto
             'Cod' => empty($cod) ? [] : $cod,
+            'NovAu' => empty($novAu) ? 0 : $novAu,
             'columns' => empty($columns) ? [] : $columns,
             'Desc' => empty($desc) ? '' : $desc,
             'Tipo' => ($tipo === '' || $tipo === null) ? '' : $tipo,
@@ -1043,6 +1045,7 @@ class Novedades
 
         $rules = [ // Reglas de validación
             'Cod' => ['arrSmallintEmpty'],
+            'NovAu' => ['allowed01'],
             'Desc' => ['varchar40'],
             'Tipo' => ['intempty'],
             'start' => ['intempty'],

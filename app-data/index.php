@@ -2829,6 +2829,7 @@ Flight::route('POST /datatables/novedades', function () {
     $columns = array_column($payloadRaw['columns'] ?? [], 'data');
     $columns = array_filter($columns);
     $NovTipo = $payloadRaw['NovTipo'] ?? '';
+    $NovAu = $payloadRaw['NovAu'] ?? '';
 
     $payload = [
         'Search' => $payloadRaw['search']['value'] ?? '',
@@ -2838,6 +2839,7 @@ Flight::route('POST /datatables/novedades', function () {
         'Cod[]' => $payloadRaw['NovCodi'] ?? [],
         'Tipo' => ($NovTipo === '' || $NovTipo === null) ? '' : $NovTipo,
         'AllColumns' => $payloadRaw['AllColumns'] ?? 0,
+        'NovAu' => ($NovAu === '' || $NovAu === null) ? 0 : $NovAu,
     ];
 
 

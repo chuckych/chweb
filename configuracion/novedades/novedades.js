@@ -1897,10 +1897,10 @@
             }
         });
     };
-    const getNovedadByNovTipo = (NovTipo) => {
+    const getNovedadByNovTipo = () => {
         return $.ajax({
             url: ENDPOINT_NOVEDADES,
-            data: { NovTipo: NovTipo },
+            data: { NovAu: 1 },
             method: 'POST',
             success: function (response) {
                 const rs = response.data || {};
@@ -2137,7 +2137,7 @@
             novedad1NovCoAdLoadedFor = null;
         }
 
-        await getNovedadByNovTipo(data.NovTipo);
+        await getNovedadByNovTipo();
         initTablaNovecausa(data.NovCodi);
         initTablaNovedad1(data.NovCodi);
 
