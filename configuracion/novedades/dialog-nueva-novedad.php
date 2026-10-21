@@ -35,7 +35,7 @@
             Cerrar
         </button>
         <button class="btn btn-custom font09" id="accept-dialog-nueva-novedad">
-            Crear
+            Aceptar
         </button>
     </div>
 </dialog>

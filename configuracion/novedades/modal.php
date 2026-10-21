@@ -80,8 +80,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="font09 pointer float-right btn btn-outline-secondary border"
+                <button type="button" class="font09 pointer float-right btn btn-outline-secondary border-0"
                     data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-outline-custom font09 border" id="btn-save-apply">Aplicar</button>
                 <button type="button" class="btn btn-custom font09" id="btn-save">Guardar</button>
             </div>
         </div>

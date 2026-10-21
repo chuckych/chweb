@@ -2027,8 +2027,9 @@
         return true;
     };
 
-    const saveNovedadConfig = () => {
+    const saveNovedadConfig = (apply = false) => {
         const $btnSave = $('#btn-save');
+        const $btnSaveApply = $('#btn-save-apply');
         const payload = collectNovedadPayloadFromDataFields();
 
         if (!validateNovedadPayload(payload)) return;
@@ -2036,6 +2037,7 @@
         $.notifyClose();
         notify('Guardando novedad...', 'info');
         $btnSave.prop('disabled', true);
+        $btnSaveApply.prop('disabled', true);
 
         axios.post(ENDPOINT_NOVEDAD_CONFIG, payload)
             .then((response) => {
@@ -2044,7 +2046,9 @@
                     ls.set(LS_REFRESH_TABLE_NOVEDADES, true);
                     $.notifyClose();
                     notify('Novedad guardada correctamente', 'success');
-                    // MODAL_NOVEDAD.modal('hide');
+                    if (apply) {
+                        MODAL_NOVEDAD.modal('hide');
+                    }
                     return;
                 }
                 $.notifyClose();
@@ -2056,12 +2060,18 @@
             })
             .finally(() => {
                 $btnSave.prop('disabled', false);
+                $btnSaveApply.prop('disabled', false);
             });
     };
 
     $(document).off('click.novedadSave', '#btn-save');
     $(document).on('click.novedadSave', '#btn-save', function () {
-        saveNovedadConfig();
+        saveNovedadConfig(true);
+    });
+    
+    $(document).off('click.novedadSave', '#btn-save-apply');
+    $(document).on('click.novedadSave', '#btn-save-apply', function () {
+        saveNovedadConfig(false);
     });
 
     const setFieldValue = (el, data) => {
