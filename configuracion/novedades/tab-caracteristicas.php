@@ -33,7 +33,7 @@ $tipos = [
         <div class="col-12 col-md-3">
             <div class="form-group">
                 <label for="NovColor" class="col-form-label">Color</label>
-                <input type="text" class="form-control" id="NovColor" data-field="Color" value="#000000"
+                <input type="text" class="form-control" id="NovColor" data-field="Color" value="#333333"
                     data-jscolor="{}" autocomplete="off">
             </div>
         </div>

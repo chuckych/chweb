@@ -87,6 +87,9 @@
         const $horColor = $('#NovColor');
         if (!$horColor.length || !window.jscolor) return;
 
+        // Preserva el valor actual (cargado desde datos) antes de instalar/configurar jscolor.
+        const preservedColor = normalizeColorHex($horColor.val());
+
         if (window.jscolor && window.jscolor.presets) {
             window.jscolor.presets.default = {
                 palette: [
@@ -125,10 +128,9 @@
             });
         }
 
-        const currentValue = normalizeColorHex($horColor.val());
-        $horColor.val(currentValue);
+        $horColor.val(preservedColor);
         if (picker && typeof picker.fromString === 'function') {
-            picker.fromString(currentValue);
+            picker.fromString(preservedColor);
         }
     };
     // Renderiza badge con el color del horario
