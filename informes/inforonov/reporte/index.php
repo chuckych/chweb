@@ -1,5 +1,4 @@
 <?php
-error_log("INFO: Ingreso a reporteonov.php", 3, "inforonov/reporte/reporteonov.log");
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 if (session_status() == PHP_SESSION_NONE) {
     session_start();

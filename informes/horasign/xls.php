@@ -242,7 +242,7 @@ try {
         'archivo' => $nameFile,
         'resultado' => $resultado,
         'totalLegajos' => $totalLegajos,
-        'payload' => $payload
+        'payload' => $payload ?? null
     ];
     Flight::json($data);
 } catch (\Exception $e) {
@@ -251,7 +251,7 @@ try {
         'mensaje' => $e->getMessage(),
         'resultado' => $resultado,
         'totalLegajos' => $totalLegajos,
-        'payload' => $payload
+        'payload' => $payload ?? null
     ];
     file_put_contents('error.log', $e->getMessage() . PHP_EOL, FILE_APPEND);
     Flight::json($data);

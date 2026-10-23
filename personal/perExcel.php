@@ -51,19 +51,19 @@ $encabezado = [
     "DNI",
     "CUIL",
     "Cod",
-    $labelEmpr,
+    $labelEmpr ?? '',
     "Cod",
-    $labelPlan,
+    $labelPlan ?? '',
     "Cod",
     "CONVENIO",
     "Cod",
-    $labelSect,
+    $labelSect ?? '',
     "Cod",
-    $labelSec,
+    $labelSec ?? '',
     "Cod",
-    $labelGrup,
+    $labelGrup ?? '',
     "Cod",
-    $labelSucu,
+    $labelSucu ?? '',
     "Cod",
     "Regla CH",
     "Email",
@@ -126,7 +126,7 @@ $spreadsheet->freezePane('A2');
 // $spreadsheet->freezePaneByColumnAndRow('B', '2');
 $ColumnCount = 3;
 $RowIndex = 2;
-$spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
+$spreadsheet->freezePane(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($ColumnCount) . $RowIndex);
 
 $spreadsheet->getStyle('A1:AL1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
@@ -234,7 +234,7 @@ $sql_query = "SELECT PERSONAL.LegNume AS 'LegNume', PERSONAL.LegApNo AS 'LegApNo
 
 $result = sqlsrv_query($link, $sql_query, $param, $options);
 
-function FormatoHoraToExcel($Hora)
+function FormatoHoraToExcel(string $Hora)
 {
     $Hora = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
@@ -243,7 +243,7 @@ function FormatoHoraToExcel($Hora)
     $Hora = ($excelTimestamp - $excelDate) == 0 ? '' : $excelTimestamp - $excelDate;
     return $Hora;
 }
-function FormatoFechaToExcel($Fecha)
+function FormatoFechaToExcel(string $Fecha)
 {
     $timestamp = new \DateTime($Fecha);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
@@ -252,18 +252,20 @@ function FormatoFechaToExcel($Fecha)
     return $Fecha;
 }
 
-function getcolumnrange($min, $max)
+function getcolumnrange(string $min, string $max)
 {
-    $pointer = strtoupper($min);
     $output = array();
-    while (positionalcomparison($pointer, strtoupper($max)) <= 0) {
-        array_push($output, $pointer);
-        $pointer++;
+    $start = stringtointvalue(strtoupper($min));
+    $end = stringtointvalue(strtoupper($max));
+
+    for ($i = $start; $i <= $end; $i++) {
+        $output[] = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
     }
+
     return $output;
 }
 
-function positionalcomparison($a, $b)
+function positionalcomparison(string $a, string $b)
 {
     $a1 = stringtointvalue($a);
     $b1 = stringtointvalue($b);
@@ -278,7 +280,7 @@ function positionalcomparison($a, $b)
 /*
  * e.g. A=1 - B=2 - Z=26 - AA=27 - CZ=104 - DA=105 - ZZ=702 - AAA=703
  */
-function stringtointvalue($str)
+function stringtointvalue(string $str)
 {
     $amount = 0;
     $strarra = array_reverse(str_split($str));
@@ -343,44 +345,51 @@ while ($row = sqlsrv_fetch_array($result)) {
     $RCHDesc = $row['RCHDesc'];
 
     # Escribirlos en el documento
-    $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $LegNume);
-    $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $LegApNo);
-    $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $LegTipo);
-    $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $LegDocu);
-    $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $LegCUIT);
-    $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $EmpCodi);
-    $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $EmpRazo);
-    $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $PlaCodi);
-    $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $PlaDesc);
-    $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $ConCodi);
-    $spreadsheet->setCellValueByColumnAndRow(11, $numeroDeFila, $ConDesc);
-    $spreadsheet->setCellValueByColumnAndRow(12, $numeroDeFila, $SecCodi);
-    $spreadsheet->setCellValueByColumnAndRow(13, $numeroDeFila, $SecDesc);
-    $spreadsheet->setCellValueByColumnAndRow(14, $numeroDeFila, $Se2Codi);
-    $spreadsheet->setCellValueByColumnAndRow(15, $numeroDeFila, $Se2Desc);
-    $spreadsheet->setCellValueByColumnAndRow(16, $numeroDeFila, $GruCodi);
-    $spreadsheet->setCellValueByColumnAndRow(17, $numeroDeFila, $GruDesc);
-    $spreadsheet->setCellValueByColumnAndRow(18, $numeroDeFila, $SucCodi);
-    $spreadsheet->setCellValueByColumnAndRow(19, $numeroDeFila, $SucDesc);
-    $spreadsheet->setCellValueByColumnAndRow(20, $numeroDeFila, $LegRegl);
-    $spreadsheet->setCellValueByColumnAndRow(21, $numeroDeFila, $RCHDesc);
-    $spreadsheet->setCellValueByColumnAndRow(22, $numeroDeFila, $LegMail);
-    $spreadsheet->setCellValueByColumnAndRow(23, $numeroDeFila, $LegDomi);
-    $spreadsheet->setCellValueByColumnAndRow(24, $numeroDeFila, $LegDoNu);
-    $spreadsheet->setCellValueByColumnAndRow(25, $numeroDeFila, $LegDoOb);
-    $spreadsheet->setCellValueByColumnAndRow(26, $numeroDeFila, $LegDoPi);
-    $spreadsheet->setCellValueByColumnAndRow(27, $numeroDeFila, $LegDoDP);
-    $spreadsheet->setCellValueByColumnAndRow(28, $numeroDeFila, $LocDesc);
-    $spreadsheet->setCellValueByColumnAndRow(29, $numeroDeFila, $LegCOPO);
-    $spreadsheet->setCellValueByColumnAndRow(30, $numeroDeFila, $ProDesc);
-    $spreadsheet->setCellValueByColumnAndRow(31, $numeroDeFila, $NacDesc);
-    $spreadsheet->setCellValueByColumnAndRow(32, $numeroDeFila, $LegTel1);
-    $spreadsheet->setCellValueByColumnAndRow(33, $numeroDeFila, $LegTeO1);
-    $spreadsheet->setCellValueByColumnAndRow(34, $numeroDeFila, $LegTel2);
-    $spreadsheet->setCellValueByColumnAndRow(35, $numeroDeFila, $LegTeO2);
-    $spreadsheet->setCellValueByColumnAndRow(36, $numeroDeFila, $LegEsta);
-    $spreadsheet->setCellValueByColumnAndRow(37, $numeroDeFila, $LegFeIn);
-    $spreadsheet->setCellValueByColumnAndRow(38, $numeroDeFila, $LegFeEg);
+    $rowValues = [
+        $LegNume,
+        $LegApNo,
+        $LegTipo,
+        $LegDocu,
+        $LegCUIT,
+        $EmpCodi,
+        $EmpRazo,
+        $PlaCodi,
+        $PlaDesc,
+        $ConCodi,
+        $ConDesc,
+        $SecCodi,
+        $SecDesc,
+        $Se2Codi,
+        $Se2Desc,
+        $GruCodi,
+        $GruDesc,
+        $SucCodi,
+        $SucDesc,
+        $LegRegl,
+        $RCHDesc,
+        $LegMail,
+        $LegDomi,
+        $LegDoNu,
+        $LegDoOb,
+        $LegDoPi,
+        $LegDoDP,
+        $LocDesc,
+        $LegCOPO,
+        $ProDesc,
+        $NacDesc,
+        $LegTel1,
+        $LegTeO1,
+        $LegTel2,
+        $LegTeO2,
+        $LegEsta,
+        $LegFeIn,
+        $LegFeEg,
+    ];
+
+    foreach ($rowValues as $index => $cellValue) {
+        $column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($index + 1);
+        $spreadsheet->setCellValue($column . $numeroDeFila, $cellValue);
+    }
     $Today2 = ($LegFeIn == 0) ? 'TODAY()' : 'AK' . $numeroDeFila;
     $Today = ($LegFeEg == 0) ? 'TODAY()' : 'AL' . $numeroDeFila;
     if ($LegEsta == 'Inactivo') {

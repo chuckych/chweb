@@ -28,8 +28,8 @@ E_ALL();
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
-
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
@@ -237,19 +237,19 @@ while ($row = sqlsrv_fetch_array($result)) {
     $Fecha = FormatoFechaToExcel($Fecha);
 
     # Escribirlos en el documento
-    $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Legajo);
-    $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $Nombre);
-    $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $Fecha);
-    $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $Dia);
-    $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $Horario);
-    $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $CodNov);
-    $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $DescNov);
-    $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $TipoNov);
-    $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $HorNov);
-    $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $CodCausa);
-    $spreadsheet->setCellValueByColumnAndRow(11, $numeroDeFila, $DescCausa);
-    $spreadsheet->setCellValueByColumnAndRow(12, $numeroDeFila, $JustNov);
-    $spreadsheet->setCellValueByColumnAndRow(13, $numeroDeFila, $ObsNov);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(1) . $numeroDeFila, $Legajo);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(2) . $numeroDeFila, $Nombre);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(3) . $numeroDeFila, $Fecha);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(4) . $numeroDeFila, $Dia);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(5) . $numeroDeFila, $Horario);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(6) . $numeroDeFila, $CodNov);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(7) . $numeroDeFila, $DescNov);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(8) . $numeroDeFila, $TipoNov);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(9) . $numeroDeFila, $HorNov);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(10) . $numeroDeFila, $CodCausa);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(11) . $numeroDeFila, $DescCausa);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(12) . $numeroDeFila, $JustNov);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(13) . $numeroDeFila, $ObsNov);
 
     $numeroDeFila++;
 }

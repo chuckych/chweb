@@ -215,14 +215,14 @@ while ($row = sqlsrv_fetch_array($result)) {
     }
 
     # Escribirlos en el documento
-    $spreadsheet->setCellValue('A' . $numeroDeFila, $Legajo); /** A */
-    $spreadsheet->setCellValue('B' . $numeroDeFila, $Nombre); /** B */
-    $spreadsheet->setCellValue('C' . $numeroDeFila, $HorasEx); /** C */
-    $spreadsheet->setCellValue('D' . $numeroDeFila, $FrancoCompe1); /** D */
-    $spreadsheet->setCellValue('E' . $numeroDeFila, $FrancoCompe2); /** E */
-    $spreadsheet->setCellValue('F' . $numeroDeFila, $JornadaReducida1); /** F */
-    $spreadsheet->setCellValue('G' . $numeroDeFila, $JornadaReducida2); /** G */
-    $spreadsheet->setCellValue('H' . $numeroDeFila, $CtaCte); /** H */
+    $spreadsheet->setCellValue("A$numeroDeFila", $Legajo); /** A */
+    $spreadsheet->setCellValue("B$numeroDeFila", $Nombre); /** B */
+    $spreadsheet->setCellValue("C$numeroDeFila", $HorasEx); /** C */
+    $spreadsheet->setCellValue("D$numeroDeFila", $FrancoCompe1); /** D */
+    $spreadsheet->setCellValue("E$numeroDeFila", $FrancoCompe2); /** E */
+    $spreadsheet->setCellValue("F$numeroDeFila", $JornadaReducida1); /** F */
+    $spreadsheet->setCellValue("G$numeroDeFila", $JornadaReducida2); /** G */
+    $spreadsheet->setCellValue("H$numeroDeFila", $CtaCte); /** H */
     $numeroDeFila++;
 }
 sqlsrv_free_stmt($result);

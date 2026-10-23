@@ -436,8 +436,13 @@ class Clientes
         fclose($handle);
         return $success;
     }
-    public function edita_cliente(int $IDCliente)
+    public function edita_cliente(string $IDCliente)
     {
+        if (!ctype_digit($IDCliente)) {
+            throw new \ValueError("ID de cliente inválido", 400);
+        }
+        $IDCliente = (int) $IDCliente;
+
         $datos = $this->validar_alta_cuenta();
         $conn = $this->conect->conn();
         $inicio = microtime(true);
@@ -446,7 +451,7 @@ class Clientes
         if ($this->si_existe_nombre_cliente($Nombre, $conn, $IDCliente)) {
             throw new \ValueError("Ya existe una cuenta con el nombre: {$Nombre}", 400);
         }
-        if ($this->si_no_existe_id_cliente(intval($IDCliente), $conn)) {
+        if ($this->si_no_existe_id_cliente($IDCliente, $conn)) {
             throw new \ValueError("No existe una cuenta con el id: {$IDCliente}", 400);
         }
 

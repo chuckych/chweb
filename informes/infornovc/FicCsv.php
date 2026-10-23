@@ -26,6 +26,7 @@ E_ALL();
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 
 $documento = new Spreadsheet();
@@ -63,19 +64,19 @@ foreach ($data['data'] as $r) {
     $_convaus = $r['_convaus'];
     $_convpres = str_replace(",", ".", $_convpres);
     $_convaus = str_replace(",", ".", $_convaus);
-    $_totalmesesconv = $r['_totalmesesconv'];
+    $_totalmesesconv = $r['_totalmese   sconv'];
 
     # Escribirlos en el documento
-    $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $legajo);
-    $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $nombre);
-    $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $desde);
-    $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $hasta);
-    $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $_presentes);
-    $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $_ausentes);
-    $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $_totaldias);
-    $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $_convpres);
-    $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $_convaus);
-    $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $_totalmesesconv);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(1) . $numeroDeFila, $legajo);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(2) . $numeroDeFila, $nombre);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(3) . $numeroDeFila, $desde);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(4) . $numeroDeFila, $hasta);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(5) . $numeroDeFila, $_presentes);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(6) . $numeroDeFila, $_ausentes);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(7) . $numeroDeFila, $_totaldias);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(8) . $numeroDeFila, $_convpres);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(9) . $numeroDeFila, $_convaus);
+    $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(10) . $numeroDeFila, $_totalmesesconv);
     $numeroDeFila++;
 }
 
@@ -95,7 +96,7 @@ try {
     echo json_encode($data);
     exit;
 } catch (\Exception $e) {
-    $data = array('status' => 'error');
+    $data = ['status' => 'error'];
     echo json_encode($data);
     exit;
 }

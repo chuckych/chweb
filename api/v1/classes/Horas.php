@@ -1115,7 +1115,7 @@ class Horas
             'HoraMax' => empty($HoraMax) ? '' : ($HoraMax),
             'MinMaxH' => empty($MinMaxH) ? 0 : ($MinMaxH),
             'Estruct' => empty($Estruct) ? 0 : ($Estruct),
-            'HsTrAT' => empty($HsTrAT) ? '' : ($HsTrAT),
+            'HsTrAT' => empty($HsTrAT) ? 0 : ($HsTrAT),
             'ThColu' => empty($ThColu) ? 0 : ($ThColu),
             'start' => empty($start) ? 0 : ($start),
             'length' => empty($length) ? 5 : ($length),

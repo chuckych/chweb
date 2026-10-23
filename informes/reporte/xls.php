@@ -20,6 +20,8 @@ E_ALL();
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 // use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
@@ -169,7 +171,7 @@ if ($VPor == 'todo') {
 }
 
 $last_key = count($encabezado) - 1;
-function numberToLetter($num)
+function numberToLetter(string $num)
 {
     $numeric = $num % 26;
     $letter = chr(65 + $numeric);
@@ -189,8 +191,12 @@ $numeroDeFila = 2;
 
 // Flight::json($payload) . exit;
 
-function filtrarEstructura($estructura, $campo, $valor)
+function filtrarEstructura($estructura, string $campo, string $valor)
 {
+    if (!is_array($estructura)) {
+        return '';
+    }
+
     if (empty($estructura))
         return '';
 
@@ -207,8 +213,12 @@ function filtrarEstructura($estructura, $campo, $valor)
         return '';
     }
 }
-function filtrarSeccion($estructura, $sector, $seccion)
+function filtrarSeccion($estructura, string $sector, string $seccion)
 {
+    if (!is_array($estructura)) {
+        return '';
+    }
+
     if (empty($estructura))
         return '';
 
@@ -238,13 +248,13 @@ try {
         $LegApNo = trim($objeto['LegApNo']);
 
         if ($getEstructura == '1') {
-            $Empr = filtrarEstructura($estructuras['Empresas'] ?? '', 'EmpCodi', $objeto['Empr'])['EmpRazon'] ?? '';
-            $Plan = filtrarEstructura($estructuras['Plantas'] ?? '', 'PlaCodi', $objeto['Plan'])['PlaDesc'] ?? '';
-            $Conv = filtrarEstructura($estructuras['Convenios'] ?? '', 'ConCodi', $objeto['Conv'])['ConDesc'] ?? '';
-            $Sect = filtrarEstructura($estructuras['Sectores'] ?? '', 'SecCodi', $objeto['Sect'])['SecDesc'] ?? '';
-            $Secc = filtrarSeccion($estructuras['Secciones'] ?? '', $objeto['Sect'], $objeto['Secc']);
-            $Grup = filtrarEstructura($estructuras['Grupos'] ?? '', 'GruCodi', $objeto['Grup'])['GruDesc'] ?? '';
-            $Sucu = filtrarEstructura($estructuras['Sucursales'] ?? '', 'SucCodi', $objeto['Sucu'])['SucDesc'] ?? '';
+            $Empr = filtrarEstructura($estructuras['Empresas'] ?? [], 'EmpCodi', $objeto['Empr'])['EmpRazon'] ?? '';
+            $Plan = filtrarEstructura($estructuras['Plantas'] ?? [], 'PlaCodi', $objeto['Plan'])['PlaDesc'] ?? '';
+            $Conv = filtrarEstructura($estructuras['Convenios'] ?? [], 'ConCodi', $objeto['Conv'])['ConDesc'] ?? '';
+            $Sect = filtrarEstructura($estructuras['Sectores'] ?? [], 'SecCodi', $objeto['Sect'])['SecDesc'] ?? '';
+            $Secc = filtrarSeccion($estructuras['Secciones'] ?? [], $objeto['Sect'], $objeto['Secc']);
+            $Grup = filtrarEstructura($estructuras['Grupos'] ?? [], 'GruCodi', $objeto['Grup'])['GruDesc'] ?? '';
+            $Sucu = filtrarEstructura($estructuras['Sucursales'] ?? [], 'SucCodi', $objeto['Sucu'])['SucDesc'] ?? '';
         }
 
         $TotalesHoras = $objeto['TotalesHoras'] ?? [];
@@ -262,19 +272,19 @@ try {
         // )
 
         // # Escribirlos en el documento
-        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Lega);
-        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $LegApNo);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(1) . $numeroDeFila, $Lega);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(2) . $numeroDeFila, $LegApNo);
 
         $ultimaColumna = 3;
 
         if ($getEstructura == '1') {
-            $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $Empr);
-            $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $Plan);
-            $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $Conv);
-            $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $Sect);
-            $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $Secc);
-            $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $Grup);
-            $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $Sucu);
+            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(3) . $numeroDeFila, $Empr);
+            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(4) . $numeroDeFila, $Plan);
+            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(5) . $numeroDeFila, $Conv);
+            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(6) . $numeroDeFila, $Sect);
+            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(7) . $numeroDeFila, $Secc ?? '');
+            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(8) . $numeroDeFila, $Grup);
+            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(9) . $numeroDeFila, $Sucu);
             $ultimaColumna = 10;
         }
 
@@ -316,11 +326,11 @@ try {
                     switch ($Formato) {
                         case 'enHoras':
                             $valorEnHoras = $valueTh['EnHoras2'] ? HorasToExcelMas24($valueTh['EnHoras2']) : '';
-                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorEnHoras);
+                            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex($siguienteColumna) . $numeroDeFila, $valorEnHoras);
                             break;
                         case 'enDecimal':
                             $valorDecimal = $valueTh['EnHorasDecimal2'] ? round($valueTh['EnHorasDecimal2'], 2) : '';
-                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorDecimal);
+                            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex($siguienteColumna) . $numeroDeFila, $valorDecimal);
                             break;
                     }
                 }
@@ -357,17 +367,17 @@ try {
                     switch ($Formato) {
                         case 'enHoras':
                             $valorEnHorasNov = $valueNov['EnHoras'] ? HorasToExcelMas24($valueNov['EnHoras']) : '';
-                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorEnHorasNov);
+                            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex($siguienteColumna) . $numeroDeFila, $valorEnHorasNov);
                             break;
                         case 'enDecimal':
                             $valorDecimal = $valueNov['EnHorasDecimal'] ? round($valueNov['EnHorasDecimal'], 2) : '';
-                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorDecimal);
+                            $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex($siguienteColumna) . $numeroDeFila, $valorDecimal);
                             break;
                     }
                     if ($cantidades == '1') {
                         $siguienteColumna = $ultimaColumna++;
                         $valorCantidad = $valueNov['Cantidad'];
-                        $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorCantidad);
+                        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex($siguienteColumna) . $numeroDeFila, $valorCantidad);
                     }
                 }
             }
@@ -376,7 +386,7 @@ try {
         $ultimaFila = $numeroDeFila;
         $numeroDeFila++;
     }
-    function subTotales($arrayLetrasCol, $fila, $spreadsheet)
+    function subTotales(array $arrayLetrasCol, int $fila, Worksheet $spreadsheet)
     {
         if (!$arrayLetrasCol)
             return;
@@ -400,11 +410,13 @@ try {
         $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(30); // Set row height
     }
 
-    $todasLasCeldas = 'A1:' . $ultimaLetra . $ultimaFila;
+    $todasLasCeldas = 'A1:' . $ultimaLetra . ($ultimaFila ?? $numeroDeFila);
     $spreadsheet->getStyle($todasLasCeldas)->getAlignment()->setIndent(1); // Set indent
     $spreadsheet->getStyle('A1')->getAlignment()->setIndent(1); // Set indent
 
 } catch (\Throwable $th) {
+    error_log($th->getMessage());
+    error_log($th->getTraceAsString());
     $errores[] = $th->getMessage();
 }
 // Flight::json($valor) . exit;
@@ -432,7 +444,7 @@ try {
 
     $data = array(
         'status' => 'ok',
-        'archivo' => 'archivos/' . $NombreArchivo,
+        'archivo' => "archivos/$NombreArchivo",
         'errores' => $errores ?? []
     );
     echo json_encode($data);

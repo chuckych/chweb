@@ -24,6 +24,7 @@ E_ALL();
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 $param = []; 
@@ -180,7 +181,9 @@ foreach ($ColNume as $colN) {
 }
 $ColumnCount = 3;
 $RowIndex = 2;
-$spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
+// $spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
+// $spreadsheet->freezePane($ColumnCount.$RowIndex);
+$spreadsheet->freezePane('A2');
 /** Mostrar / ocultar una columna */
 // $spreadsheet->getColumnDimension('E')->setVisible(true);
 // $spreadsheet->getColumnDimension('F')->setVisible(true);
@@ -250,19 +253,19 @@ if ($xlsData) {
 
         $textMap = $valor['regLat'] != 0 ? 'Ver en Google Maps' : 'Sin GPS';
 
-        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $userID);
-        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $userName);
-        $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $regDay);
-        $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $Fecha);
-        $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $regHora);
-        $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $zoneName);
-        $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $textMap);
-        $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $confidence);
-        $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $tipo);
-        $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $device);
-        $spreadsheet->setCellValueByColumnAndRow(11, $numeroDeFila, $eventZone);
-        $spreadsheet->setCellValueByColumnAndRow(12, $numeroDeFila, $eventDevice);
-        $spreadsheet->setCellValueByColumnAndRow(13, $numeroDeFila, $appVersion);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(1) . $numeroDeFila, $userID);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(2) . $numeroDeFila, $userName);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(3) . $numeroDeFila, $regDay);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(4) . $numeroDeFila, $Fecha);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(5) . $numeroDeFila, $regHora);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(6) . $numeroDeFila, $zoneName);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(7) . $numeroDeFila, $textMap);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(8) . $numeroDeFila, $confidence);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(9) . $numeroDeFila, $tipo);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(10) . $numeroDeFila, $device);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(11) . $numeroDeFila, $eventZone);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(12) . $numeroDeFila, $eventDevice);
+        $spreadsheet->setCellValue(Coordinate::stringFromColumnIndex(13) . $numeroDeFila, $appVersion);
 
         ($valor['regLat'] != 0) ? $spreadsheet->getCell('G' . $numeroDeFila)->getHyperlink()->setUrl($LinkMapa) : ''; // Si no hay GPS no se puede ver el link mapa 
         $numeroDeFila++;

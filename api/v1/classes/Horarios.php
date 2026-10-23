@@ -13,6 +13,7 @@ use Classes\Auditor;
 use Classes\Personal;
 use Flight;
 use flight\net\Request;
+use function count;
 
 class Horarios
 {
@@ -552,32 +553,32 @@ class Horarios
 
         return $this->tools->validar_datos($datos, $rules, $customValueKey, 'validar_request_rotacion');
     }
-    private function check_horario(array $datos, $connDB = '')
-    {
-        $conn = $this->conect->check_connection($connDB);
+    // private function check_horario(array $datos, $connDB = '')
+    // {
+    //     $conn = $this->conect->check_connection($connDB);
 
-        if ($this->desde) {
-            $sqlCheck = "SELECT COUNT(*) AS Cantidad FROM HORALE1 WHERE Ho1Lega = :Lega AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
-            $stmt = $conn->prepare($sqlCheck);
-            $datos['Fecha'] = date('Ymd', strtotime($datos['Fecha'])); // Convierto la fecha a formato YYYYMMDD
-            $stmt->bindValue(':Lega', $datos['Lega'], \PDO::PARAM_INT);
-            $stmt->bindValue(':Fecha', $datos['Fecha'], \PDO::PARAM_STR);
-            $stmt->execute(); // Ejecuto la consulta
-            $result = $stmt->fetchColumn(); // Obtengo la cantidad de filas afectadas
-            return $result;
-        }
-        if ($this->desdeHasta) {
-            $sqlCheck = "SELECT COUNT(*) AS Cantidad FROM HORALE2 WHERE Ho2Lega = :Lega AND Ho2Fec1 = CONVERT(datetime, :FechaD, 120)";
-            $stmt = $conn->prepare($sqlCheck);
-            $datos['FechaD'] = date('Ymd', strtotime($datos['FechaD'])); // Convierto la fecha a formato YYYYMMDD
-            $stmt->bindValue(':Lega', $datos['Lega'], \PDO::PARAM_INT);
-            $stmt->bindValue(':FechaD', $datos['FechaD'], \PDO::PARAM_STR);
-            $stmt->execute(); // Ejecuto la consulta
-            $result = $stmt->fetchColumn(); // Obtengo la cantidad de filas afectadas
-            return $result;
-        }
-    }
-    private function check_horario_data(array $datos, $connDB = '')
+    //     if ($this->desde) {
+    //         $sqlCheck = "SELECT COUNT(*) AS Cantidad FROM HORALE1 WHERE Ho1Lega = :Lega AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
+    //         $stmt = $conn->prepare($sqlCheck);
+    //         $datos['Fecha'] = date('Ymd', strtotime($datos['Fecha'])); // Convierto la fecha a formato YYYYMMDD
+    //         $stmt->bindValue(':Lega', $datos['Lega'], \PDO::PARAM_INT);
+    //         $stmt->bindValue(':Fecha', $datos['Fecha'], \PDO::PARAM_STR);
+    //         $stmt->execute(); // Ejecuto la consulta
+    //         $result = $stmt->fetchColumn(); // Obtengo la cantidad de filas afectadas
+    //         return $result;
+    //     }
+    //     if ($this->desdeHasta) {
+    //         $sqlCheck = "SELECT COUNT(*) AS Cantidad FROM HORALE2 WHERE Ho2Lega = :Lega AND Ho2Fec1 = CONVERT(datetime, :FechaD, 120)";
+    //         $stmt = $conn->prepare($sqlCheck);
+    //         $datos['FechaD'] = date('Ymd', strtotime($datos['FechaD'])); // Convierto la fecha a formato YYYYMMDD
+    //         $stmt->bindValue(':Lega', $datos['Lega'], \PDO::PARAM_INT);
+    //         $stmt->bindValue(':FechaD', $datos['FechaD'], \PDO::PARAM_STR);
+    //         $stmt->execute(); // Ejecuto la consulta
+    //         $result = $stmt->fetchColumn(); // Obtengo la cantidad de filas afectadas
+    //         return $result;
+    //     }
+    // }
+    private function check_horario_data(array $datos, $connDB = null)
     {
         try {
             $legajos = $datos['Lega'] ?? [];
@@ -624,7 +625,7 @@ class Horarios
 
         return $result ? array_column($result, 'LegNume') : [];
     }
-    private function check_rotacion_data(array $datos, $connDB = '')
+    private function check_rotacion_data(array $datos, $connDB = null)
     {
         try {
             $legajos = $datos['Lega'] ?? [];
@@ -651,7 +652,7 @@ class Horarios
 
         return $result ? array_column($result, 'LegNume') : [];
     }
-    private function return_horarios($connDB = ''): array
+    private function return_horarios($connDB = null): array
     {
         try {
             $conn = $this->conect->check_connection($connDB);
@@ -682,7 +683,7 @@ class Horarios
             throw new \Exception("Error al obtener horarios", 400);
         }
     }
-    private function return_rotaciones($connDB = ''): array
+    private function return_rotaciones($connDB = null): array
     {
         try {
             $conn = $this->conect->check_connection($connDB);
@@ -711,7 +712,7 @@ class Horarios
             throw new \Exception("Error al obtener rotaciones", 400);
         }
     }
-    private function return_total_dias_rotacion(int $Codi, $connDB = '')
+    private function return_total_dias_rotacion(int $Codi, $connDB = null)
     {
         try {
             $conn = $this->conect->check_connection($connDB);
@@ -1441,7 +1442,7 @@ class Horarios
         // $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
         $this->resp->respuesta($rota ?? [], count($rota ?? []), 'OK', 200, 0, count($rota ?? []), 0);
     }
-    public function get_horale_1(string $Legajo, $connDB = '', array $ListHorarios = [], bool $return = false)
+    public function get_horale_1(string $Legajo, $connDB = null, array $ListHorarios = [], bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1478,7 +1479,7 @@ class Horarios
 
         $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
-    public function get_horale_2(string $Legajo, $connDB = '', array $ListHorarios = [], bool $return = false)
+    public function get_horale_2(string $Legajo, $connDB = null, array $ListHorarios = [], bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1516,7 +1517,7 @@ class Horarios
 
         $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
-    public function get_rotaleg(string $Legajo, $connDB = '', bool $return = false)
+    public function get_rotaleg(string $Legajo, $connDB = null, bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1557,7 +1558,7 @@ class Horarios
 
         $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
-    public function get_citacion(string $Legajo, $connDB = '', bool $return = false)
+    public function get_citacion(string $Legajo, $connDB = null, bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1596,11 +1597,11 @@ class Horarios
 
         $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
-    public function get_asign_legajo(string $Legajo, bool $return = false)
+    public function get_asign_legajo(string $Legajo, $connDB = null, bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
-        $conn = $this->conect->check_connection();
+        $conn = $this->conect->check_connection($connDB);
 
         $ListHorarios = $this->return_horarios($conn) ?? []; // Devuelve los horarios
         $horale1 = $this->get_horale_1($Legajo, $conn, $ListHorarios, true);

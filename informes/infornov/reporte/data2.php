@@ -91,15 +91,20 @@ foreach ($dataNovedades as $key => $ValueData) {
     $suc[] = ($ValueData['TipoN'] == '7') ? (($ValueData['Tipo'])) : '';
     $sus[] = ($ValueData['TipoN'] == '7') ? (HoraMin($ValueData['Horas'])) : '';
     /** ART */
-    $arc[] = ($ValueData['TipoN'] == '7') ? (($ValueData['Tipo'])) : '';
-    $art[] = ($ValueData['TipoN'] == '7') ? (HoraMin($ValueData['Horas'])) : '';
+    $arc[] = ($ValueData['TipoN'] == '8') ? (($ValueData['Tipo'])) : '';
+    $art[] = ($ValueData['TipoN'] == '8') ? (HoraMin($ValueData['Horas'])) : '';
     /** Ausencias */
     $ac[] = ($ValueData['TipoN'] == '3') ? (($ValueData['Tipo'])) : '';
     $a[] = ($ValueData['TipoN'] == '3') ? (HoraMin($ValueData['Horas'])) : '';
 }
 
-$todoc = ($dataNovedades['Codigo'] ?? array());
-$todo = HoraMin($dataNovedades['Horas'] ?? '');
+$todoc = array_column($dataNovedades, 'Codigo');
+$todo = array_map(
+    static function ($row) {
+        return HoraMin($row['Horas'] ?? '');
+    },
+    $dataNovedades
+);
 
 $tc = (array_count_values($tc));
 $ac = (array_count_values($ac));
@@ -111,4 +116,4 @@ $acc = (array_count_values($acc));
 $suc = (array_count_values($suc));
 $arc = (array_count_values($arc));
 
-$todoc = (array_count_values($todoc));
+$todoc = array_count_values($todoc);
