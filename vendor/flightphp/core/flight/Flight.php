@@ -11,13 +11,11 @@ use flight\net\Route;
 use flight\core\EventDispatcher;
 use Psr\Container\ContainerInterface;
 
-require_once __DIR__ . '/autoload.php';
-
 /**
  * The Flight class is a static representation of the framework.
  *
  * @license MIT, https://docs.flightphp.com/license
- * @copyright Copyright (c) 2011-2025, Mike Cao <mike@mikecao.com>, n0nag0n <n0nag0n@sky-9.com>
+ * @copyright 2011-2026, Mike Cao https://mikecao.com, n0nag0n <n0nag0n@sky-9.com>
  *
  * @method static void start()
  * @method static void path(string $dir)
@@ -79,8 +77,7 @@ require_once __DIR__ . '/autoload.php';
  * @phpstan-method static void json(mixed $data, int $code = 200, bool $encode = true, string $charset = "utf8", int $encodeOption = 0, int $encodeDepth = 512)
  * @phpstan-method static void jsonHalt(mixed $data, int $code = 200, bool $encode = true, string $charset = 'utf-8', int $option = 0)
  * @phpstan-method static void jsonp(mixed $data, string $param = 'jsonp', int $code = 200, bool $encode = true, string $charset = "utf8", int $encodeOption = 0, int $encodeDepth = 512)
- *
- * Note: IDEs will use standard @method tags for autocompletion, while PHPStan will use @phpstan-* tags for advanced type checking.
+ * @license https://docs.flightphp.com/license MIT
  */
 class Flight
 {

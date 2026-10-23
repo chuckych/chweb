@@ -12,8 +12,8 @@ use flight\net\Route;
  * an assigned callback function. The Router tries to match the
  * requested URL against a series of URL patterns.
  *
- * @license MIT, http://flightphp.com/license
- * @copyright Copyright (c) 2011, Mike Cao <mike@mikecao.com>
+ * @copyright 2011 Mike Cao https://mikecao.com
+ * @license https://docs.flightphp.com/license MIT
  */
 class Router
 {
@@ -152,7 +152,7 @@ class Router
             if (!isset($this->routesByMethod[$method])) {
                 $this->routesByMethod[$method] = [];
             }
-            $this->routesByMethod[$method][] = $route;
+            $this->routesByMethod[$method][count($this->routes) - 1] = $route;
         }
 
         return $route;
@@ -270,17 +270,13 @@ class Router
         }
 
         // Fast path: check method-specific routes first, then wildcard routes (only on first routing attempt)
-        $methodsToCheck = [$requestMethod, '*'];
-        foreach ($methodsToCheck as $method) {
-            if (isset($this->routesByMethod[$method])) {
-                foreach ($this->routesByMethod[$method] as $route) {
-                    if ($route->matchUrl($requestUrl, $this->caseSensitive)) {
-                        $this->executedRoute = $route;
-                        // Set iterator position to this route for potential next() calls
-                        $this->index = array_search($route, $this->routes, true);
-                        return $route;
-                    }
-                }
+        $candidates = ($this->routesByMethod[$requestMethod] ?? []) + ($this->routesByMethod['*'] ?? []);
+        ksort($candidates);
+        foreach ($candidates as $routeIndex => $route) {
+            if ($route->matchUrl($requestUrl, $this->caseSensitive)) {
+                $this->executedRoute = $route;
+                $this->index = $routeIndex;
+                return $route;
             }
         }
 

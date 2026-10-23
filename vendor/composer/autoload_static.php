@@ -19,15 +19,19 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
     );
 
     public static $prefixLengthsPsr4 = array (
-        's' => 
+        's' =>
         array (
             'setasign\\Fpdi\\' => 14,
         ),
-        'Z' => 
+        'f' =>
+        array (
+            'flight\\' => 7,
+        ),
+        'Z' =>
         array (
             'ZipStream\\' => 10,
         ),
-        'S' => 
+        'S' =>
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
@@ -36,17 +40,16 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
             'Symfony\\Component\\Translation\\' => 30,
             'Spipu\\Html2Pdf\\' => 15,
         ),
-        'P' => 
+        'P' =>
         array (
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
-            'Psr\\Http\\Client\\' => 16,
             'Psr\\Clock\\' => 10,
             'PhpOption\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
-        'M' => 
+        'M' =>
         array (
             'MyCLabs\\Enum\\' => 13,
             'Mpdf\\PsrLogAwareTrait\\' => 22,
@@ -54,143 +57,147 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
             'Mpdf\\' => 5,
             'Matrix\\' => 7,
         ),
-        'G' => 
+        'G' =>
         array (
             'GrahamCampbell\\ResultType\\' => 26,
         ),
-        'D' => 
+        'D' =>
         array (
             'Dotenv\\' => 7,
             'DeepCopy\\' => 9,
         ),
-        'C' => 
+        'C' =>
         array (
+            'Composer\\Pcre\\' => 14,
             'Complex\\' => 8,
             'Carbon\\Doctrine\\' => 16,
             'Carbon\\' => 7,
         ),
-        'A' => 
+        'A' =>
         array (
             'App\\' => 4,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'setasign\\Fpdi\\' => 
+        'setasign\\Fpdi\\' =>
         array (
             0 => __DIR__ . '/..' . '/setasign/fpdi/src',
         ),
-        'ZipStream\\' => 
+        'flight\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/flightphp/core/flight',
+        ),
+        'ZipStream\\' =>
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
         ),
-        'Symfony\\Polyfill\\Php80\\' => 
+        'Symfony\\Polyfill\\Php80\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
+        'Symfony\\Polyfill\\Mbstring\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Polyfill\\Ctype\\' => 
+        'Symfony\\Polyfill\\Ctype\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Symfony\\Contracts\\Translation\\' => 
+        'Symfony\\Contracts\\Translation\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/translation-contracts',
         ),
-        'Symfony\\Component\\Translation\\' => 
+        'Symfony\\Component\\Translation\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
         ),
-        'Spipu\\Html2Pdf\\' => 
+        'Spipu\\Html2Pdf\\' =>
         array (
             0 => __DIR__ . '/..' . '/spipu/html2pdf/src',
         ),
-        'Psr\\SimpleCache\\' => 
+        'Psr\\SimpleCache\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
-        'Psr\\Log\\' => 
+        'Psr\\Log\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
-        'Psr\\Http\\Message\\' => 
+        'Psr\\Http\\Message\\' =>
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Psr\\Http\\Client\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/http-client/src',
-        ),
-        'Psr\\Clock\\' => 
+        'Psr\\Clock\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/clock/src',
         ),
-        'PhpOption\\' => 
+        'PhpOption\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
         ),
-        'PhpOffice\\PhpSpreadsheet\\' => 
+        'PhpOffice\\PhpSpreadsheet\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
         ),
-        'MyCLabs\\Enum\\' => 
+        'MyCLabs\\Enum\\' =>
         array (
             0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
         ),
-        'Mpdf\\PsrLogAwareTrait\\' => 
+        'Mpdf\\PsrLogAwareTrait\\' =>
         array (
             0 => __DIR__ . '/..' . '/mpdf/psr-log-aware-trait/src',
         ),
-        'Mpdf\\PsrHttpMessageShim\\' => 
+        'Mpdf\\PsrHttpMessageShim\\' =>
         array (
             0 => __DIR__ . '/..' . '/mpdf/psr-http-message-shim/src',
         ),
-        'Mpdf\\' => 
+        'Mpdf\\' =>
         array (
             0 => __DIR__ . '/..' . '/mpdf/mpdf/src',
         ),
-        'Matrix\\' => 
+        'Matrix\\' =>
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
         ),
-        'GrahamCampbell\\ResultType\\' => 
+        'GrahamCampbell\\ResultType\\' =>
         array (
             0 => __DIR__ . '/..' . '/graham-campbell/result-type/src',
         ),
-        'Dotenv\\' => 
+        'Dotenv\\' =>
         array (
             0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
         ),
-        'DeepCopy\\' => 
+        'DeepCopy\\' =>
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
-        'Complex\\' => 
+        'Composer\\Pcre\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/composer/pcre/src',
+        ),
+        'Complex\\' =>
         array (
             0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
         ),
-        'Carbon\\Doctrine\\' => 
+        'Carbon\\Doctrine\\' =>
         array (
             0 => __DIR__ . '/..' . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine',
         ),
-        'Carbon\\' => 
+        'Carbon\\' =>
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
         ),
-        'App\\' => 
+        'App\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'H' => 
+        'H' =>
         array (
-            'HTMLPurifier' => 
+            'HTMLPurifier' =>
             array (
                 0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
             ),
@@ -198,6 +205,12 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
     );
 
     public static $classMap = array (
+        'App\\Http\\ApiTokenGenerator' => __DIR__ . '/../..' . '/src/Http/ApiTokenGenerator.php',
+        'App\\Http\\ChApiClient' => __DIR__ . '/../..' . '/src/Http/ChApiClient.php',
+        'App\\Http\\CurlHttpClient' => __DIR__ . '/../..' . '/src/Http/CurlHttpClient.php',
+        'App\\Http\\HttpClientInterface' => __DIR__ . '/../..' . '/src/Http/HttpClientInterface.php',
+        'App\\Http\\HttpRequest' => __DIR__ . '/../..' . '/src/Http/HttpRequest.php',
+        'App\\Http\\UrlBuilder' => __DIR__ . '/../..' . '/src/Http/UrlBuilder.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Carbon\\AbstractTranslator' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/AbstractTranslator.php',
         'Carbon\\Carbon' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Carbon.php',
@@ -287,6 +300,23 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'Complex\\Functions' => __DIR__ . '/..' . '/markbaker/complex/classes/src/Functions.php',
         'Complex\\Operations' => __DIR__ . '/..' . '/markbaker/complex/classes/src/Operations.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Composer\\Pcre\\MatchAllResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchAllResult.php',
+        'Composer\\Pcre\\MatchAllStrictGroupsResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchAllStrictGroupsResult.php',
+        'Composer\\Pcre\\MatchAllWithOffsetsResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchAllWithOffsetsResult.php',
+        'Composer\\Pcre\\MatchResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchResult.php',
+        'Composer\\Pcre\\MatchStrictGroupsResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchStrictGroupsResult.php',
+        'Composer\\Pcre\\MatchWithOffsetsResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchWithOffsetsResult.php',
+        'Composer\\Pcre\\PHPStan\\InvalidRegexPatternRule' => __DIR__ . '/..' . '/composer/pcre/src/PHPStan/InvalidRegexPatternRule.php',
+        'Composer\\Pcre\\PHPStan\\PregMatchFlags' => __DIR__ . '/..' . '/composer/pcre/src/PHPStan/PregMatchFlags.php',
+        'Composer\\Pcre\\PHPStan\\PregMatchParameterOutTypeExtension' => __DIR__ . '/..' . '/composer/pcre/src/PHPStan/PregMatchParameterOutTypeExtension.php',
+        'Composer\\Pcre\\PHPStan\\PregMatchTypeSpecifyingExtension' => __DIR__ . '/..' . '/composer/pcre/src/PHPStan/PregMatchTypeSpecifyingExtension.php',
+        'Composer\\Pcre\\PHPStan\\PregReplaceCallbackClosureTypeExtension' => __DIR__ . '/..' . '/composer/pcre/src/PHPStan/PregReplaceCallbackClosureTypeExtension.php',
+        'Composer\\Pcre\\PHPStan\\UnsafeStrictGroupsCallRule' => __DIR__ . '/..' . '/composer/pcre/src/PHPStan/UnsafeStrictGroupsCallRule.php',
+        'Composer\\Pcre\\PcreException' => __DIR__ . '/..' . '/composer/pcre/src/PcreException.php',
+        'Composer\\Pcre\\Preg' => __DIR__ . '/..' . '/composer/pcre/src/Preg.php',
+        'Composer\\Pcre\\Regex' => __DIR__ . '/..' . '/composer/pcre/src/Regex.php',
+        'Composer\\Pcre\\ReplaceResult' => __DIR__ . '/..' . '/composer/pcre/src/ReplaceResult.php',
+        'Composer\\Pcre\\UnexpectedNullMatchException' => __DIR__ . '/..' . '/composer/pcre/src/UnexpectedNullMatchException.php',
         'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
         'DeepCopy\\DeepCopy' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
         'DeepCopy\\Exception\\CloneException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
@@ -306,6 +336,7 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'DeepCopy\\Matcher\\PropertyTypeMatcher' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Matcher/PropertyTypeMatcher.php',
         'DeepCopy\\Reflection\\ReflectionHelper' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Reflection/ReflectionHelper.php',
         'DeepCopy\\TypeFilter\\Date\\DateIntervalFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/Date/DateIntervalFilter.php',
+        'DeepCopy\\TypeFilter\\Date\\DatePeriodFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/Date/DatePeriodFilter.php',
         'DeepCopy\\TypeFilter\\ReplaceFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/ReplaceFilter.php',
         'DeepCopy\\TypeFilter\\ShallowCopyFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/ShallowCopyFilter.php',
         'DeepCopy\\TypeFilter\\Spl\\ArrayObjectFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/Spl/ArrayObjectFilter.php',
@@ -354,6 +385,7 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'Dotenv\\Util\\Regex' => __DIR__ . '/..' . '/vlucas/phpdotenv/src/Util/Regex.php',
         'Dotenv\\Util\\Str' => __DIR__ . '/..' . '/vlucas/phpdotenv/src/Util/Str.php',
         'Dotenv\\Validator' => __DIR__ . '/..' . '/vlucas/phpdotenv/src/Validator.php',
+        'Flight' => __DIR__ . '/..' . '/flightphp/core/flight/Flight.php',
         'GrahamCampbell\\ResultType\\Error' => __DIR__ . '/..' . '/graham-campbell/result-type/src/Error.php',
         'GrahamCampbell\\ResultType\\Result' => __DIR__ . '/..' . '/graham-campbell/result-type/src/Result.php',
         'GrahamCampbell\\ResultType\\Success' => __DIR__ . '/..' . '/graham-campbell/result-type/src/Success.php',
@@ -379,6 +411,7 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'HTMLPurifier_AttrDef_CSS_Multiple' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/CSS/Multiple.php',
         'HTMLPurifier_AttrDef_CSS_Number' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/CSS/Number.php',
         'HTMLPurifier_AttrDef_CSS_Percentage' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/CSS/Percentage.php',
+        'HTMLPurifier_AttrDef_CSS_Ratio' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/CSS/Ratio.php',
         'HTMLPurifier_AttrDef_CSS_TextDecoration' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/CSS/TextDecoration.php',
         'HTMLPurifier_AttrDef_CSS_URI' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/CSS/URI.php',
         'HTMLPurifier_AttrDef_Clone' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/Clone.php',
@@ -1364,22 +1397,12 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'PhpOption\\Some' => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption/Some.php',
         'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Psr\\Clock\\ClockInterface' => __DIR__ . '/..' . '/psr/clock/src/ClockInterface.php',
-        'Psr\\Http\\Client\\ClientExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientExceptionInterface.php',
-        'Psr\\Http\\Client\\ClientInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientInterface.php',
-        'Psr\\Http\\Client\\NetworkExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/NetworkExceptionInterface.php',
-        'Psr\\Http\\Client\\RequestExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/RequestExceptionInterface.php',
         'Psr\\Http\\Message\\MessageInterface' => __DIR__ . '/..' . '/psr/http-message/src/MessageInterface.php',
-        'Psr\\Http\\Message\\RequestFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/RequestFactoryInterface.php',
         'Psr\\Http\\Message\\RequestInterface' => __DIR__ . '/..' . '/psr/http-message/src/RequestInterface.php',
-        'Psr\\Http\\Message\\ResponseFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/ResponseFactoryInterface.php',
         'Psr\\Http\\Message\\ResponseInterface' => __DIR__ . '/..' . '/psr/http-message/src/ResponseInterface.php',
-        'Psr\\Http\\Message\\ServerRequestFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/ServerRequestFactoryInterface.php',
         'Psr\\Http\\Message\\ServerRequestInterface' => __DIR__ . '/..' . '/psr/http-message/src/ServerRequestInterface.php',
-        'Psr\\Http\\Message\\StreamFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/StreamFactoryInterface.php',
         'Psr\\Http\\Message\\StreamInterface' => __DIR__ . '/..' . '/psr/http-message/src/StreamInterface.php',
-        'Psr\\Http\\Message\\UploadedFileFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/UploadedFileFactoryInterface.php',
         'Psr\\Http\\Message\\UploadedFileInterface' => __DIR__ . '/..' . '/psr/http-message/src/UploadedFileInterface.php',
-        'Psr\\Http\\Message\\UriFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/UriFactoryInterface.php',
         'Psr\\Http\\Message\\UriInterface' => __DIR__ . '/..' . '/psr/http-message/src/UriInterface.php',
         'Psr\\Log\\AbstractLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/AbstractLogger.php',
         'Psr\\Log\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/log/Psr/Log/InvalidArgumentException.php',
@@ -1420,6 +1443,8 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'Spipu\\Html2Pdf\\Parsing\\TagParser' => __DIR__ . '/..' . '/spipu/html2pdf/src/Parsing/TagParser.php',
         'Spipu\\Html2Pdf\\Parsing\\TextParser' => __DIR__ . '/..' . '/spipu/html2pdf/src/Parsing/TextParser.php',
         'Spipu\\Html2Pdf\\Parsing\\Token' => __DIR__ . '/..' . '/spipu/html2pdf/src/Parsing/Token.php',
+        'Spipu\\Html2Pdf\\Security\\Security' => __DIR__ . '/..' . '/spipu/html2pdf/src/Security/Security.php',
+        'Spipu\\Html2Pdf\\Security\\SecurityInterface' => __DIR__ . '/..' . '/spipu/html2pdf/src/Security/SecurityInterface.php',
         'Spipu\\Html2Pdf\\SvgDrawer' => __DIR__ . '/..' . '/spipu/html2pdf/src/SvgDrawer.php',
         'Spipu\\Html2Pdf\\Tag\\AbstractHtmlTag' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/AbstractHtmlTag.php',
         'Spipu\\Html2Pdf\\Tag\\AbstractSvgTag' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/AbstractSvgTag.php',
@@ -1431,6 +1456,7 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'Spipu\\Html2Pdf\\Tag\\Html\\Cite' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Cite.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Del' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Del.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Em' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Em.php',
+        'Spipu\\Html2Pdf\\Tag\\Html\\Figure' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Figure.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Font' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Font.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\I' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/I.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Ins' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Ins.php',
@@ -1439,6 +1465,7 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'Spipu\\Html2Pdf\\Tag\\Html\\Samp' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Samp.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Small' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Small.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Span' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Span.php',
+        'Spipu\\Html2Pdf\\Tag\\Html\\Strike' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Strike.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Strong' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Strong.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Sub' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Sub.php',
         'Spipu\\Html2Pdf\\Tag\\Html\\Sup' => __DIR__ . '/..' . '/spipu/html2pdf/src/Tag/Html/Sup.php',
@@ -1557,8 +1584,6 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'TCPDF_FONTS' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_fonts.php',
         'TCPDF_FONT_DATA' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_font_data.php',
         'TCPDF_IMAGES' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_images.php',
-        'TCPDF_IMPORT' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_import.php',
-        'TCPDF_PARSER' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_parser.php',
         'TCPDF_STATIC' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_static.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
@@ -1579,6 +1604,25 @@ class ComposerStaticInit7f4cb8670667a16ef134fa8e2cf600e5
         'ZipStream\\Option\\Version' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Option/Version.php',
         'ZipStream\\Stream' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Stream.php',
         'ZipStream\\ZipStream' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/ZipStream.php',
+        'flight\\Engine' => __DIR__ . '/..' . '/flightphp/core/flight/Engine.php',
+        'flight\\commands\\AiGenerateInstructionsCommand' => __DIR__ . '/..' . '/flightphp/core/flight/commands/AiGenerateInstructionsCommand.php',
+        'flight\\commands\\AiInitCommand' => __DIR__ . '/..' . '/flightphp/core/flight/commands/AiInitCommand.php',
+        'flight\\commands\\ControllerCommand' => __DIR__ . '/..' . '/flightphp/core/flight/commands/ControllerCommand.php',
+        'flight\\commands\\RouteCommand' => __DIR__ . '/..' . '/flightphp/core/flight/commands/RouteCommand.php',
+        'flight\\core\\Dispatcher' => __DIR__ . '/..' . '/flightphp/core/flight/core/Dispatcher.php',
+        'flight\\core\\EventDispatcher' => __DIR__ . '/..' . '/flightphp/core/flight/core/EventDispatcher.php',
+        'flight\\core\\FilteredCallable' => __DIR__ . '/..' . '/flightphp/core/flight/core/FilteredCallable.php',
+        'flight\\core\\Loader' => __DIR__ . '/..' . '/flightphp/core/flight/core/Loader.php',
+        'flight\\database\\PdoWrapper' => __DIR__ . '/..' . '/flightphp/core/flight/database/PdoWrapper.php',
+        'flight\\database\\SimplePdo' => __DIR__ . '/..' . '/flightphp/core/flight/database/SimplePdo.php',
+        'flight\\net\\Request' => __DIR__ . '/..' . '/flightphp/core/flight/net/Request.php',
+        'flight\\net\\Response' => __DIR__ . '/..' . '/flightphp/core/flight/net/Response.php',
+        'flight\\net\\Route' => __DIR__ . '/..' . '/flightphp/core/flight/net/Route.php',
+        'flight\\net\\Router' => __DIR__ . '/..' . '/flightphp/core/flight/net/Router.php',
+        'flight\\net\\UploadedFile' => __DIR__ . '/..' . '/flightphp/core/flight/net/UploadedFile.php',
+        'flight\\template\\View' => __DIR__ . '/..' . '/flightphp/core/flight/template/View.php',
+        'flight\\util\\Collection' => __DIR__ . '/..' . '/flightphp/core/flight/util/Collection.php',
+        'flight\\util\\Json' => __DIR__ . '/..' . '/flightphp/core/flight/util/Json.php',
         'setasign\\Fpdi\\FpdfTpl' => __DIR__ . '/..' . '/setasign/fpdi/src/FpdfTpl.php',
         'setasign\\Fpdi\\FpdfTplTrait' => __DIR__ . '/..' . '/setasign/fpdi/src/FpdfTplTrait.php',
         'setasign\\Fpdi\\FpdfTrait' => __DIR__ . '/..' . '/setasign/fpdi/src/FpdfTrait.php',

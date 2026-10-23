@@ -12,8 +12,8 @@ use flight\core\EventDispatcher;
  * contains the response headers, HTTP status code, and response
  * body.
  *
- * @license MIT, http://flightphp.com/license
- * @copyright Copyright (c) 2011, Mike Cao <mike@mikecao.com>
+ * @copyright 2011 Mike Cao https://mikecao.com
+ * @license https://docs.flightphp.com/license MIT
  */
 class Response
 {
@@ -484,7 +484,8 @@ class Response
      * Downloads a file.
      *
      * @param string $filePath The path to the file to be downloaded.
-     * @param string $fileName The name the downloaded file should have. If not provided or is an empty string, the name of the file on disk will be used.
+     * @param string $fileName The name the downloaded file should have.
+     * If not provided or is an empty string, the name of the file on disk will be used.
      *
      * @throws Exception If the file cannot be found.
      *

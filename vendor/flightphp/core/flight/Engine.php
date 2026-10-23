@@ -24,8 +24,7 @@ use Psr\Container\ContainerInterface;
  * It is responsible for loading an HTTP request, running the assigned services,
  * and generating an HTTP response.
  *
- * @license MIT, https://docs.flightphp.com/license
- * @copyright Copyright (c) 2011-2025, Mike Cao <mike@mikecao.com>, n0nag0n <n0nag0n@sky-9.com>
+ * @copyright 2011-2026, Mike Cao https://mikecao.com, n0nag0n <n0nag0n@sky-9.com>
  *
  * @method void start()
  * @method void stop()
@@ -57,8 +56,7 @@ use Psr\Container\ContainerInterface;
  * @method void lastModified(int $time)
  * @method void download(string $filePath)
  *
- * @phpstan-template EngineTemplate of object
- * @phpstan-method void registerContainerHandler(ContainerInterface|callable(class-string<EngineTemplate> $id, array<int|string, mixed> $params): ?EngineTemplate $containerHandler)
+ * @phpstan-method void registerContainerHandler(ContainerInterface|callable(class-string<object> $id, array<int|string, mixed> $params): ?object $containerHandler)
  * @phpstan-method Route route(string $pattern, callable|string|array{0: class-string, 1: string} $callback, bool $pass_route = false, string $alias = '')
  * @phpstan-method void group(string $pattern, callable $callback, (class-string|callable|array{0: class-string, 1: string})[] $group_middlewares = [])
  * @phpstan-method Route post(string $pattern, callable|string|array{0: class-string, 1: string} $callback, bool $pass_route = false, string $alias = '')
@@ -75,10 +73,7 @@ use Psr\Container\ContainerInterface;
  * @phpstan-method void json(mixed $data, int $code = 200, bool $encode = true, string $charset = "utf8", int $encodeOption = 0, int $encodeDepth = 512)
  * @phpstan-method void jsonHalt(mixed $data, int $code = 200, bool $encode = true, string $charset = 'utf-8', int $option = 0)
  * @phpstan-method void jsonp(mixed $data, string $param = 'jsonp', int $code = 200, bool $encode = true, string $charset = "utf8", int $encodeOption = 0, int $encodeDepth = 512)
- *
- * Note: IDEs will use standard @method tags for autocompletion, while PHPStan will use @phpstan-* tags for advanced type checking.
- *
- * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+ * @license https://docs.flightphp.com/license MIT
  */
 class Engine
 {
@@ -118,7 +113,7 @@ class Engine
     /** Class loader. */
     protected Loader $loader;
 
-    /** @var Dispatcher<EngineTemplate> Method and class dispatcher. */
+    /** Method and class dispatcher. */
     protected Dispatcher $dispatcher;
 
     /** Event dispatcher. */
@@ -193,6 +188,7 @@ class Engine
         $this->loader->register('view', View::class, [], function (View $view) use ($self) {
             $view->path = $self->get('flight.views.path');
             $view->extension = $self->get('flight.views.extension');
+            $view->restrictToPath = (bool) $self->get('flight.views.restrict_to_path');
         });
 
         foreach (self::MAPPABLE_METHODS as $name) {
@@ -204,10 +200,13 @@ class Engine
         $this->set('flight.case_sensitive', false);
         $this->set('flight.handle_errors', true);
         $this->set('flight.log_errors', false);
+        $this->set('flight.debug', false);
         $this->set('flight.views.path', './views');
         $this->set('flight.views.extension', '.php');
+        $this->set('flight.views.restrict_to_path', false);
         $this->set('flight.content_length', true);
         $this->set('flight.v2.output_buffering', false);
+        $this->set('flight.allow_method_override', true);
 
         // Startup configuration
         $this->before('start', function () use ($self) {
@@ -225,6 +224,24 @@ class Engine
             // which causes a lot of problems. This will be removed
             // in v4
             $self->response()->v2_output_buffering = $this->get('flight.v2.output_buffering');
+
+            // Propagate method override setting to Request.
+            // Assign the static on the class first — do not call request() before this,
+            // or Request's constructor caches the method while the flag is still the default (true).
+            Request::$allowMethodOverride = (bool) $self->get('flight.allow_method_override');
+
+            // If a Request was already built earlier (common: apps touch request() before start)
+            // while override was still enabled, refresh the cached verb when override is off
+            // and an override input is present. When no override input exists, leave any
+            // intentional manual method assignment alone.
+            if (Request::$allowMethodOverride === false) {
+                $hasOverrideInput = Request::getVar('HTTP_X_HTTP_METHOD_OVERRIDE') !== ''
+                    || isset($_REQUEST['_method']);
+                if ($hasOverrideInput === true) {
+                    $request = $self->request();
+                    $request->method = Request::getMethod();
+                }
+            }
         });
 
         $this->initialized = true;
@@ -267,7 +284,8 @@ class Engine
     /**
      * Registers the container handler
      *
-     * @param ContainerInterface|callable(class-string<T> $id, array<int|string, mixed> $params): ?T $containerHandler Callback function or PSR-11 Container object that sets the container and how it will inject classes
+     * @param ContainerInterface|callable(class-string<T> $id, array<int|string, mixed> $params): ?T $containerHandler
+     * Callback function or PSR-11 Container object that sets the container and how it will inject classes
      *
      * @template T of object
      */
@@ -451,7 +469,21 @@ class Engine
                 $middlewareObject = method_exists($middleware, $eventName) === true ? [$middleware, $eventName] : false;
 
                 // If the middleware is a string, we need to create the object and then call the event.
-            } elseif (is_string($middleware) === true && method_exists($middleware, $eventName) === true) {
+            } elseif (is_string($middleware) === true) {
+                if (class_exists($middleware) === false) {
+                    if (ob_get_level() > (getenv('PHPUNIT_TEST') ? 1 : 0)) {
+                        ob_end_clean();
+                    }
+
+                    throw new Exception(
+                        "Middleware class '$middleware' not found. Is it being correctly autoloaded with Flight::path()?"
+                    );
+                }
+
+                if (method_exists($middleware, $eventName) === false) {
+                    continue;
+                }
+
                 $resolvedClass = null;
 
                 // if there's a container assigned, we should use it to create the object
@@ -459,14 +491,19 @@ class Engine
                     $resolvedClass = $this->dispatcher->resolveContainerClass($middleware, $params);
                     // otherwise just assume it's a plain jane class, so inject the engine
                     // just like in Dispatcher::invokeCallable()
-                } elseif (class_exists($middleware) === true) {
+                } else {
                     $resolvedClass = new $middleware($this);
                 }
 
-                // If something was resolved, create an array callable that will be passed in later.
-                if ($resolvedClass !== null) {
-                    $middlewareObject = [$resolvedClass, $eventName];
+                if ($resolvedClass === null) {
+                    if (ob_get_level() > (getenv('PHPUNIT_TEST') ? 1 : 0)) {
+                        ob_end_clean();
+                    }
+
+                    throw new Exception("Middleware class '$middleware' could not be resolved.");
                 }
+
+                $middlewareObject = [$resolvedClass, $eventName];
             }
 
             // If nothing was resolved, go to the next thing
@@ -488,7 +525,14 @@ class Engine
             // Which loosely translates to $class->$method($params)
             $start = microtime(true);
             $middlewareResult = $middlewareObject($params);
-            $this->triggerEvent('flight.middleware.executed', $route, $middleware, $eventName, microtime(true) - $start);
+
+            $this->triggerEvent(
+                'flight.middleware.executed',
+                $route,
+                $middleware,
+                $eventName,
+                microtime(true) - $start
+            );
 
             if ($useV3OutputBuffering === true) {
                 $this->response()->write(ob_get_clean());
@@ -670,16 +714,24 @@ class Engine
     public function _error(Throwable $e): void
     {
         $this->triggerEvent('flight.error', $e);
-        $msg = sprintf(
-            <<<'HTML'
-            <h1>500 Internal Server Error</h1>
-                <h3>%s (%s)</h3>
-                <pre>%s</pre>
-            HTML, // phpcs:ignore
-            $e->getMessage(),
-            $e->getCode(),
-            $e->getTraceAsString()
-        );
+
+        if ($this->get('flight.debug') === true) {
+            $msg = sprintf(
+                <<<'HTML'
+                <h1>500 Internal Server Error</h1>
+                    <h3>%s (%s)</h3>
+                    <pre>%s</pre>
+                HTML, // phpcs:ignore
+                htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'),
+                $e->getCode(),
+                htmlspecialchars($e->getTraceAsString(), ENT_QUOTES, 'UTF-8')
+            );
+        } else {
+            if ($this->get('flight.log_errors') === true) {
+                error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+            }
+            $msg = '<h1>500 Internal Server Error</h1>';
+        }
 
         try {
             $this->response()
@@ -860,7 +912,12 @@ class Engine
     public function _methodNotFound(Route $route): void
     {
         $this->response()->setHeader('Allow', implode(', ', $route->methods));
-        $this->halt(405, 'Method Not Allowed. Allowed Methods are: ' . implode(', ', $route->methods), empty(getenv('PHPUNIT_TEST')));
+
+        $this->halt(
+            405,
+            'Method Not Allowed. Allowed Methods are: ' . implode(', ', $route->methods),
+            empty(getenv('PHPUNIT_TEST'))
+        );
     }
 
     /**
@@ -877,7 +934,7 @@ class Engine
         }
 
         // Append base url to redirect url
-        if ($base !== '/'   && strpos($url, '://') === false) {
+        if ($base !== '/' && strpos($url, '://') === false) {
             $url = $base . preg_replace('#/+#', '/', '/' . $url);
         }
 
@@ -988,7 +1045,11 @@ class Engine
         int $option = 0
     ): void {
         $json = $encode ? Json::encode($data, $option) : $data;
-        $callback = $this->request()->query[$param];
+        $callback = (string) $this->request()->query[$param];
+
+        if ($callback !== '' && !preg_match('/^[A-Za-z_$][\w$.]{0,127}$/', $callback)) {
+            throw new Exception('Invalid JSONP callback name.');
+        }
 
         $this->response()
             ->status($code)
