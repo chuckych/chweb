@@ -4,7 +4,7 @@
         "igorescobar/jquery-mask-plugin": "^1.14",
         "mpdf/mpdf": "^8.2",
         "nesbot/carbon": "^2.72",
-        "phpoffice/phpspreadsheet": "^1.30",
+        "phpoffice/phpspreadsheet": "^2.4",
         "spipu/html2pdf": "*",
         "twbs/bootstrap-icons": "^1.10",
         "verot/class.upload.php": "^2.1",
