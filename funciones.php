@@ -2926,38 +2926,18 @@ function listaRol($idLista = '0')
 function listaEstruct($idLista = '0')
 {
     $idLista = intval($idLista);
-    switch ($idLista) {
-        case 0:
-            return 'Todos';
-        // break;
-        case 1:
-            return 'Empresas';
-        // break;
-        case 2:
-            return 'Plantas';
-        // break;
-        case 3:
-            return 'Convenios';
-        // break;
-        case 4:
-            return 'Sectores';
-        // break;
-        case 5:
-            return 'Secciones';
-        // break;
-        case 6:
-            return 'Grupos';
-        // break;
-        case 7:
-            return 'Sucursales';
-        // break;
-        case 8:
-            return 'Personal';
-        // break;
-        default:
-            return 'Todos';
-        // break;
-    }
+    return match ($idLista) {
+        0 => 'Todos',
+        1 => 'Empresas',
+        2 => 'Plantas',
+        3 => 'Convenios',
+        4 => 'Sectores',
+        5 => 'Secciones',
+        6 => 'Grupos',
+        7 => 'Sucursales',
+        8 => 'Personal',
+        default => 'Todos',
+    };
 }
 function totalDiasFechas($fecha_inicial, $fecha_final)
 {
