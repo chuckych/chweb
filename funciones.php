@@ -1021,14 +1021,63 @@ function modulo_cuentas()
         return $value['modsrol'];
     }
 }
-function ExisteModRol($modulo)
+/**
+ * Busca el primer elemento de un array cuyo $key coincida con $valor.
+ * Devuelve el elemento completo o null si no se encuentra.
+ */
+function buscarPorClave(array $array, string $key, mixed $valor): ?array
+{
+    foreach ($array as $item) {
+        if (isset($item[$key]) && $item[$key] == $valor) {
+            return $item;
+        }
+    }
+    return null;
+}
+
+/**
+ * Verifica si el módulo actual está asignado al rol del usuario en sesión.
+ * Redirige al inicio si no tiene acceso.
+ */
+function ExisteModRol(?string $modulo): void
+{
+    $_SESSION['ID_MODULO'] = $modulo;
+
+    if (!defined('ID_MODULO')) {
+        define('ID_MODULO', $modulo ?? '');
+    }
+
+    $moduloId = (int) $modulo;
+    if ($moduloId <= 0) {
+        return;
+    }
+
+    $tieneAcceso = false;
+    foreach ($_SESSION['MODS_ROL'] ?? [] as $modRol) {
+        if ((int) $modRol['modsrol'] === $moduloId) {
+            $tieneAcceso = true;
+            break;
+        }
+    }
+
+    if (!$tieneAcceso) {
+        header('Location: /' . HOMEHOST . '/');
+        exit;
+    }
+
+    $moduloActual = buscarPorClave($_SESSION['MODULOS'] ?? [], 'id', $moduloId);
+    if ($moduloActual !== null) {
+        access_log($moduloActual['modulo']);
+    }
+}
+function ExisteModRol_old(string $modulo)
 {
     /**
      * 
      * verificamos si existe el modulo asociado a la session del rol de usuario. 
      * sino existe lo enviamos al incio.
      */
-    $_SESSION['ID_MODULO'] = $modulo ?? '';
+    $_SESSION['ID_MODULO'] = $modulo ?? null;
     define('ID_MODULO', $modulo);
     if (intval($modulo) > 0) {
         $r = array_filter($_SESSION["MODS_ROL"], function ($e) {
