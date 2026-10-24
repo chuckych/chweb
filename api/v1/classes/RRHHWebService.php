@@ -139,11 +139,7 @@ class RRHHWebService
                     }
                 }
 
-                if (PHP_VERSION_ID >= 80000) {
-                    unset($ch);
-                } else {
-                    curl_close($ch);
-                } // close curl handle
+                unset($ch);
                 return true;
             }
             return false;
@@ -305,11 +301,7 @@ class RRHHWebService
                 }
             }
 
-            if (PHP_VERSION_ID >= 80000) {
-                unset($ch);
-            } else {
-                curl_close($ch);
-            }
+            unset($ch); // close curl handle
             $finScript = microtime(true);
             $tiempoEjecucion = \round($finScript - $inicioScript, 2);
             $tiempoEjecucion = \round($tiempoEjecucion / 60, 2);
@@ -474,11 +466,7 @@ class RRHHWebService
                 }
             }
 
-            if (PHP_VERSION_ID >= 80000) {
-                unset($ch);
-            } else {
-                curl_close($ch);
-            }
+            unset($ch); // close curl handle
 
             return true;
         } catch (\Exception $e) {
@@ -519,11 +507,7 @@ class RRHHWebService
         }
 
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        } // close curl handle
+        unset($ch); // close curl handle
 
         if ($http_code != '201') {
             throw new \Exception("Error Ping WebService. \"Cod: $curl_errno: $curl_error\"", 1);

@@ -1415,11 +1415,7 @@ $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) 
         writelog($text, $pathLog); // escribir en el log de errores el error
     }
 
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
 
     if ($file_contents) {
         return $file_contents;

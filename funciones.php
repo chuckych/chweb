@@ -2157,19 +2157,7 @@ function EstadoProceso($url)
         $respuesta = curl_exec($ch);
         $curl_errno = curl_errno($ch);
 
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            if (PHP_VERSION_ID >= 80000) {
-                unset($ch);
-            } else {
-                if (PHP_VERSION_ID >= 80000) {
-                    unset($ch);
-                } else {
-                    curl_close($ch);
-                }
-            }
-        }
+        unset($ch);
 
         // Si hay error de curl, retornar error
         if ($curl_errno > 0) {
@@ -2227,21 +2215,13 @@ function pingWebService($textError) // Función para validar que el Webservice d
     if ($curl_errno > 0) { // si hay error
         $text = "WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        } // Cerrar curl antes de salir
+        unset($ch); // Cerrar curl antes de salir
         PrintRespuestaJson('Error', $text);
         exit; // salimos del script
     }
 
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    } // close curl handle
+    unset($ch); // close curl handle
 
     switch ($http_code) {
         case 201:
@@ -2290,11 +2270,7 @@ function pingWS()
     }
 
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    } // close curl handle
+    unset($ch); // close curl handle
 
     return ($http_code == 201) ? true : false; // escribir en el log
 }
@@ -2321,11 +2297,7 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
             return "Error";
             // exit;
         }
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        }
+        unset($ch);
         if ($httpCode == 404) {
             fileLog("Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\"", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
             return $respuesta;
@@ -2362,11 +2334,7 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($httpCode == 404) {
         $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2410,11 +2378,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($httpCode == 404) {
         $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2459,11 +2423,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
 
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2508,11 +2468,7 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         echo $respuesta;
@@ -2550,11 +2506,7 @@ function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoD
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         $data = array('status' => 'error', 'dato' => $respuesta);
@@ -2697,11 +2649,7 @@ function getRemoteFile($url, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($file_contents) {
         return $file_contents;
     } else {
@@ -2751,11 +2699,7 @@ function sendRemoteData($url, $payload, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($file_contents) {
         return $file_contents;
     } else {
@@ -2783,11 +2727,7 @@ function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($file_contents) {
         return $file_contents;
     } else {
@@ -2818,11 +2758,7 @@ function curlAPI($url, $payload, $method, $token, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($file_contents) {
         return $file_contents;
     } else {
@@ -2858,18 +2794,41 @@ function mod_roles($recid_rol)
         return $respuesta;
     }
 }
-function TokenMobile($token, $data)
+
+/**
+ * Extrae una parte del token móvil con formato "token@appcode".
+ *
+ * @param string $token  Token completo (formato: "token@appcode").
+ * @param string $campo  "appcode" devuelve la parte tras el '@',
+ *                       "token"   devuelve la parte antes del '@'.
+ * @return string        La parte solicitada, o '' si no existe / es inválida.
+ */
+function tokenMobile(string $token, string $campo): string
+{
+    if ($token === '') {
+        return '';
+    }
+
+    [$tokenParte, $appCodeParte] = array_pad(explode('@', $token, 2), 2, '');
+
+    return match ($campo) {
+        'appcode' => $appCodeParte,
+        'token' => $tokenParte,
+        default => '',
+    };
+}
+function tokenMobile_old($token, $data)
 {
     /** data = "appcode" devuelve Aplication Code, "token" = devuelve el token */
     if (!empty($token)) {
         $t = explode('@', $token);
         switch ($data) {
             case 'appcode':
-                $t[1] = $t[1] ?? '';
+                $t[1] ??= '';
                 return $t[1];
             // break;
             case 'token':
-                $t[0] = $t[0] ?? '';
+                $t[0] ??= '';
                 return $t[0];
             // break;
             default:
@@ -3564,13 +3523,8 @@ function padLeft($str, $length, $pad = ' ')
 {
     return str_pad($str, $length, $pad, STR_PAD_LEFT);
 }
-/**
- * Function that groups an array of associative arrays by some key.
- * 
- * @param {String} $key Property to sort by.
- * @param {Array} $data Array that stores multiple associative arrays.
- */
-function _group_by_keys($array, $keys = [])
+
+function _group_by_keys(array $array, array $keys = [])
 {
     if ($array) {
         $return = [];
@@ -3587,15 +3541,15 @@ function _group_by_keys($array, $keys = [])
             $arrGroup2[] = array_map("unserialize", array_unique(array_map("serialize", $value)));
         }
 
-        foreach ($arrGroup2 as $key => $value2) {
-            $arrGroup3[] = $value2[0];
+        foreach (($arrGroup2 ?? []) as $key => $value2) {
+            $arrGroup3[] = $value2[0] ?? [];
         }
     } else {
         $arrGroup3[] = [];
     }
-    return $arrGroup3;
+    return $arrGroup3 ?? [];
 }
-function pingApiMobileHRP($urlAppMobile)
+function pingApiMobileHRP(string $urlAppMobile)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $urlAppMobile . '/attention/api/test/ping');
@@ -3609,11 +3563,7 @@ function pingApiMobileHRP($urlAppMobile)
     ];
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     $file_contents = curl_exec($ch);
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     return ($file_contents) ? $file_contents : false;
     // exit;
 }
@@ -3642,11 +3592,7 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = tru
         (response(0, 1, $MESSAGE, '', 0, 1, $idCompany));
         exit; // salimos del script
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     return ($file_contents) ? $file_contents : false;
 }
 function confidenceFaceStr($confidence, $id_api, $threshold)
@@ -4102,11 +4048,7 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10, $method =
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
 
     if ($file_contents) {
         return $file_contents;
@@ -4244,11 +4186,7 @@ function actualizar_cache($endpoint)
             $text = "cURL Error ($curl_errno): $curl_error"; // set error message
             throw new Exception($text);
         }
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        }
+        unset($ch);
     } catch (Exception $e) {
         filelog($e->getMessage(), 'error.log');
     }

@@ -144,18 +144,10 @@ function get_data(string $url)
         $text = "cURL Error ($curl_errno) : $curl_error $url"; // set error message
         $pathLog = date('Ymd') . '_get_data.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        } // close curl handle
+        unset($ch); // close curl handle
         return false;
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    } // close curl handle
+    unset($ch); // close curl handle
     return $output;
 }
 

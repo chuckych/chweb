@@ -1235,11 +1235,7 @@ function sendRemoteDatausuarios($url, $payload, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    } // close curl handle
+    unset($ch); // close curl handle
     if ($file_contents) {
         return $file_contents;
     } else {

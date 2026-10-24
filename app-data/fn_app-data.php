@@ -219,22 +219,12 @@ function ch_api_old()
         if (!$file_contents) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
         }
-        if (PHP_VERSION_ID >= 80500) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        }
+        unset($ch);
         $text = 'API CH: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
         return $file_contents;
     } catch (\Exception $e) {
         error_log("Error en fn_app-data.php ch_api:164: " . $e->getMessage());
-        if (PHP_VERSION_ID >= 80500) {
-            unset($ch);
-        } else {
-            if (is_resource($ch ?? null)) {
-                curl_close($ch ?? null);
-            }
-        } // close curl handle
+        unset($ch); // close curl handle
         return false;
     }
 }

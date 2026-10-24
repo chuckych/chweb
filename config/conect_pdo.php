@@ -27,9 +27,7 @@ if (!isset($connpdo) || !($connpdo instanceof PDO)) {
 		$dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
 
 		// Opciones PDO mejoradas
-		$mysqlAttrInitCommand = PHP_VERSION_ID >= 80500
-			? Pdo\Mysql::ATTR_INIT_COMMAND  // PHP 8.5+
-			: PDO::MYSQL_ATTR_INIT_COMMAND; // PHP < 8.5
+		$mysqlAttrInitCommand = Pdo\Mysql::ATTR_INIT_COMMAND;
 
 		$options = [
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Lanzar excepciones en errores

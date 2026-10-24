@@ -42,23 +42,15 @@ function pingWS($textError, $webService) // Función para validar que el Webserv
 
     if ($curl_errno > 0) { // si hay error
         $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
-        writeLog($text, __DIR__ . "../../logs/" . date('Ymd') . "_errorWebService.log", '');
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        }// Cerrar curl antes de salir
+        writeLog($text, __DIR__ . "/../logs/" . date('Ymd') . "_errorWebService.log", '');
+        unset($ch); // Cerrar curl antes de salir
         http_response_code(400);
         (response([], 0, "Error Interno. WS", 400, 0, 0, 0));
         exit;
     }
 
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }// close curl handle
+    unset($ch); // close curl handle
 
     return ($http_code == 201) ? true : (response([], 0, $textError, 400, 0, 0, 0)) . exit; // escribir en el log
 }
@@ -96,11 +88,7 @@ function EstadoProcesoWS($url)
 
         $curl_errno = curl_errno($ch);
         // error_log(print_r($respuesta, true));
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        }
+        unset($ch);
         // Si hay error de curl, retornar error
         if ($curl_errno > 0) {
             return 'Error';
@@ -164,11 +152,7 @@ function getPremios($FechaDesde, $FechaHasta, $Legajos, $LegajoDesde, $LegajoHas
         response($text, '0', 'Error', 400, $time_start, 0, '');
         exit;
     }
-    if (PHP_VERSION_ID >= 80000) {
-        unset($ch);
-    } else {
-        curl_close($ch);
-    }
+    unset($ch);
     if ($httpCode == 404) {
         writeLog($text, __DIR__ . '/../logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         $data = ['status' => 'error', 'dato' => $respuesta];

@@ -94,16 +94,6 @@ final class CurlHttpClient implements HttpClientInterface
     /** @param \CurlHandle|resource $ch */
     private function closeHandle($ch): void
     {
-        if (PHP_VERSION_ID >= 80500) {
-            unset($ch);
-        } elseif (PHP_VERSION_ID < 80000) {
-            // En PHP 7.x $ch es resource, \is_resource() es válido
-            if (\is_resource($ch ?? null) && get_resource_type($ch) === 'curl') {
-                \curl_close($ch ?? null); // @phpstan-ignore-line
-            }
-        } else {
-            // PHP 8.0 - 8.4: CurlHandle, \curl_close() acepta el objeto directamente
-            \curl_close($ch); // @phpstan-ignore-line
-        }
+        unset($ch);
     }
 }
