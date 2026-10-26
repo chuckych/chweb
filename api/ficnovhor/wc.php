@@ -1,6 +1,6 @@
 <?php
 $wc = $wcNov = $wcONov = $wcHoras = $wcFicFech = $wcFicFech = $wcFicFechNov = $wcFicFechONov = $wcFicFechHor = $wcFicFechReg = '';
-$dp = $payload;
+$dp = $payload ?? [];
 
 $start = start();
 $length = length();
@@ -247,7 +247,7 @@ if (!empty($Dias)) {
     // Verificar si hubo valores inválidos
     if (count($validos) !== count(array_unique($Dias))) {
         http_response_code(400);
-        response([], 0, 'Días debe ser un arreglo de números del 1 al 7', 400, $time_start, 0, $idCompany);
+        response([], 0, 'Días debe ser un arreglo de números del 1 al 7', 400, $time_start ?? 0, 0, $idCompany ?? 0);
         return; // Añadir return para evitar ejecución posterior
     }
 
@@ -402,9 +402,9 @@ foreach ($arrDPPersonal as $key => $v) {
                     $e = "'" . implode("','", $e) . "'";
                     $wc .= " AND PERSONAL.$key IN ($e)";
                 } else {
-                    foreach ($e as $v) {
-                        if ($v !== NULL) {
-                            $wc .= " AND PERSONAL.$key = '$v'";
+                    foreach ($e as $v1) {
+                        if ($v1 !== NULL) {
+                            $wc .= " AND PERSONAL.$key = '$v1'";
                         }
                     }
                 }
@@ -412,14 +412,10 @@ foreach ($arrDPPersonal as $key => $v) {
         }
     } else {
         if ($v) {
-            switch ($key) {
-                case 'LegApNo':
-                    $wc .= " AND PERSONAL.$key LIKE '%$v%'";
-                    break;
-                default:
-                    $wc .= " AND PERSONAL.$key = '$v'";
-                    break;
-            }
+            $wc .= match ($key) {
+                'LegApNo' => " AND PERSONAL.$key LIKE '%$v%'",
+                default => " AND PERSONAL.$key = '$v'",
+            };
         }
     }
 }
@@ -429,7 +425,7 @@ if ($dp['FechIni'] && $dp['FechFin']) {
     $fecha2 = fechFormat($dp['FechFin'], 'Ymd');
     if (intval($fecha1) > intval($fecha2)) {
         http_response_code(400);
-        (response([], 0, 'Rango de Fecha Incorrecto', 400, $time_start, 0, $idCompany));
+        (response([], 0, 'Rango de Fecha Incorrecto', 400, $time_start ?? 0, 0, $idCompany ?? 0));
     }
     $wcFicFech = " AND FICHAS.FicFech BETWEEN '$fecha1' AND '$fecha2'";
     $wcFicFechNov = " AND FICHAS3.FicFech BETWEEN '$fecha1' AND '$fecha2'";
@@ -449,7 +445,7 @@ if ($dp['LegaD']) {
     $LegaH = ($dp['LegaH']) ? intval($dp['LegaH']) : intval($dp['LegaD']); // si legaH viene vacio asignamos LegaD
     if ($LegaD > $LegaH) {
         http_response_code(400);
-        (response([], 0, 'Rango de Legajos Incorrecto', 400, $time_start, 0, $idCompany));
+        (response([], 0, 'Rango de Legajos Incorrecto', 400, $time_start ?? 0, 0, $idCompany ?? 0));
     } else {
         $wc .= " AND FICHAS.FicLega BETWEEN '$LegaD' AND '$LegaH'";
     }
