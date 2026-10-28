@@ -2641,20 +2641,19 @@ function getRemoteFile($url, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $file_contents = curl_exec($ch);
-    // error_log("file_contents: " . print_r($file_contents, true)); // Log para depuración
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
     if ($curl_errno > 0) { // si hay error
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
+        error_log(" cURL failed for URL $url with error $text");
     }
     unset($ch);
     if ($file_contents) {
         return $file_contents;
     } else {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log';
-        // fileLog('Error al obtener datos', $pathLog);
         return false;
     }
 }

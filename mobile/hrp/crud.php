@@ -396,7 +396,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
-            auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
+            auditoria($api['RESPONSE_DATA']['textAud'] ?? '', 'M', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'] ?? '';
@@ -446,7 +446,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
-            auditoria($api['RESPONSE_DATA']['textAud'], 'B', $idCompany, '32');
+            auditoria($api['RESPONSE_DATA']['textAud'] ?? '', 'B', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'] ?? '';

@@ -10,19 +10,62 @@ $arrayData = [];
 $arraySelect = [];
 $error = $start_date = $end_date = '';
 $_SESSION["APIMOBILEHRP_MOBILE"] ??= '';
-function dr_f($ddmmyyyy)
-{
-    $fecha = date("Ymd", strtotime((str_replace("/", "-", $ddmmyyyy))));
-    return $fecha;
-}
+
 if (session_status() === PHP_SESSION_ACTIVE) {
     session_write_close();
 }
+/**
+ * Convierte una fecha en formato d/m/Y (o d-m-Y) a Ymd.
+ * Devuelve null si no se puede interpretar.
+ */
+function dr_f(?string $ddmmyyyy): ?string
+{
+    if ($ddmmyyyy === null) {
+        return null;
+    }
 
-$DateRange = explode(' al ', $_POST['_drMob2']);
-$FechaIni = test_input(dr_f($DateRange[0]));
+    $ddmmyyyy = trim($ddmmyyyy);
+    if ($ddmmyyyy === '') {
+        return null;
+    }
+
+    $normalizada = str_replace('/', '-', $ddmmyyyy);
+    $ts = strtotime($normalizada);
+
+    if ($ts === false) {
+        return null;
+    }
+
+    return date('Ymd', $ts);
+}
+
+$drRaw = $_POST['_drMob2'] ?? '';
+if (!is_string($drRaw)) {
+    $drRaw = '';
+}
+
+$DateRange = array_map('trim', explode(' al ', $drRaw));
+
+$FechaIniRaw = dr_f($DateRange[0] ?? null);
+$FechaFinRaw = dr_f($DateRange[1] ?? null);
+
+if ($FechaIniRaw === null || $FechaFinRaw === null) {
+    // Respuesta controlada de error
+    if (!headers_sent()) {
+        http_response_code(400);
+        header('Content-Type: application/json; charset=utf-8');
+    }
+    echo json_encode([
+        'ok' => false,
+        'error' => 'Rango de fechas inválido o ausente (_drMob2).',
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+$FechaIni = test_input($FechaIniRaw);
 $FechaIni = fechformat2($FechaIni) . ' 00:00:00';
-$FechaFin = test_input(dr_f($DateRange[1]));
+
+$FechaFin = test_input($FechaFinRaw);
 $FechaFin = fechformat2($FechaFin) . ' 23:59:59';
 
 $params = $columns = $totalRecords = '';
@@ -91,6 +134,8 @@ $api = "api/v1/checks/$parametros";
 $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = parseApiResponse($api);
+// error_log($url);
+// error_log(print_r($api, true));
 $error = $api['error'] ?? '';
 $totalRecords = $api['TOTAL'] ?? 0;
 $tm = (microtime(true));
