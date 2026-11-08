@@ -36,6 +36,7 @@ switch ($auth) { // 0 = SQL Server Authentication, 1 = Windows Authentication
 			"Database" => $db,
 			"CharacterSet" => "utf-8",
 			"Encrypt" => false,  // o true con TrustServerCertificate
+			"Driver" => "{ODBC Driver 18 for SQL Server}"
 			// "TrustServerCertificate" => true  // opcional, solo si Encrypt es true
 		]; // Windows Authentication
 		break;
@@ -46,6 +47,7 @@ switch ($auth) { // 0 = SQL Server Authentication, 1 = Windows Authentication
 			"PWD" => $pass,
 			"CharacterSet" => "UTF-8",
 			"Encrypt" => false,  // o true con TrustServerCertificate
+			"Driver" => "{ODBC Driver 18 for SQL Server}"
 			// "TrustServerCertificate" => true  // opcional, solo si Encrypt es true
 		];
 }

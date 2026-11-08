@@ -80,8 +80,18 @@ function secure_auth_ch()
     }
 
     checkDBIntegrity();
-    // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
-    (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+    // -------- Chequeamos si el usuario y la password son iguales ---------- //
+    // Si la clave por defecto no ha sido verificada aún, la verificamos y almacenamos el resultado en la sesión
+    if (!isset(($_SESSION['CLAVE_POR_DEFECTO']))) {
+        $_SESSION['CLAVE_POR_DEFECTO'] = password_verify($_SESSION['user'], $_SESSION['HASH_CLAVE']);
+    }
+
+    // Si la clave por defecto ha sido verificada y es la clave por defecto, redirigimos al usuario a cambiar la clave
+    if ($_SESSION['CLAVE_POR_DEFECTO']) {
+        header('Location:/' . HOMEHOST . '/usuarios/perfil/');
+        exit;
+    }
+    // -------- //
 
     $fechaGuardada = $_SESSION["ultimoAcceso"]; // Fecha de ultimo acceso
     $ahora = date("Y-m-d H:i:s"); // Fecha actual
@@ -116,8 +126,18 @@ function secure_auth_ch_json()
         exit;
     }
 
-    // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
-    (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+    // -------- Chequeamos si el usuario y la password son iguales ---------- //
+    // Si la clave por defecto no ha sido verificada aún, la verificamos y almacenamos el resultado en la sesión
+    if (!isset(($_SESSION['CLAVE_POR_DEFECTO']))) {
+        $_SESSION['CLAVE_POR_DEFECTO'] = password_verify($_SESSION['user'], $_SESSION['HASH_CLAVE']);
+    }
+
+    // Si la clave por defecto ha sido verificada y es la clave por defecto, redirigimos al usuario a cambiar la clave
+    if ($_SESSION['CLAVE_POR_DEFECTO']) {
+        header('Location:/' . HOMEHOST . '/usuarios/perfil/');
+        exit;
+    }
+    // -------- //
 
     $fechaGuardada = $_SESSION["ultimoAcceso"];
     $ahora = date("Y-m-d H:i:s");
@@ -146,8 +166,18 @@ function secure_auth_ch2()
         echo '<div class="p-3 fw5 text-danger">Sesión Expirada</div>';
         exit;
     }
-    // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
-    (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+    // -------- Chequeamos si el usuario y la password son iguales ---------- //
+    // Si la clave por defecto no ha sido verificada aún, la verificamos y almacenamos el resultado en la sesión
+    if (!isset(($_SESSION['CLAVE_POR_DEFECTO']))) {
+        $_SESSION['CLAVE_POR_DEFECTO'] = password_verify($_SESSION['user'], $_SESSION['HASH_CLAVE']);
+    }
+
+    // Si la clave por defecto ha sido verificada y es la clave por defecto, redirigimos al usuario a cambiar la clave
+    if ($_SESSION['CLAVE_POR_DEFECTO']) {
+        header('Location:/' . HOMEHOST . '/usuarios/perfil/');
+        exit;
+    }
+    // -------- //
 
     $fechaGuardada = $_SESSION["ultimoAcceso"];
     $ahora = date("Y-m-d H:i:s");
@@ -592,7 +622,7 @@ function MinExcel($min)
     $min = ($min / 24);
     return $min;
 }
-function test_input($data)
+function test_input_old($data)
 {
     if (is_array($data)) {
         $clean = [];
@@ -613,6 +643,85 @@ function test_input($data)
     $data = trim($data);
 
     return ($data);
+}
+/**
+ * Normaliza/limpia datos de entrada de forma recursiva.
+ *
+ * Contextos:
+ *   - 'json' (por defecto): normaliza entidades legadas a UTF-8, NO escapa HTML.
+ *                           Pensado para alimentar json_encode().
+ *   - 'html':               normaliza entidades legadas y escapa UNA vez con
+ *                           htmlspecialchars() para imprimir en HTML.
+ *   - 'raw':                solo normaliza UTF-8 y trim. Sin tocar entidades
+ *                           ni escapar. Útil para hashes, tokens, binarios
+ *                           convertidos, etc.
+ *
+ * NO sustituye a prepared statements para SQL ni al escapado en la salida.
+ *
+ * @param mixed  $data
+ * @param string $context 'json' | 'html' | 'raw'
+ * @return mixed
+ */
+function test_input(mixed $data, string $context = 'json'): mixed
+{
+    static $allowed = ['json' => true, 'html' => true, 'raw' => true];
+    if (!isset($allowed[$context])) {
+        $context = 'json';
+    }
+
+    if (is_array($data)) {
+        $clean = [];
+        foreach ($data as $k => $value) {
+            // Las claves también se normalizan para evitar claves binarias/rotas.
+            $cleanKey = is_string($k) ? test_input($k, 'raw') : $k;
+            $clean[$cleanKey] = test_input($value, $context);
+        }
+        return $clean;
+    }
+
+    if ($data === null) {
+        return '';
+    }
+    // error_log('test_input received: ' . var_export($data, true));
+
+    if (is_bool($data)) {
+        return $data ? '1' : '0';
+    }
+
+    if (!is_scalar($data)) {
+        // Objetos, recursos, closures... no son datos válidos de entrada.
+        return '';
+    }
+
+    $data = (string) $data;
+
+    // 1) UTF-8 válido (sustituye secuencias inválidas por U+FFFD).
+    if (!mb_check_encoding($data, 'UTF-8')) {
+        $data = mb_convert_encoding($data, 'UTF-8', 'UTF-8');
+    }
+
+    // 2) Normaliza entidades HTML legadas a caracteres reales.
+    if ($context !== 'raw') {
+        $data = html_entity_decode($data, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // nbsp real -> espacio normal; "…" -> "..."
+        $data = str_replace(
+            ["\xC2\xA0", "\xE2\x80\xA6"],
+            [' ', '...'],
+            $data
+        );
+    }
+
+    // 3) Recorta antes de escapar para no dejar entidades a medias.
+    $data = trim($data);
+
+    // 4) Escapado HTML una sola vez, solo si el destino es HTML.
+    if ($context === 'html') {
+        $data = htmlspecialchars($data, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    // error_log('test_input returning: ' . var_export($data, true) . ' for context: ' . $context);
+    return $data;
 }
 function hoy()
 {
@@ -2838,7 +2947,7 @@ function tokenMobile_old($token, $data)
         return '';
     }
 }
-function utf8str($cadena)
+function utf8str_old($cadena)
 {
     return str_replace([
         "&Aacute;",
@@ -2877,6 +2986,30 @@ function utf8str($cadena)
         "'",
         "...",
     ], $cadena);
+}
+/**
+ * Decodifica entidades HTML a caracteres reales (UTF-8).
+ * NO es un sanitizador: no protege de XSS, solo normaliza texto ya escapado.
+ *
+ * @param string|null $cadena
+ * @return string
+ */
+function utf8str(?string $cadena): string
+{
+    if ($cadena === null || $cadena === '') {
+        return '';
+    }
+
+    // Decodifica entidades con y sin punto y coma, numéricas y nombradas (HTML5).
+    $decoded = html_entity_decode($cadena, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    // Normaliza nbsp real a espacio normal.
+    $decoded = str_replace("\xC2\xA0", ' ', $decoded);
+
+    // Colapsa "..." tipográfico si lo quieres mantener como texto plano.
+    $decoded = str_replace("\xE2\x80\xA6", '...', $decoded); // U+2026
+
+    return $decoded;
 }
 function horarioCH($HorCodi)
 {
@@ -3162,11 +3295,12 @@ function simple_pdoQuery($sql)
     }
     $stmt = null;
 }
-function count_pdoQuery($sql)
+function count_pdoQuery(string $sql)
 {
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
+
         $stmt->execute();
         return ($stmt->fetchColumn() > 0) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
@@ -4147,10 +4281,9 @@ function explodeSession($session)
 
     return explode(',', $session);
 }
-function actualizar_cache($endpoint)
+function actualizar_cache(string $endpoint)
 {
     try {
-        // filelog($endpoint, 'url.log');
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);

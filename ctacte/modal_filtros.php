@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal animate__animated animate__fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel"
+<div class="modal fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">

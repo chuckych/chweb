@@ -115,9 +115,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $post = $_POST;
 
-        $post['formDeviceNombre'] = $post['formDeviceNombre'] ?? '';
-        $post['formDeviceEvento'] = $post['formDeviceEvento'] ?? '';
-        $post['formDevicePhoneID'] = $post['formDevicePhoneID'] ?? '';
+        $post['formDeviceNombre'] ??= '';
+        $post['formDeviceEvento'] ??= '';
+        $post['formDevicePhoneID'] ??= '';
 
         $formDeviceNombre = test_input($post['formDeviceNombre']);
         $formDeviceEvento = test_input($post['formDeviceEvento']);
@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
-            auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
+            auditoria($api['RESPONSE_DATA']['textAud'] ?? '', 'M', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'] ?? '';
@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
-            auditoria($api['RESPONSE_DATA']['textAud'], 'B', $idCompany, '32');
+            auditoria($api['RESPONSE_DATA']['textAud'] ?? '', 'B', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'] ?? '';

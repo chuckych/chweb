@@ -31,6 +31,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('aceptar', $_POS
 
         if ($rs_update) {
             unset($_SESSION["HASH_CLAVE"]);
+            unset($_SESSION['CLAVE_POR_DEFECTO']);
             $_SESSION["HASH_CLAVE"] = ($contraauto);
             header("Location:/" . HOMEHOST . "/usuarios/perfil/?true=true");
         }

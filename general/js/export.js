@@ -302,7 +302,16 @@ $(document).ready(function () {
         }).then(function (response) {
             let data = response.data
             console.log(response);
-            if (data.destino == "V") {
+            const dataStatus = data?.status ?? '';
+            const dataMensaje = data?.Mensaje ?? '';
+            if(dataStatus === 'error') {
+                ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+                $.notifyClose();
+                notify(`${dataMensaje}`, 'danger', 5000, 'right')
+                return;
+            }
+            const dataDestino = data?.destino ?? '';
+            if (dataDestino == "V") {
                 $('#Exportar').modal('hide');
                 const host = $("#_host").val();
                 window.open(host + '/' + _homehost + '/general/reporte/archivos/' + data.archivo, '_blank');
