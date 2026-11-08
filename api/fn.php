@@ -1723,38 +1723,58 @@ function formatearFecha($fecha)
 }
 
 /**
- * Valida que el request contenga JSON válido
- * 
- * @param string|null $json El contenido JSON a validar
- * @param bool $returnDecoded Si es true, retorna el JSON decodificado en lugar de bool
- * @return bool|array|object Retorna true/false o el JSON decodificado según $returnDecoded
+ * Lee y valida un JSON del request (php://input) o de un string.
+ *
+ * @param string|null $json          JSON a validar. Si es null, lee php://input.
+ * @param bool        $returnDecoded true → devuelve el array decodificado; false → devuelve bool.
+ * @return array|bool|null           array si $returnDecoded=true y es válido;
+ *                                   true/false si $returnDecoded=false;
+ *                                   null si $returnDecoded=true y hay error.
  */
-function validarJsonRequest(?string $json = null, bool $returnDecoded = false)
+function validarJsonRequest(?string $json = null, bool $returnDecoded = false): array|bool|null
 {
-    // Si no se pasa el JSON, intentar obtenerlo del request
-    if ($json === null) {
-        $json = file_get_contents('php://input');
-    }
+    try {
+        // Si no se pasa el JSON, intentar obtenerlo del request
+        if ($json === null) {
+            $json = @file_get_contents('php://input');
+            if ($json === false) {
+                error_log('validarJsonRequest: no se pudo leer php://input');
+                return $returnDecoded ? null : false;
+            }
+        }
 
-    // Verificar que no esté vacío
-    if (empty($json)) {
+        // Verificar que no esté vacío
+        if (empty($json)) {
+            return $returnDecoded ? null : false;
+        }
+
+        // Decodificar el JSON
+        $data = json_decode($json, true);
+
+        // Verificar si hubo errores en la decodificación
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log(sprintf(
+                'validarJsonRequest: JSON inválido (%s): %s',
+                json_last_error_msg(),
+                substr($json, 0, 500)   // truncar para no llenar el log
+            ));
+            return $returnDecoded ? null : false;
+        }
+
+        // Verificar que el resultado sea un array (no null, string, etc.)
+        // Nota: con $assoc=true, json_decode NUNCA devuelve objetos, solo arrays.
+        // La comprobación is_object($data) es redundante pero inofensiva.
+        if (!is_array($data)) {
+            error_log('validarJsonRequest: el JSON decodificado no es un array');
+            return $returnDecoded ? null : false;
+        }
+
+        return $returnDecoded ? $data : true;
+
+    } catch (\Throwable $e) {
+        error_log('validarJsonRequest EXCEPTION: ' . $e->getMessage() . ' | JSON: ' . substr((string) $json, 0, 500));
         return $returnDecoded ? null : false;
     }
-
-    // Decodificar el JSON
-    $data = json_decode($json, true);
-
-    // Verificar si hubo errores en la decodificación
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return $returnDecoded ? null : false;
-    }
-
-    // Verificar que el resultado sea un array u objeto (no null, string, etc.)
-    if (!is_array($data) && !is_object($data)) {
-        return $returnDecoded ? null : false;
-    }
-
-    return $returnDecoded ? $data : true;
 }
 
 /**

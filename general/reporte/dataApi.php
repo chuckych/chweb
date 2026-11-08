@@ -104,7 +104,7 @@ $dataParametros = [
     "getEstruct" => "1",
 ];
 
-$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor";
 $dataApi = requestApi($url, $token, $authBasic, $dataParametros, 20);
 $dataApi = parseApiResponse($dataApi);
 

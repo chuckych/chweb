@@ -117,6 +117,3 @@ $FiltrosFichas .= $SeccionesFichas;
 $FiltrosFichas .= $GruposFichas;
 $FiltrosFichas .= $SucursalesFichas;
 $FiltrosFichas .= $LegajosFichas;
-// error_log(print_r($filtros, true).PHP_EOL);
-// error_log(print_r('-------------------', true).PHP_EOL);
-// error_log(print_r($FiltrosFichas, true).PHP_EOL);

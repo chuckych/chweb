@@ -63,12 +63,9 @@ class requestControl
     public function check_json()
     {
         $request = Flight::request();
-        $payload = $request->data;
-        // (response($payload, 0, 'Formato JSON invalido', 400, microtime(true), 0, 0));
-        // exit;
-        // $array = file_get_contents('php://input');
-        // $data = json_decode($array, true);
-        if ($payload === null && json_last_error() !== JSON_ERROR_NONE) {
+        $body = $request->getBody();
+        $errores = [];
+        if ($body !== '' && json_decode($body) === null && json_last_error() !== JSON_ERROR_NONE) {
             $errores[] = json_last_error_msg();
             // la cadena no está en formato JSON válido
             http_response_code(400);

@@ -4102,6 +4102,16 @@ function calcLimitTar($start, $end)
     );
     return $obj;
 }
+/**
+ * Summary of requestApi
+ * @param mixed $url
+ * @param mixed $token
+ * @param mixed $authBasic
+ * @param mixed $payload
+ * @param mixed $timeout
+ * @param mixed $method
+ * @return bool|string
+ */
 function requestApi($url, $token, $authBasic, $payload, $timeout = 10, $method = 'POST')
 {
 
@@ -4132,7 +4142,8 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10, $method =
 
     switch ($method) {
         case 'POST':
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL); // Mantener POST y body en 301/302
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
             break;
         case "GET":
