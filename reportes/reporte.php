@@ -450,7 +450,7 @@ $queryRecords = sqlsrv_query($link, $sql_query, $param, $options);
                 <!-- 1 -->
                 <td class="label"><?= $value['Gen_Fecha'] ?></td>
                 <!-- 2 -->
-                <td class="label"><?= nombre_dias($value['Gen_Dia_Semana'], false) ?></td>
+                <td class="label"><?= dayString($value['Gen_Dia_Semana'], false) ?></td>
                 <!-- 3 -->
                 <td class="label"><?= $value['Gen_Horario'] ?></td>
                 <!-- 4 -->

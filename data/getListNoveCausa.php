@@ -16,8 +16,8 @@ $q = test_input($_POST['q']);
 
 $data = array();
 
-$q = (ValString($_POST['q'])) ? $_POST['q'] : exit;
-$NovCNove = (ValNumerico($_POST['NovCNove'])) ? $_POST['NovCNove'] : exit;
+$q = (siEsString($_POST['q'])) ? $_POST['q'] : exit;
+$NovCNove = (siEsNumero($_POST['NovCNove'])) ? $_POST['NovCNove'] : exit;
 
 
 $query = "SELECT NOVECAUSA.NovCCodi AS Codigo ,NOVECAUSA.NovCDesc AS Descripcion FROM NOVECAUSA WHERE NOVECAUSA.NovCNove='$NovCNove' AND NOVECAUSA.NovCCodi >0 AND NOVECAUSA.NovCDesc LIKE '%$q%' AND NOVECAUSA.NovCCodi > 0 ORDER BY NOVECAUSA.NovCCodi";

@@ -1,6 +1,6 @@
 <?php
 // try {
-$authenticated = false;
+$authenticate = false;
 $Server = $_SERVER['SERVER_NAME'] ?? '';
 
 // Configuración de la cookie
@@ -105,12 +105,12 @@ try {
 	exit; // termina la ejecución
 }
 // Si el usuario no es de AD, se procede con la autenticación normal
-$authenticated = (($row['user_ad'] ?? '0') === '1') ?
+$authenticate = (($row['user_ad'] ?? '0') === '1') ?
 	auth_ad($passLogin, $row) :
 	password_verify($passLogin ?? '', $row['clave'] ?? ''); // Verifica la contraseña utilizando password_verify
 
 // Si la autenticación es correcta (true)
-if ($authenticated) {
+if ($authenticate) {
 
 	$checkHost = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 1 AND descripcion = 'host' AND cliente = $row[id_cliente] LIMIT 1");
 

@@ -60,7 +60,7 @@ $Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident a
                 <!-- <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" name="f1" id="f1" method="POST" class="w-100" onsubmit="ShowLoading()"> -->
                 <div class="row">
                     <div class="col-12 col-sm-9">
-                        <div class="form-inline <?= dnone($rowcount) ?> mb-2">
+                        <div class="form-inline <?= classDnone($rowcount) ?> mb-2">
                             <!-- <p class="p-1 m-0 fontq">Seleccionar Rol</p> -->
                             <select name="rol" id="rol" class="h40 form-control custom-select w250 SelecRol">
                             </select>
@@ -104,7 +104,7 @@ $Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident a
                         </table>
                         <div class="">
                             <button type="submit" name="submit"
-                                class="px-4 btn btn-custom border fontq mt-2 <?= dnone($rowcount) ?>  btn-mobile"
+                                class="px-4 btn btn-custom border fontq mt-2 <?= classDnone($rowcount) ?>  btn-mobile"
                                 value="Importar" id="submit"><i class="bi-download font1 mr-2"></i>IMPORTAR</button>
                         </div>
                     </div>

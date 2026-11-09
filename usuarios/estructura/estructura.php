@@ -199,7 +199,7 @@ require __DIR__ . '/crud.php';
                     <p class="p-0 m-0 fontq">Usuarios del Rol: <?= $UsuariosRol ?></p>
                 </div>
             </div>
-            <?php if (!principal($_GET['_r'])) { /** Check de usuario principal del sistema*/ ?>
+            <?php if (!existeUsuarioPrincipal($_GET['_r'])) { /** Check de usuario principal del sistema*/ ?>
                 <div class="row bg-transparent mt-2">
                     <div class="p-3 bg-light m-0 w-100"><?= $e_titulo ?></div>
                     <div class="col-12 py-3 bg-white">

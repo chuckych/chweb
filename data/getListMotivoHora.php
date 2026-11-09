@@ -16,8 +16,8 @@ $q = test_input($_POST['q']);
 
 $data = array();
 
-$q = (ValString($_POST['q'])) ? $_POST['q'] : exit;
-$Fic1Hora = (ValNumerico($_POST['Fic1Hora'])) ? $_POST['Fic1Hora'] : exit;
+$q = (siEsString($_POST['q'])) ? $_POST['q'] : exit;
+$Fic1Hora = (siEsNumero($_POST['Fic1Hora'])) ? $_POST['Fic1Hora'] : exit;
 
 $query = "SELECT THoCCodi,THoCDesc FROM TIPOHORACAUSA WHERE THoCHora = '$Fic1Hora' AND THoCDesc LIKE '%$q%' AND THoCCodi > 0 ORDER BY THoCCodi";
 $result = sqlsrv_query($link, $query, $params, $options);

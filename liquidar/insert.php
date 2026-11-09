@@ -89,7 +89,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_liquidacion'] == 'tr
     }
     ;
 
-    if (!ValNumerico($_POST['LegaIni']) || (!ValNumerico($_POST['LegaFin']))) {
+    if (!siEsNumero($_POST['LegaIni']) || (!siEsNumero($_POST['LegaFin']))) {
         $data = array('status' => 'error', 'Mensaje' => 'Campos de Legajo deben ser Números');
         echo json_encode($data);
         exit;

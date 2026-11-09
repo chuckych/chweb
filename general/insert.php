@@ -501,9 +501,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
     $Dato2 = 'Nov: (' . $NovCodi . ') ' . $NovDesc;
 
     $sql = "SELECT FicLega, FicNove, FicFech FROM FICHAS3 WHERE FICHAS3.FicLega = '$FicLega' AND FICHAS3.FicFech = '$FicFech' $SelectNovTipo AND FICHAS3.FicCate = '0' ORDER BY FICHAS3.FicLega,FICHAS3.FicFech";
-    // print_r($sql);
-    // echo json_encode($sql);
-    //     exit;
 
     $result = sqlsrv_query($link, $sql, $params, $options);
     if ((sqlsrv_num_rows($result) > 0) && $FicCate == 0) {

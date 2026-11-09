@@ -1093,7 +1093,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $status = 'ok';
                 $arrayData = $api['RESPONSE_DATA']['responseApi'];
                 auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
-                checkenroll($_SESSION["RECID_CLIENTE_MOBILE"], $userID, $_SESSION["APIMOBILEHRP_MOBILE"], 4);
+                checkEnroll($_SESSION["RECID_CLIENTE_MOBILE"], $userID, $_SESSION["APIMOBILEHRP_MOBILE"], 4);
             } else {
                 $status = 'error';
                 $arrayData = $api['MESSAGE'] ?? '';
@@ -1125,7 +1125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $status = 'ok';
                 $arrayData = $api['RESPONSE_DATA']['responseApi'];
                 auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
-                checkenroll($_SESSION["RECID_CLIENTE_MOBILE"], $userID, $_SESSION["APIMOBILEHRP_MOBILE"], 4);
+                checkEnroll($_SESSION["RECID_CLIENTE_MOBILE"], $userID, $_SESSION["APIMOBILEHRP_MOBILE"], 4);
             } else {
                 $status = 'error';
                 $arrayData = $api['MESSAGE'] ?? '';

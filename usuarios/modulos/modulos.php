@@ -34,7 +34,7 @@ $Rol = ExisteRol2($_GET['_r'])
                     class="btn fontq mt-1 float-right m-0 opa7 btn-custom">Volver a Roles</a>
             </div>
         </div>
-        <?php if (!principal($_GET['_r'])) {
+        <?php if (!existeUsuarioPrincipal($_GET['_r'])) {
             /** Check de usuario principal del sistema*/ ?>
             <div class="row m-1">
                 <div class="col-12 fonth mt-2 fw4 bg-light py-2 mb-2">M&oacute;dulos</div>

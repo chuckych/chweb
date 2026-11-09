@@ -24,96 +24,105 @@ $Legajo = $Datos[0];
 
 $data = [];
 
-/** HORAS */
-$query = "SELECT FICHAS1.FicHora AS 'Hora', TIPOHORA.THoDesc AS 'HoraDesc', TIPOHORA.THoDesc2 AS 'HoraDesc2', FICHAS1.FicHsHe AS 'FicHsHe', FICHAS1.FicHsAu AS 'FicHsAu', FICHAS1.FicHsAu2 AS 'FicHsAu2', FICHAS1.FicObse AS 'Observ', TIPOHORACAUSA.THoCCodi AS 'Motivo', TIPOHORACAUSA.THoCDesc AS 'DescMotivo', FICHAS1.FicFech AS 'FicFech', FICHAS1.FicEsta AS 'Estado', TIPOHORA.THoColu AS 'THoColu', FICHAS.FicHsTr AS 'FicHsTr', FICHAS.FicHsAT AS 'FicHsAT', FICHAS.FicDiaL AS 'FicDiaL', FICHAS.FicDiaF AS 'FicDiaF', FICHAS.FicHorE AS 'FicHorE', FICHAS.FicHorS AS 'FicHorS', FICHAS.FicLega AS 'FicLega', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Horario', dbo.fn_STRMinutos(FicHsTr) AS 'FicHsTrMin', dbo.fn_STRMinutos(FicHsAT) AS 'FicHsATMin' FROM FICHAS LEFT JOIN FICHAS1 ON FICHAS.FicLega=FICHAS1.FicLega AND FICHAS.FicFech=FICHAS1.FicFech LEFT JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi WHERE FICHAS.FicLega='$Legajo' AND FICHAS.FicFech='$Fecha' ORDER BY TIPOHORA.THoColu, FICHAS1.FicHora";
+try {
 
-$fichaCerrada = PerCierre($Fecha, $Legajo);
-$disabled = $fichaCerrada;
+    /** HORAS */
+    $query = "SELECT FICHAS1.FicHora AS 'Hora', TIPOHORA.THoDesc AS 'HoraDesc', TIPOHORA.THoDesc2 AS 'HoraDesc2', FICHAS1.FicHsHe AS 'FicHsHe', FICHAS1.FicHsAu AS 'FicHsAu', FICHAS1.FicHsAu2 AS 'FicHsAu2', FICHAS1.FicObse AS 'Observ', TIPOHORACAUSA.THoCCodi AS 'Motivo', TIPOHORACAUSA.THoCDesc AS 'DescMotivo', FICHAS1.FicFech AS 'FicFech', FICHAS1.FicEsta AS 'Estado', TIPOHORA.THoColu AS 'THoColu', FICHAS.FicHsTr AS 'FicHsTr', FICHAS.FicHsAT AS 'FicHsAT', FICHAS.FicDiaL AS 'FicDiaL', FICHAS.FicDiaF AS 'FicDiaF', FICHAS.FicHorE AS 'FicHorE', FICHAS.FicHorS AS 'FicHorS', FICHAS.FicLega AS 'FicLega', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Horario', dbo.fn_STRMinutos(FicHsTr) AS 'FicHsTrMin', dbo.fn_STRMinutos(FicHsAT) AS 'FicHsATMin' FROM FICHAS LEFT JOIN FICHAS1 ON FICHAS.FicLega=FICHAS1.FicLega AND FICHAS.FicFech=FICHAS1.FicFech LEFT JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi WHERE FICHAS.FicLega='$Legajo' AND FICHAS.FicFech='$Fecha' ORDER BY TIPOHORA.THoColu, FICHAS1.FicHora";
 
-$result = sqlsrv_query($link, $query, $param, $options);
-$classHint = 'hint--right hint--rounded hint--no-arrow hint--no-shadow';
+    $fichaCerrada = PerCierre($Fecha, $Legajo);
+    $disabled = $fichaCerrada;
 
-if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)):
+    $result = sqlsrv_query($link, $query, $param, $options);
+    $classHint = 'hint--right hint--rounded hint--no-arrow hint--no-shadow';
 
-        $HorasNeg = ($row['FicHsATMin'] <= $row['FicHsTrMin']) ? 0 : 1;
-        $Exedentes = ($row['FicHsTrMin'] - $row['FicHsATMin']);
+    if (sqlsrv_num_rows($result) > 0) {
+        while ($row = sqlsrv_fetch_array($result)):
 
-        $disabled = $editar = $eliminar = $debug = '';
-        $HoraFechStr = !empty($row['FicFech']) ? $row['FicFech']->format('Ymd') : '';
+            $HorasNeg = ($row['FicHsATMin'] <= $row['FicHsTrMin']) ? 0 : 1;
+            $Exedentes = ($row['FicHsTrMin'] - $row['FicHsATMin']);
 
-        if (!empty($row['FicFech'])) {
+            $disabled = $editar = $eliminar = $debug = '';
+            $HoraFechStr = !empty($row['FicFech']) ? $row['FicFech']->format('Ymd') : '';
 
-            if ($fichaCerrada) {
-                $editar = "<span aria-label='No se puede editar (Periodo Cerrado)' class='{$classHint}'>
+            if (!empty($row['FicFech'])) {
+
+                if ($fichaCerrada) {
+                    $editar = "<span aria-label='No se puede editar (Periodo Cerrado)' class='{$classHint}'>
                                 <a href='#TopN' class='bi bi-pen btn btn-sm btn-link text-decoration-none {$disabled}'></a>
                            </span>";
-                $eliminar = $row['Estado'] === 2 ?
-                    "<span aria-label='No se puede eliminar (Periodo Cerrado)' class='{$classHint}'>
+                    $eliminar = $row['Estado'] === 2 ?
+                        "<span aria-label='No se puede eliminar (Periodo Cerrado)' class='{$classHint}'>
                         <a class=\"bi bi-trash btn btn-sm btn-link text-decoration-none $disabled\"></a>
                     </span>" :
-                    '';
-            } else {
-                $disabled = ($row['Estado'] === 2) ? '' : '';
-                $editar = '<span aria-label="Editar Hora: ' . $row['HoraDesc'] . '" class="' . $classHint . '">
+                        '';
+                } else {
+                    $disabled = ($row['Estado'] === 2) ? '' : '';
+                    $editar = '<span aria-label="Editar Hora: ' . $row['HoraDesc'] . '" class="' . $classHint . '">
                                 <a href="#TopN" class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_hora text-gris ' . $disabled . '"  data="' . $row['Hora'] . '" data1="' . $row['FicHsAu'] . '" data2="' . $row['FicHsAu2'] . '" data3="' . $row['HoraDesc'] . '" data4="' . $row['Motivo'] . '" data5="' . $row['DescMotivo'] . '" data6="' . $row['Observ'] . '"</a>
                            </span>';
-                $eliminar = '<span aria-label="Eliminar Hora: ' . $row['HoraDesc'] . '" class="' . $classHint . '">
+                    $eliminar = '<span aria-label="Eliminar Hora: ' . $row['HoraDesc'] . '" class="' . $classHint . '">
                                 <a data="' . $row['Hora'] . '-' . $HoraFechStr . '-' . $Legajo . '"  data2="' . $row['HoraDesc'] . '"  class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_Hora ' . $disabled . '"></a>
                             </span>';
-                $eliminar = ($row['Estado'] === 2) ? $eliminar : '';
-            }
-            
-        }
-        if (str_replace("-", "", $_SESSION['ListaTipoHora'])) {
-            if (!in_array(intval($row['Hora']), explode(',', $_SESSION['ListaTipoHora']))) {
-                $editar = $eliminar = '';
-            }
-        }
+                    $eliminar = ($row['Estado'] === 2) ? $eliminar : '';
+                }
 
-        $editar = $_SESSION["ABM_ROL"]['mHor'] == '0' ? '' : $editar;
-        $eliminar = $_SESSION["ABM_ROL"]['bHor'] == '0' ? '' : $eliminar;
+            }
+            if (str_replace("-", "", $_SESSION['ListaTipoHora'])) {
+                if (!in_array(intval($row['Hora']), explode(',', $_SESSION['ListaTipoHora']))) {
+                    $editar = $eliminar = '';
+                }
+            }
 
-        if (!empty($row['FicFech'])) {
-            $data[] = [
-                'Cod' => $row['Hora'],
-                'Descripcion' => $row['HoraDesc'],
-                'Descripcion2' => $row['HoraDesc2'],
-                'HsCalc' => $row['FicHsAu'],
-                'HsHechas' => $row['FicHsHe'],
-                'HsAuto' => $row['FicHsAu2'],
-                'Observ' => ceronull($row['Observ']),
-                'Motivo' => ceronull($row['Motivo']),
-                'DescMotivo' => ceronull($row['DescMotivo']),
-                'editar' => $editar,
-                'eliminar' => $eliminar,
-                'ficEsta' => $row['Estado'],
-                'fichaCerrada' => $fichaCerrada,
-                'null' => '',
+            $editar = $_SESSION["ABM_ROL"]['mHor'] == '0' ? '' : $editar;
+            $eliminar = $_SESSION["ABM_ROL"]['bHor'] == '0' ? '' : $eliminar;
+
+            if (!empty($row['FicFech'])) {
+                $data[] = [
+                    'Cod' => $row['Hora'],
+                    'Descripcion' => $row['HoraDesc'],
+                    'Descripcion2' => $row['HoraDesc2'],
+                    'HsCalc' => $row['FicHsAu'],
+                    'HsHechas' => $row['FicHsHe'],
+                    'HsAuto' => $row['FicHsAu2'],
+                    'Observ' => ceronull($row['Observ']),
+                    'Motivo' => ceronull($row['Motivo']),
+                    'DescMotivo' => ceronull($row['DescMotivo']),
+                    'editar' => $editar,
+                    'eliminar' => $eliminar,
+                    'ficEsta' => $row['Estado'],
+                    'fichaCerrada' => $fichaCerrada,
+                    'null' => '',
+                ];
+            }
+
+            $dataFichas = [
+                'Horario' => $row['Horario'],
+                'FicHsTr' => $row['FicHsTr'],
+                'FicHsAT' => $row['FicHsAT'],
+                'FicDiaL' => $row['FicDiaL'],
+                'FicDiaF' => $row['FicDiaF'],
+                'FicHorE' => $row['FicHorE'],
+                'FicHorS' => $row['FicHorS'],
+                'FicHsTrMin' => $row['FicHsTrMin'],
+                'FicHsATMin' => $row['FicHsATMin'],
+                'HorasNeg' => $HorasNeg,
+                'DatoFicha' => $HoraFechStr . $row['FicLega'],
+                'Exedentes' => MinHora($Exedentes),
             ];
-        }
-
-        $dataFichas = [
-            'Horario' => $row['Horario'],
-            'FicHsTr' => $row['FicHsTr'],
-            'FicHsAT' => $row['FicHsAT'],
-            'FicDiaL' => $row['FicDiaL'],
-            'FicDiaF' => $row['FicDiaF'],
-            'FicHorE' => $row['FicHorE'],
-            'FicHorS' => $row['FicHorS'],
-            'FicHsTrMin' => $row['FicHsTrMin'],
-            'FicHsATMin' => $row['FicHsATMin'],
-            'HorasNeg' => $HorasNeg,
-            'DatoFicha' => $HoraFechStr . $row['FicLega'],
-            'Exedentes' => MinHora($Exedentes),
-        ];
-    endwhile;
-    sqlsrv_free_stmt($result);
+        endwhile;
+        sqlsrv_free_stmt($result);
+    }
+    /** Fin HORAS */
+    echo json_encode([
+        'Horas' => $data,
+        'Fichas' => $dataFichas ?? []
+    ]);
+    sqlsrv_close($link);
+} catch (\Throwable $th) {
+    error_log($th->getMessage());
+    echo json_encode([
+        'error' => $th->getMessage()
+    ]);
+    error_log($th->getTraceAsString());
+    exit;
 }
-/** Fin HORAS */
-echo json_encode([
-    'Horas' => $data,
-    'Fichas' => $dataFichas
-]);
-sqlsrv_close($link);
-exit;

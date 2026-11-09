@@ -34,8 +34,7 @@ $FicFech = $Datos[1];
 $data = array();
 
 try {
-    $q = (ValString($_POST['q'])) ? $_POST['q'] : exit;
-    // $NovCNove = (ValNumerico($_POST['NovCNove'])) ? $_POST['NovCNove'] : exit;
+    $q = (siEsString($_POST['q'])) ? $_POST['q'] : exit;
     $valores = '';
     $query = "SELECT FICHAS1.FicHora FROM FICHAS1 WHERE FICHAS1.FicLega='$FicLega' AND FICHAS1.FicFech='$FicFech'";
     $result = sqlsrv_query($link, $query, $params, $options);

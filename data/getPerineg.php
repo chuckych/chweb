@@ -61,7 +61,6 @@ try {
     echo json_encode(["data" => $data]);
 
 } catch (Exception $e) {
-    error_log("Error en getPerineg: " . $e->getMessage());
     $data['error'] = $e->getMessage();
     echo json_encode(["data" => $data]);
 }

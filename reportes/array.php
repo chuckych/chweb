@@ -48,7 +48,7 @@ $queryRecords = sqlsrv_query($link, $query, $param, $options);
 
 while ($row = sqlsrv_fetch_array($queryRecords)):
     $Fecha = $row['Fecha']->format('Ymd');
-    $row['Dia_Sem'] = nombre_dias($row['Dia_Sem'], false);
+    $row['Dia_Sem'] = dayString($row['Dia_Sem'], false);
     $Fic_Asignada = ($row['Fic_Asignada']) ? $row['Fic_Asignada']->format('Ymd') : null;
     $data[] = array(
         'Lega' => $row['Lega'],

@@ -186,12 +186,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
         $data = ['status' => 'ok', 'Mensaje' => 'Reporte Creado.' . $_nombre, 'archivo' => $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid()];
 
-        error_log(sprintf(
-            '[reporte] html=%.1fs init=%.1fs css=%.1fs writeHTML=%.1fs output=%.1fs total=%.1fs pico=%dMB legajos=%d',
-            $t_html - $start_time, $t_init - $t_html, $t_css - $t_init,
-            $t_write - $t_css, $t_output - $t_write, microtime(true) - $start_time,
-            memory_get_peak_usage(true) / 1048576, $TotalLegajos ?? 0
-        ));
+        // error_log(sprintf(
+        //     '[reporte] html=%.1fs init=%.1fs css=%.1fs writeHTML=%.1fs output=%.1fs total=%.1fs pico=%dMB legajos=%d',
+        //     $t_html - $start_time, $t_init - $t_html, $t_css - $t_init,
+        //     $t_write - $t_css, $t_output - $t_write, microtime(true) - $start_time,
+        //     memory_get_peak_usage(true) / 1048576, $TotalLegajos ?? 0
+        // ));
         echo json_encode($data);
         exit();
     } catch (\Mpdf\MpdfException $e) {

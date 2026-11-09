@@ -1,8 +1,14 @@
 <?php
+
+use Symfony\Component\Translation\Provider\NullProvider;
+
 require __DIR__ . '/config/function.php';
 require __DIR__ . '/vendor/autoload.php';
 
-// $routeEnv = __DIR__ . '/../../config_chweb/';
+class ValidationException extends \Exception
+{
+}
+
 $routeEnv = getConfigPath();
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
@@ -53,7 +59,7 @@ function checkDBIntegrity()
 }
 function configureErrorReporting(): void
 {
-    $isLocal = ($_SERVER['SERVER_NAME'] ?? '') === 'localhost';
+    $isLocal = ($_SERVER['SERVER_NAME'] ?? '') === 'chweb.local';
     error_reporting(E_ALL);
     ini_set('display_errors', $isLocal ? '1' : '0');
 }
@@ -121,7 +127,7 @@ function secure_auth_ch_json()
     $HTTP_REFERER = $_SERVER['HTTP_REFERER'] ?? '';
     if ($secure_auth_ch !== true || empty($_SESSION['UID'])) {
         error_log($HTTP_REFERER);
-        $f = 'Sesi&oacute;n Expirada. Inicie sesi&oacute;n nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($HTTP_REFERER) . '">Iniciar sesi&oacute;n </a>';
+        $f = 'Sesión Expirada. Inicie sesión nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($HTTP_REFERER) . '">Iniciar sesión </a>';
         PrintRespuestaJson('sesion', $f);
         exit;
     }
@@ -161,8 +167,10 @@ function secure_auth_ch2()
 {
     timeZone();
     timeZone_lang();
-    if ($_SESSION["secure_auth_ch"] !== true
-        || empty($_SESSION['UID'])) {
+    if (
+        $_SESSION["secure_auth_ch"] !== true
+        || empty($_SESSION['UID'])
+    ) {
         echo '<div class="p-3 fw5 text-danger">Sesión Expirada</div>';
         exit;
     }
@@ -197,32 +205,10 @@ function secure_auth_ch2()
     checkDBIntegrity();
     configureErrorReporting();
 }
-/** ultimaacc */
 // Función para obtener la fecha hora del ultimo acceso
 function ultimoacc()
 {
     return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s"); // Actualizo la fecha de la sesión
-}
-/** Seguridad injections SQL */
-/**
- * @param $key string
- * @return string
- */
-function secureVar($key)
-{
-    if (is_array($key)) {
-        $clean = [];
-        foreach ($key as $k => $value) {
-            $clean[$k] = secureVar($value);
-        }
-        return $clean;
-    }
-
-    $key = (string) ($key ?? '');
-    $key = htmlspecialchars(stripslashes($key), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); // Limpio la variable
-    $key = str_ireplace("script", "blocked", $key); // Remplazo el script por una palabra bloqueada
-    $key = htmlentities($key, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); // Codifico la variable
-    return $key;
 }
 function vjs()
 {
@@ -233,6 +219,21 @@ function vjs()
         default:
             return version();
     }
+}
+/** Seguridad injection SQL */
+/**
+ * Summary of secureVar
+ * Escapa y sanitiza una variable para prevenir inyecciones SQL y XSS.
+ * @param mixed $key
+ * @return string
+ */
+function secureVar($key)
+{
+    $key = htmlspecialchars(stripslashes($key));
+    $key = str_ireplace("script", "blocked", $key);
+    #$key = mysql_real_escape_string($key);
+    $key = htmlentities($key, ENT_QUOTES);
+    return $key;
 }
 function version_file(string $pathFile)
 {
@@ -259,7 +260,7 @@ $params = [];
 if (!defined('SQLSRV_CURSOR_KEYSET')) {
     define('SQLSRV_CURSOR_KEYSET', 2); // El valor correcto puede variar según tu aplicación
 }
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET, 'keyset');
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET, 'keyset'];
 /** GENERAR generaPass */
 function recid()
 {
@@ -285,12 +286,23 @@ function Ident()
     }
     return $Ident; // Retorno de la cadena generada
 }
+/**
+ * Summary of statusData
+ * @param mixed $status
+ * @param mixed $dato
+ * @return never
+ */
 function statusData($status, $dato)
 {
-    $data = array('status' => $status, 'Mensaje' => $dato);
+    $data = ['status' => $status, 'Mensaje' => $dato];
     echo json_encode($data);
     exit;
 }
+/**
+ * Summary of getBrowser
+ * @param mixed $user_agent
+ * @return string
+ */
 function getBrowser($user_agent)
 {
     if (strpos($user_agent, 'MSIE') !== FALSE)
@@ -312,7 +324,13 @@ function getBrowser($user_agent)
     else
         return 'No hemos podido detectar su navegador';
 }
-function AttrDisabled($ValTrue)
+/**
+ * Summary of AttrDisabled
+ * Devuelve el atributo 'disabled' si $ValTrue no es igual a 1
+ * @param mixed $ValTrue
+ * @return string
+ */
+function attrDisabled($ValTrue)
 {
     return $ValTrue == 1 ? '' : 'disabled';
 }
@@ -320,6 +338,11 @@ function BrowserIE()
 {
     return getBrowser($_SERVER['HTTP_USER_AGENT']) == 'Internet explorer' ? true : false;
 }
+/**
+ * Summary of BorrarArchivosPDF
+ * Borra archivos PDF en la ruta especificada que tengan más de 1 hora de antigüedad
+ * @param mixed $RutaFiles
+ */
 function BorrarArchivosPDF($RutaFiles)
 {
     $files = glob($RutaFiles); //obtenemos el nombre de todos los ficheros
@@ -397,6 +420,16 @@ function encabezado_mod_svgIcon($bgc, $colortexto, $svg, $titulo, $imgclass = ''
     </div>
     </div>';
 }
+/**
+ * Summary of encabezado_mod2
+ * Displays a custom header with the specified background color, text color, SVG icon, title, width, and additional CSS class.
+ * @param mixed $bgc
+ * @param mixed $colortexto
+ * @param mixed $svg
+ * @param mixed $titulo
+ * @param mixed $width
+ * @param mixed $class
+ */
 function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
 {
 
@@ -471,6 +504,16 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
         </div>
     </div>';
 }
+/**
+ * Summary of encabezado_mod3
+ * @param mixed $bgc
+ * @param mixed $colortexto
+ * @param mixed $svg
+ * @param mixed $titulo
+ * @param mixed $style
+ * @param mixed $class
+ * Displays a custom header with the specified background color, text color, SVG icon, title, inline style, and additional CSS class.
+ */
 function encabezado_mod3($bgc, $colortexto, $svg, $titulo, $style, $class)
 {
 
@@ -543,8 +586,10 @@ function host(): string
         $expectedValues = is_array($expectedValues) ? $expectedValues : [$expectedValues];
 
         // Verificar si el valor del servidor coincide con alguno de los valores esperados
-        if (in_array($serverValue, $expectedValues, true) ||
-            ($header === 'HTTPS' && $serverValue !== 'off')) {
+        if (
+            in_array($serverValue, $expectedValues, true) ||
+            ($header === 'HTTPS' && $serverValue !== 'off')
+        ) {
             $isHttps = true;
             break;
         }
@@ -554,6 +599,11 @@ function host(): string
 
     return $protocol . $_SERVER['HTTP_HOST'];
 }
+/**
+ * Summary of valida_campo
+ * @param mixed $name
+ * @return bool
+ */
 function valida_campo($name)
 {
     switch ($name) {
@@ -563,23 +613,44 @@ function valida_campo($name)
             return false;
     }
 }
+/**
+ * Summary of pagina
+ * @param mixed $pagina
+ * @return mixed
+ */
 function pagina($pagina)
 {
     $pag = (!isset($_GET['p']) or $_GET['p'] == "index.php") ? $pagina : $_GET['p'];
     return $pag;
 }
-
+/**
+ * Summary of UnsetGet
+ * Esta función obtiene el valor de una variable GET y la inicializa si no está definida.
+ * @param mixed $variable
+ * @return mixed|string
+ */
 function UnsetGet($variable)
 {
     $_GET[$variable] = isset($_GET[$variable]) ? $_GET[$variable] : '';
     return $_GET[$variable];
 }
-/** Función UnsetPost() */
+/**
+ * Summary of UnsetPost
+ * Esta función obtiene el valor de una variable POST y la inicializa si no está definida.
+ * @param mixed $variable
+ * @return mixed|string
+ */
 function UnsetPost($variable)
 {
     $_POST[$variable] = ($_POST[$variable]) ?? '';
     return $_POST[$variable];
 }
+/**
+ * Summary of FormatHora
+ * Convierte un valor en minutos a formato de hora (HH:MM).
+ * @param mixed $var
+ * @return string
+ */
 function FormatHora($var)
 {
     // if($var <= -60){ /** Si el valor es menor o igual a menos -60 */
@@ -598,6 +669,12 @@ function FormatHora($var)
     }
     return $hora;
 }
+/**
+ * Summary of FormatHoraR
+ * Convierte un valor en minutos a formato de hora (HH:MM) y maneja valores negativos.
+ * @param mixed $var
+ * @return string
+ */
 function FormatHoraR($var)
 {
     // if($var <= -60){ /** Si el valor es menor o igual a menos -60 */
@@ -616,33 +693,17 @@ function FormatHoraR($var)
     }
     return $hora;
 }
+/**
+ * Summary of MinExcel
+ * Convierte minutos a formato compatible con Excel (días).
+ * @param mixed $min
+ * @return float
+ */
 function MinExcel($min)
 {
     $min = $min / 60;
     $min = ($min / 24);
     return $min;
-}
-function test_input_old($data)
-{
-    if (is_array($data)) {
-        $clean = [];
-        foreach ($data as $k => $value) {
-            $clean[$k] = test_input($value);
-        }
-        return $clean;
-    }
-
-    if (!$data)
-        return '';
-    $data = (string) ($data ?? '');
-    $data = utf8str($data);
-    $data = htmlspecialchars(stripslashes($data), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    $data = str_ireplace("script", '', $data);
-    $data = htmlentities($data, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    $data = str_replace('&nbsp;', ' ', $data); // Reemplaza &nbsp; con un espacio en blanco
-    $data = trim($data);
-
-    return ($data);
 }
 /**
  * Normaliza/limpia datos de entrada de forma recursiva.
@@ -729,12 +790,24 @@ function hoy()
     $hoy = date('Y-m-d');
     return rtrim($hoy);
 }
+/**
+ * Summary of FechaString
+ * Convierte una fecha a formato "Ymd" (año, mes, día) sin separadores.
+ * @param mixed $var
+ * @return string
+ */
 function FechaString($var)
 {
     $date = date_create($var);
     $FormatFecha = date_format($date, "Ymd");
     return $FormatFecha;
 }
+/**
+ * Summary of ceronull
+ * Convierte valores nulos o ceros a un guion ('-').
+ * @param mixed $var
+ * @return string
+ */
 function ceronull($var)
 {
     switch ($var) {
@@ -748,6 +821,12 @@ function ceronull($var)
     }
     return $var;
 }
+/**
+ * Summary of nombre_dia
+ * Devuelve el nombre del día de la semana correspondiente a un número (1-7, donde 1 es Lunes y 7 es Domingo).
+ * @param mixed $var
+ * @return string
+ */
 function nombre_dia($var)
 {
     switch ($var) {
@@ -775,59 +854,48 @@ function nombre_dia($var)
     }
     return $var;
 }
-function nombre_dias($var, $abreviado)
+/**
+ * Summary of dayString
+ * Devuelve el nombre del día de la semana correspondiente a un número (1-7, donde 1 es Lunes y 7 es Domingo), abreviado o completo.
+ * @param mixed $var
+ * @param bool $abreviado
+ * @return string
+ */
+function dayString($var, bool $abreviado)
 {
     if ($abreviado) {
-        switch ($var) {
-            case '7':
-                $var = "Dom";
-                break;
-            case '1':
-                $var = "Lun";
-                break;
-            case '2':
-                $var = "Mar";
-                break;
-            case '3':
-                $var = "Mié";
-                break;
-            case '4':
-                $var = "Jue";
-                break;
-            case '5':
-                $var = "Vie";
-                break;
-            case '6':
-                $var = "Sáb";
-                break;
-        }
-    } else {
-        switch ($var) {
-            case '7':
-                $var = "Domingo";
-                break;
-            case '1':
-                $var = "Lunes";
-                break;
-            case '2':
-                $var = "Martes";
-                break;
-            case '3':
-                $var = "Miércoles";
-                break;
-            case '4':
-                $var = "Jueves";
-                break;
-            case '5':
-                $var = "Viernes";
-                break;
-            case '6':
-                $var = "Sábado";
-                break;
-        }
+        $var = match ($var) {
+            '7' => "Dom",
+            '1' => "Lun",
+            '2' => "Mar",
+            '3' => "Mié",
+            '4' => "Jue",
+            '5' => "Vie",
+            '6' => "Sáb",
+            default => $var
+        };
+        return $var;
     }
+    
+    $var = match ($var) {
+        '7' => "Domingo",
+        '1' => "Lunes",
+        '2' => "Martes",
+        '3' => "Miércoles",
+        '4' => "Jueves",
+        '5' => "Viernes",
+        '6' => "Sábado",
+        default => $var
+    };
+
     return $var;
 }
+/**
+ * Summary of DiaSemana
+ * Devuelve el nombre del día de la semana y la fecha correspondiente a una fecha dada.
+ * @param mixed $Ymd
+ * @return string
+ */
 function DiaSemana($Ymd)
 {
     timeZone();
@@ -838,6 +906,12 @@ function DiaSemana($Ymd)
     $scheduled_day = "$days[$day] " . date('d/m/Y', strtotime($scheduled_day));
     return $scheduled_day;
 }
+/**
+ * Summary of Nombre_Mes
+ * Devuelve el nombre abreviado del mes correspondiente a una fecha dada.
+ * @param mixed $Ymd
+ * @return string
+ */
 function Nombre_Mes($Ymd)
 {
     $scheduled_month = $Ymd;
@@ -846,51 +920,37 @@ function Nombre_Mes($Ymd)
     $scheduled_month = $Month[$mes];
     return $scheduled_month;
 }
+/**
+ * Summary of Nombre_MesNum
+ * Devuelve el nombre completo del mes correspondiente a un número (1-12).
+ * @param mixed $NumeroMes
+ * @return string
+ */
 function Nombre_MesNum($NumeroMes)
 {
-    switch ($NumeroMes) {
-        case '1':
-            $text = 'Enero';
-            break;
-        case '2':
-            $text = 'Febrero';
-            break;
-        case '3':
-            $text = 'Marzo';
-            break;
-        case '4':
-            $text = 'Abril';
-            break;
-        case '5':
-            $text = 'Mayo';
-            break;
-        case '6':
-            $text = 'Junio';
-            break;
-        case '7':
-            $text = 'Julio';
-            break;
-        case '8':
-            $text = 'Agosto';
-            break;
-        case '9':
-            $text = 'Septiembre';
-            break;
-        case '10':
-            $text = 'Octubre';
-            break;
-        case '11':
-            $text = 'Noviembre';
-            break;
-        case '12':
-            $text = 'Diciembre';
-            break;
-        default:
-            $text = 'No hay Mes';
-            break;
-    }
+    $text = match ($NumeroMes) {
+        '1' => 'Enero',
+        '2' => 'Febrero',
+        '3' => 'Marzo',
+        '4' => 'Abril',
+        '5' => 'Mayo',
+        '6' => 'Junio',
+        '7' => 'Julio',
+        '8' => 'Agosto',
+        '9' => 'Septiembre',
+        '10' => 'Octubre',
+        '11' => 'Noviembre',
+        '12' => 'Diciembre',
+        default => 'No hay Mes',
+    };
     return $text;
 }
+/**
+ * Summary of DiaSemana4
+ * Devuelve el nombre del día de la semana y la fecha correspondiente a una fecha dada, con un espacio no separable entre ellos.
+ * @param mixed $Ymd
+ * @return string
+ */
 function DiaSemana4($Ymd)
 {
     timeZone();
@@ -901,6 +961,12 @@ function DiaSemana4($Ymd)
     $scheduled_day = "$days[$day]" . '&nbsp;' . date('d/m/Y', strtotime($scheduled_day));
     return $scheduled_day;
 }
+/**
+ * Summary of DiaSemana3
+ * Devuelve el nombre del día de la semana correspondiente a una fecha dada.
+ * @param mixed $Ymd
+ * @return string
+ */
 function DiaSemana3($Ymd)
 {
     timeZone();
@@ -911,24 +977,49 @@ function DiaSemana3($Ymd)
     $scheduled_day = $days[$day];
     return $scheduled_day;
 }
+/**
+ * Summary of fechformat
+ * Devuelve la fecha en formato 'd/m/Y'.
+ * @param mixed $fecha
+ * @return string
+ */
 function fechformat($fecha)
 {
     $fecha = date_create($fecha);
     $fecha = date_format($fecha, 'd/m/Y');
     return $fecha;
 }
+/**
+ * Summary of Fech_Format_Var
+ * Devuelve la fecha formateada según el formato especificado en $var.
+ * @param mixed $fecha
+ * @param mixed $var
+ * @return string
+ */
 function Fech_Format_Var($fecha, $var)
 {
     $fecha = date_create($fecha);
     $fecha = date_format($fecha, $var);
     return $fecha;
 }
+/**
+ * Summary of fechformat2
+ * Devuelve la fecha en formato 'Y-m-d'.
+ * @param mixed $var
+ * @return string
+ */
 function fechformat2($var)
 {
     $dato = date_create($var);
     $var = date_format($dato, 'Y-m-d');
     return $var;
 }
+/**
+ * Summary of FechaFormatH
+ * Devuelve la fecha y hora en formato 'd/m/Y H:i'.
+ * @param mixed $FechaHora
+ * @return bool|string
+ */
 function FechaFormatH($FechaHora)
 {
     if (!$FechaHora) {
@@ -938,6 +1029,12 @@ function FechaFormatH($FechaHora)
     $var = date_format($dato, "d/m/Y H:i");
     return $var;
 }
+/**
+ * Summary of HoraFormat
+ * @param mixed $FechaHora
+ * @param mixed $second
+ * @return string
+ */
 function HoraFormat($FechaHora, $second = true)
 {
     if ($second) {
@@ -949,6 +1046,13 @@ function HoraFormat($FechaHora, $second = true)
     }
     return $var;
 }
+/**
+ * Summary of FechaFormatVar
+ * Devuelve la fecha formateada según el formato especificado en $var.
+ * @param mixed $FechaHora
+ * @param mixed $var
+ * @return string
+ */
 function FechaFormatVar($FechaHora, $var)
 {
     if ($FechaHora != '0000-00-00 00:00:00') {
@@ -959,6 +1063,12 @@ function FechaFormatVar($FechaHora, $var)
         return '';
     }
 }
+/**
+ * Summary of Fecha_String
+ * @param mixed $var
+ * @return string
+ * Devuelve la fecha en formato 'Ymd'.
+ */
 function Fecha_String($var)
 {
     $dato = date_create($var);
@@ -972,14 +1082,30 @@ function inicio()
     $numrows = count($rs);
     return ($numrows);
 }
-function principal($rol)
+/**
+ * Summary of existeUsuarioPrincipal
+ * Devuelve true si existe un usuario principal para el rol especificado, de lo contrario false.
+ * @param mixed $rol
+ * @return bool
+ * 
+ * @example
+ * existeUsuarioPrincipal(1); // Devuelve true si existe un usuario principal para el rol con recid 1.
+ */
+function existeUsuarioPrincipal($rol)
 {
     if ($rol) {
         $sql = "SELECT usuarios.id FROM usuarios JOIN roles ON usuarios.rol=roles.id WHERE usuarios.principal='1' AND roles.recid='$rol' LIMIT 1";
         $rs = simple_pdoQuery($sql);
         return ($rs) ? true : false;
     }
+    return false;
 }
+/**
+ * Summary of token_exist
+ * Devuelve true si existe un token para el cliente especificado, de lo contrario false.
+ * @param mixed $recid_cliente
+ * @return bool
+ */
 function token_exist($recid_cliente)
 {
     if (!$recid_cliente)
@@ -990,7 +1116,13 @@ function token_exist($recid_cliente)
     $rs = simple_pdoQuery($sql);
     return ($rs) ? true : false;
 }
-function dnone($var)
+/**
+ * Summary of classDnone
+ * @param mixed $var
+ * @return string
+ * Devuelve "d-none" si $var coincide con ciertos valores predeterminados, de lo contrario devuelve $var.
+ */
+function classDnone($var)
 {
     switch ($var) {
         case '0':
@@ -1006,7 +1138,7 @@ function dnone($var)
     }
     return $var;
 }
-function ExisteCliente($recid)
+function ExisteCliente(string $recid)
 {
     /** Verificamos el recid de cliente para ver si existe. 
      * Sino existe redirigimos a Clientes*/
@@ -1019,97 +1151,112 @@ function ExisteCliente($recid)
         header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     }
 }
+/**
+ * Verifica si existe un rol con el recid y id especificados.
+ * @param mixed $recid
+ * @param mixed $id
+ * @return array{id: mixed, nombre: mixed, recid: mixed}
+ * @throws Exception Si el rol no existe, redirige a la página de clientes.
+ */
 function ExisteRol3($recid, $id)
 {
-    /** Verificamos el recid de rol para ver si existe. 
-     * Sino existe redirigimos a Clientes*/
     $q = "SELECT roles.nombre, roles.id, roles.recid FROM roles WHERE roles.recid='$recid' AND roles.id = '$id' LIMIT 1";
     $result = simple_pdoQuery($q);
     if ($result) {
-        return array('nombre' => $result['nombre'], 'id' => $result['id'], 'recid' => $result['recid']);
+        return ['nombre' => $result['nombre'], 'id' => $result['id'], 'recid' => $result['recid']];
     } else {
         header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+        return ['nombre' => null, 'id' => null, 'recid' => null];
     }
 }
+/**
+ * Verifica si existe un rol con el recid y id especificados.
+ * @param mixed $recid
+ * @param mixed $id
+ * @return bool
+ * Devuelve true si el rol existe, de lo contrario false.
+ */
 function ExisteRol4($recid, $id)
 {
-    /** Verificamos si existe el rol */
     $q = "SELECT 1 FROM roles WHERE roles.recid='$recid' AND roles.id = '$id' LIMIT 1";
     $result = simple_pdoQuery($q);
-    if ($result) {
-        return true;
-    } else {
-        return false;
-    }
+    return $result ? true : false;
 }
+/**
+ * Verifica si existe un usuario con el cliente recid y uid especificados.
+ * @param mixed $cliente_recid
+ * @param mixed $uid
+ * @return bool
+ * Devuelve true si el usuario existe, de lo contrario false.
+ */
 function ExisteUser($cliente_recid, $uid)
 {
-    /** Verificamos si existe el usuario */
     $q = "SELECT 1 FROM usuarios u INNER JOIN clientes c ON u.cliente=c.id WHERE u.id='$uid' AND c.recid='$cliente_recid' LIMIT 1";
     $result = simple_pdoQuery($q);
-    if ($result) {
-        return true;
-    } else {
-        return false;
-    }
+    return $result ? true : false;
 }
+/**
+ * Summary of ExisteRol2
+ * @param mixed $recid
+ * @return array{nombre: mixed, id_rol: mixed, recid: mixed}
+ */
 function ExisteRol2($recid)
 {
-    /** Verificamos el recid de cliente para ver si existe. 
-     * Sino existe redirigimos a Clientes*/
     $q = "SELECT roles.recid as 'recid', roles.nombre as 'nombre', roles.id as 'id_rol' FROM roles WHERE roles.recid='$recid' LIMIT 1";
     $r = simple_pdoQuery($q);
     if ($r) {
-        return array($r['nombre'], $r['id_rol'], $r['recid']);
+        return [$r['nombre'], $r['id_rol'], $r['recid']];
     } else {
         header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+        return [];
     }
 }
+/**
+ * Verifica si existe un rol con el recid especificado.
+ * @param mixed $recid
+ * @return void
+ * Redirige a la página de clientes si no existe el rol.
+ */
 function ExisteRol($recid)
 {
-    /** Verificamos el recid de cliente para ver si existe. 
-     * Sino existe redirigimos a Clientes*/
     $url = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
-    // $json  = file_get_contents($url);
-    // $array = json_decode($json, TRUE);
     $array = json_decode(getRemoteFile($url), true);
     $count = (count($array[0]['roles']));
     ($count) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
-    /** redirect */
-    /** 
-     *  
-     */
 }
+/**
+ * Obtiene la información del cliente con el recid especificado.
+ * @param mixed $recid
+ * @return array{0: mixed, 1: mixed, 2: mixed, 3: mixed, 4: mixed}
+ */
 function Cliente_c($recid)
 {
     $url = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['clientes'];
     if (is_array($data)):
-        // $r = array_filter($data, function ($e) {
-        //     return $e['recid'] == $_GET['_c'];
-        // });
         foreach ($data as $value):
             $id_c = $value['id'];
             $ident = $value['ident'];
             $recid_c = $value['recid'];
             $nombre_c = $value['nombre'];
             $host_c = $value['host'];
-            return array($id_c, $ident, $nombre_c, $recid_c, $host_c);
+            return [$id_c, $ident, $nombre_c, $recid_c, $host_c];
         endforeach;
     endif;
+    return [];
 }
+/**
+ * Obtiene la información del rol con el recid especificado.
+ * @param mixed $recid
+ * @return array{0: mixed, 1: mixed, 2: mixed, 3: mixed, 4: mixed, 5: mixed}
+ */
 function Rol_Recid($recid)
 {
     $url = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
-    //$json  = file_get_contents($url);
-    // $array = getRemoteFile($url);
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['roles'];
     if (is_array($data)):
-        // $r = array_filter($data, function ($e) {
-        //     return $e['recid'] == $_GET['_c'];
-        // });
         foreach ($data as $value):
             $id_Rol = $value['id'];
             $nombreRol = $value['nombre'];
@@ -1117,9 +1264,10 @@ function Rol_Recid($recid)
             $UsuariosRol = $value['cant_roles'];
             $recid_clienteRol = $value['recid_cliente'];
             $idClienteRol = $value['id_cliente'];
-            return array($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol, $idClienteRol);
+            return [$id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol, $idClienteRol];
         endforeach;
     endif;
+    return [];
 }
 function modulo_cuentas()
 {
@@ -1184,7 +1332,7 @@ function ExisteModRol_old(string $modulo)
     /**
      * 
      * verificamos si existe el modulo asociado a la session del rol de usuario. 
-     * sino existe lo enviamos al incio.
+     * sino existe lo enviamos al inicio.
      */
     $_SESSION['ID_MODULO'] = $modulo ?? null;
     define('ID_MODULO', $modulo);
@@ -1223,6 +1371,14 @@ function ListaRoles(string $Recid_C)
         endforeach;
     endif;
 }
+/**
+ * Obtiene la estructura del rol especificado.
+ * @param mixed $get_rol
+ * @param mixed $recid_rol
+ * @param mixed $e
+ * @param mixed $data
+ * @return string
+ */
 function estructura_rol($get_rol, $recid_rol, $e, $data)
 {
     $url = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
@@ -1233,7 +1389,16 @@ function estructura_rol($get_rol, $recid_rol, $e, $data)
         $rol = (!$array[0]['error']) ? "$val_roles" : "";
         return $rol;
     }
+    return '';
 }
+/**
+ * Summary of estructura_rol_count
+ * @param mixed $get_rol
+ * @param mixed $recid_rol
+ * @param mixed $e
+ * @param mixed $data
+ * @return string
+ */
 function estructura_rol_count($get_rol, $recid_rol, $e, $data)
 {
     $url = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
@@ -1245,65 +1410,56 @@ function estructura_rol_count($get_rol, $recid_rol, $e, $data)
     $rol = (!$array[0]['error']) ? "$val_roles" : "";
     return $rol;
 }
+/**
+ * Summary of TipoNov
+ * @param mixed $var
+ * @return string La descripción del tipo de novedad correspondiente al valor proporcionado.
+ */
 function TipoNov($var)
 {
-    switch ($var) {
-        case '0':
-            $tipo = 'Llegada tarde';
-            break;
-        case '1':
-            $tipo = 'Incumplimiento';
-            break;
-        case '2':
-            $tipo = 'Salida anticipada';
-            break;
-        case '3':
-            $tipo = 'Ausencia';
-            break;
-        case '4':
-            $tipo = 'Licencia';
-            break;
-        case '5':
-            $tipo = 'Accidente';
-            break;
-        case '6':
-            $tipo = 'Vacaciones';
-            break;
-        case '7':
-            $tipo = 'Suspensión';
-            break;
-        case '8':
-            $tipo = 'ART';
-            break;
-        default:
-            $tipo = $var;
-            break;
-    }
+    $tipo = match ($var) {
+        '0' => 'Llegada tarde',
+        '1' => 'Incumplimiento',
+        '2' => 'Salida anticipada',
+        '3' => 'Ausencia',
+        '4' => 'Licencia',
+        '5' => 'Accidente',
+        '6' => 'Vacaciones',
+        '7' => 'Suspensión',
+        '8' => 'ART',
+        default => $var,
+    };
     return $tipo;
 }
+/**
+ * Obtiene la descripción del tipo de novedad en función del valor proporcionado.
+ * @param mixed $var
+ * @return string
+ */
 function TipoONov($var)
 {
     $var = $var == 1 ? 'En Hora' : 'En Valor';
     return $var;
 }
+/**
+ * Summary of CateNov
+ * @param mixed $var
+ */
 function CateNov($var)
 {
-    switch ($var) {
-        case '0':
-            $tipo = 'Primaria';
-            break;
-        case '1':
-            $tipo = 'Adicional';
-            break;
-        case '2':
-            $tipo = 'Forzada';
-            break;
-        default:
-            $tipo = $var;
-            break;
-    }
+    $tipo = match ($var) {
+        '0' => 'Primaria',
+        '1' => 'Adicional',
+        '2' => 'Forzada',
+        default => $var,
+    };
     return $tipo;
 }
+/**
+ * Summary of JustNov
+ * @param mixed $var
+ * @return string La representación de la justificación de la novedad correspondiente al valor proporcionado.
+ */
 function JustNov($var)
 {
     switch ($var) {
@@ -1320,107 +1476,136 @@ function JustNov($var)
     }
     return $tipo;
 }
+/**
+ * Summary of TipoDoc
+ * @param mixed $var
+ * @return string La representación del tipo de documento correspondiente al valor proporcionado.
+ */
 function TipoDoc($var)
 {
-    switch ($var) {
-        case '0':
-            $tipo = 'DU';
-            break;
-        case '1':
-            $tipo = 'DNI';
-            break;
-        case '2':
-            $tipo = 'CI';
-            break;
-        case '3':
-            $tipo = 'LC';
-            break;
-        case '4':
-            $tipo = 'LE';
-            break;
-        case '5':
-            $tipo = 'PAS';
-            break;
-        default:
-            $tipo = $var;
-            break;
-    }
+    $tipo = match ($var) {
+        '0' => 'DU',
+        '1' => 'DNI',
+        '2' => 'CI',
+        '3' => 'LC',
+        '4' => 'LE',
+        '5' => 'PAS',
+        default => $var,
+    };
     return $tipo;
 }
+/**
+ * Summary of imgIcon
+ * @param string $var
+ * @param string $title
+ * @param string $width
+ * @return string HTML de la imagen con el icono correspondiente.
+ */
 function imgIcon($var, $title, $width)
 {
     $src = "/" . HOMEHOST . "/img/" . $var . ".png?v=" . vjs();
-    return '<img loading="lazy" src="' . $src . '" class="' . $width . '" alt="' . $title . '" title="' . $title . '">';
+    return "<img loading=\"lazy\" src=\"$src\" class=\"$width\" alt=\"$title\" title=\"$title\">";
 }
+/**
+ * Summary of Foto
+ * @param string $face_url
+ * @param string $title
+ * @param string $width
+ * @return string HTML de la imagen con la foto correspondiente.
+ */
 function Foto($face_url, $title, $width)
 {
     $src = $face_url;
-    return '<img loading="lazy" src="' . $src . '" class="' . $width . '" title="' . $title . '">';
+    return "<img loading=\"lazy\" src=\"$src\" class=\"$width\" title=\"$title\">";
 }
+/**
+ * Summary of color_fichada
+ * @param mixed $array
+ * @return array|array{Estado: mixed, Fic: string, Tipo: mixed}
+ */
 function color_fichada($array)
 {
     $fichada = [];
     foreach ($array as $valor) {
-        switch ($valor['Tipo']) {
-            case 'Manual':
-                $fichada = array(
-                    'Fic' => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
-                    'Estado' => $valor['Estado'],
-                    'Tipo' => $valor['Tipo']
-                );
-                break;
-            default:
-                $fichada = array(
-                    'Fic' => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
-                    'Estado' => $valor['Estado'],
-                    'Tipo' => $valor['Tipo']
-                );
-                break;
-        }
-        switch ($valor['Estado']) {
-            case 'Modificada':
-                $fichada = array(
-                    'Fic' => '<span class="text-danger fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '" >' . $valor['Fic'] . '</span>',
-                    'Estado' => $valor['Estado'],
-                    'Tipo' => $valor['Tipo']
-                );
-                break;
-        }
+
+        $fichada = match ($valor['Tipo']) {
+            'Manual' => [
+                'Fic' => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
+                'Estado' => $valor['Estado'],
+                'Tipo' => $valor['Tipo']
+            ],
+            default => [
+                'Fic' => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
+                'Estado' => $valor['Estado'],
+                'Tipo' => $valor['Tipo']
+            ],
+        };
+        $fichada = match ($valor['Estado']) {
+            'Modificada' => [
+                'Fic' => '<span class="text-danger fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '" >' . $valor['Fic'] . '</span>',
+                'Estado' => $valor['Estado'],
+                'Tipo' => $valor['Tipo']
+            ],
+            'Normal' => [
+                'Fic' => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '" >' . $valor['Fic'] . '</span>',
+                'Estado' => $valor['Estado'],
+                'Tipo' => $valor['Tipo']
+            ],
+            default => [
+                'Fic' => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
+                'Estado' => $valor['Estado'],
+                'Tipo' => $valor['Tipo']
+            ]
+        };
     }
     return $fichada;
 }
+/**
+ * Summary of color_fichada3
+ * Colors the fichada based on its type and state, adding appropriate HTML span elements with classes and data attributes for display purposes.
+ * @param array $array
+ * @return array|array{Estado: mixed, Fic: string, Tipo: mixed}
+ */
 function color_fichada3(array $array)
 {
     $fichada = [];
     foreach ($array as $valor) {
         switch ($valor['Tipo']) {
             case 'Manual':
-                $fichada = array(
+                $fichada = [
                     'Fic' => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
                     'Tipo' => $valor['Tipo']
-                );
+                ];
                 break;
             default:
-                $fichada = array(
+                $fichada = [
                     'Fic' => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
                     'Tipo' => $valor['Tipo']
-                );
+                ];
                 break;
         }
         switch ($valor['Estado']) {
             case 'Modificada':
-                $fichada = array(
+                $fichada = [
                     'Fic' => '<span class="text-danger fw4 contentd" title="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
                     'Tipo' => $valor['Tipo']
-                );
+                ];
                 break;
         }
     }
     return $fichada;
 }
+/**
+ * Colors the fichada based on its type and state, adding appropriate HTML span elements with classes and data attributes for display purposes.
+ * Summary of color_Fichada2
+ * @param mixed $tipo
+ * @param mixed $estado
+ * @param mixed $hora
+ * @return string
+ */
 function color_Fichada2($tipo, $estado, $hora)
 {
 
@@ -1446,7 +1631,13 @@ function color_Fichada2($tipo, $estado, $hora)
 
     return $fichada;
 }
-/** Actual month last day **/
+/**
+ * Summary of _data_last_month_day
+ * Returns the last day of the given month and year in 'Ymd' format.
+ * @param mixed $y
+ * @param mixed $m
+ * @return string
+ */
 function _data_last_month_day($y, $m)
 {
     $month = $m;
@@ -1458,7 +1649,13 @@ function _data_last_month_day($y, $m)
 ;
 // echo _data_last_month_day('2020','04').PHP_EOL;
 
-/** Actual month first day **/
+/**
+ * Summary of _data_first_month_day
+ * Returns the first day of the given month and year in 'Ymd' format.
+ * @param mixed $y
+ * @param mixed $m
+ * @return string
+ */
 function _data_first_month_day($y, $m)
 {
     $month = $m;
@@ -1477,24 +1674,26 @@ function peri_min_max()
 
     sqlsrv_free_stmt($rs);
     sqlsrv_close($link);
-    $array = array(
+    $array = [
         'min' => $peri_min,
         'max' => $peri_max
-    );
+    ];
     return $array;
-    // exit;
 }
+/**
+ * Summary of audito_ch
+ * Logs an audit entry into the database.
+ * @param mixed $AudTipo
+ * @param mixed $AudDato
+ * @param mixed $modulo
+ */
 function audito_ch($AudTipo, $AudDato, $modulo = '')
 {
-    $ipCliente = $_SERVER['REMOTE_ADDR'];
-    switch ($ipCliente) {
-        case '::1':
-            $ipCliente = ('127.0.0.1');
-            break;
-        default:
-            $ipCliente = ($_SERVER['REMOTE_ADDR']);
-            break;
-    }
+    $ipCliente = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    $ipCliente = match ($ipCliente) {
+        '::1' => '127.0.0.1',
+        default => ($_SERVER['REMOTE_ADDR']),
+    };
     require __DIR__ . '/config/conect_mssql.php';
 
     $AudUser = substr($_SESSION["NOMBRE_SESION"], 0, 10);
@@ -1512,17 +1711,17 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
     $VER_DB_CH = $VER_DB_CH[1] ?? 60;
     // file_put_contents(__DIR__ . '/' . date('Ymd') . '_errorQueryMS.log', print_r($VER_DB_CH, true));
 
-    $procedure_params = array(
-        array(&$AudFech),
-        array(&$AudHora),
-        array(&$AudUser),
-        array(&$AudTerm),
-        array(&$AudModu),
-        array(&$AudTipo),
-        array(&$AudDato),
-        array(&$FechaHora),
-        ($VER_DB_CH >= 70) ? array(&$AudZonaHoraria) : '',
-    );
+    $procedure_params = [
+        [&$AudFech],
+        [&$AudHora],
+        [&$AudUser],
+        [&$AudTerm],
+        [&$AudModu],
+        [&$AudTipo],
+        [&$AudDato],
+        [&$FechaHora],
+        ($VER_DB_CH >= 70) ? [&$AudZonaHoraria] : '',
+    ];
 
     $execAuditor70 = "exec DATA_AUDITORInsert @AudFech=?,@AudHora=?,@AudUser=?,@AudTerm=?,@AudModu=?,@AudTipo=?,@AudDato=?,@FechaHora=?, @AudZonaHoraria=?";
     $execAuditor60 = "exec DATA_AUDITORInsert @AudFech=?,@AudHora=?,@AudUser=?,@AudTerm=?,@AudModu=?,@AudTipo=?,@AudDato=?,@FechaHora=?";
@@ -1540,8 +1739,6 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         $dataAud = array("auditor" => "ok");
-        // file_put_contents(__DIR__ . '/' . date('Ymd') . '_errorQueryMS.log', print_r($stmt, true));
-        // echo json_encode($dataAud); 
         auditoria($AudDato, $AudTipo, '', $modulo); // insertamos en la tabla de auditoria de la base de datos mysql
     } else {
         if (($errors = sqlsrv_errors()) != null) {
@@ -1550,51 +1747,44 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
                 $dataAud[] = array("auditor" => "error", "Mensaje" => $mensaje[3]);
             }
         }
-        // echo json_encode($procedure_params);
-        // exit;
     }
     sqlsrv_execute($stmt);
     sqlsrv_close($link);
 }
+/**
+ * Summary of audito_ch2
+ * @param mixed $AudTipo
+ * @param mixed $AudDato
+ * @param mixed $modulo
+ * @return bool
+ */
 function audito_ch2($AudTipo, $AudDato, $modulo = '')
 {
     $ipCliente = $_SERVER['REMOTE_ADDR'];
-    switch ($ipCliente) {
-        case '::1':
-            $ipCliente = ('127.0.0.1');
-            break;
-        default:
-            $ipCliente = ($_SERVER['REMOTE_ADDR']);
-            break;
-    }
+    $ipCliente = match ($ipCliente) {
+        '::1' => '127.0.0.1',
+        default => ($_SERVER['REMOTE_ADDR']),
+    };
     require __DIR__ . '/config/conect_mssql.php';
-    // $usuario    = explode("-", $_SESSION["user"]);
 
     $AudUser = substr($_SESSION["NOMBRE_SESION"], 0, 10);
-    // $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
-    // $AudTerm   = gethostname();
-    // $AudTerm   = $ipCliente . '-' . recid2(4);
     $ipCliente = substr($ipCliente, 0, 20);
     $AudTerm = $ipCliente;
     $AudModu = 21;
-    // $FechaHora = date('Ymd H:i:s.u');
     $AudFech = date('Ymd');
     $AudHora = date('H:i:s');
-    // $now = DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
-    // $local = $now->setTimeZone(new DateTimeZone('America/Argentina/Buenos_Aires'));
-    // $FechaHora = $local->format("Y-m-d H:i:s.u");
     $FechaHora = fechaHora();
 
-    $procedure_params = array(
-        array(&$FechaHora),
-        array(&$AudHora),
-        array(&$AudUser),
-        array(&$AudTerm),
-        array(&$AudModu),
-        array(&$AudTipo),
-        array(&$AudDato),
-        array(&$FechaHora),
-    );
+    $procedure_params = [
+        [&$FechaHora],
+        [&$AudHora],
+        [&$AudUser],
+        [&$AudTerm],
+        [&$AudModu],
+        [&$AudTipo],
+        [&$AudDato],
+        [&$FechaHora],
+    ];
 
     $sql = "exec DATA_AUDITORInsert @AudFech=?,@AudHora=?,@AudUser=?,@AudTerm=?,@AudModu=?,@AudTipo=?,@AudDato=?,@FechaHora=?";
     $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
@@ -1607,19 +1797,18 @@ function audito_ch2($AudTipo, $AudDato, $modulo = '')
                 return false;
             }
         }
+        return false;
     }
 
     if (sqlsrv_execute($stmt)) {
-        /** ejecuto la sentencia */
-        $dataAud = array("auditor" => "ok");
-        // echo json_encode($dataAud); 
+        $dataAud = ["auditor" => "ok"];
         auditoria($AudDato, $AudTipo, '', $modulo);
     } else {
 
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
-                $dataAud[] = array("auditor" => "error", "dato" => 'Error Auditor');
+                $dataAud[] = ["auditor" => "error", "dato" => 'Error Auditor'];
                 $pathLog = __DIR__ . '/logs/error/' . date('Ymd') . '_errorQueryMS.log';
                 fileLog($_SERVER['REQUEST_URI'] . "\n" . $mensaje[3], $pathLog); // escribir en el log
                 return false;
@@ -1627,15 +1816,19 @@ function audito_ch2($AudTipo, $AudDato, $modulo = '')
         }
 
         echo json_encode($dataAud);
+        return false;
     }
     sqlsrv_execute($stmt);
     sqlsrv_close($link);
+    return false;
 }
 /**
- * @param {$dato} string texto de auditoria
- * @param {$tipo} string a:insert, b:update, m:delete; p: proceso
- * @param {$audcuenta} integer id de cuenta
- * @param {$modulo} modulo de la aplicación
+ * Summary of auditoria function
+ * Inserts an audit record into the database with the provided details.
+ * @param mixed $dato The data to be recorded in the audit.
+ * @param mixed $tipo The type of audit action (e.g., insert, update, delete, process).
+ * @param mixed $audcuenta The account ID related to the audit.
+ * @param mixed $modulo The module of the application where the action occurred.
  */
 function auditoria($dato, $tipo, $audcuenta = '', $modulo = '')
 {
@@ -1679,7 +1872,12 @@ function auditoria($dato, $tipo, $audcuenta = '', $modulo = '')
     }
     $connpdo = null; // cierra la conexion
 }
-
+/**
+ * Summary of auditoria_multiple
+ * @param mixed $array
+ * @param mixed $AudMod
+ * @return bool
+ */
 function auditoria_multiple($array, $AudMod)
 {
     timeZone();
@@ -1727,6 +1925,12 @@ function auditoria_multiple($array, $AudMod)
     $connpdo = null; // cierra la conexion
     return false;
 }
+/**
+ * Summary of fecha_min_max
+ * @param mixed $tabla
+ * @param mixed $ColFech
+ * @return array
+ */
 function fecha_min_max($tabla, $ColFech)
 {
     require __DIR__ . '/config/conect_mssql.php';
@@ -1748,6 +1952,12 @@ function fecha_min_max($tabla, $ColFech)
     return $array;
     // exit;
 }
+/**
+ * Summary of fecha_min_max2
+ * @param mixed $tabla
+ * @param mixed $ColFech
+ * @return array
+ */
 function fecha_min_max2($tabla, $ColFech)
 {
     require __DIR__ . '/config/conect_mssql.php';
@@ -1768,37 +1978,10 @@ function fecha_min_max2($tabla, $ColFech)
     sqlsrv_close($link);
     return $array;
 }
-function nov_cta_cte_old()
-{
-    require __DIR__ . '/config/conect_mssql.php';
-    $params = [];
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $query = "SELECT DISTINCT CTANOVE.CTA2Nove, NOVEDAD.NovDesc, CTANOVE.CTA2Peri FROM CTANOVE JOIN NOVEDAD ON CTANOVE.CTA2Nove = NOVEDAD.NovCodi ORDER BY CTANOVE.CTA2Peri DESC";
-    $rs = sqlsrv_query($link, $query, $params, $options);
-    if (sqlsrv_num_rows($rs) > 0) {
-        while ($fila = sqlsrv_fetch_array($rs)) {
-            $CTA2Nove = $fila['CTA2Nove'];
-            $NovDesc = $fila['NovDesc'];
-            $CTA2Peri = $fila['CTA2Peri'];
-            $array[] = array(
-                'cod' => $CTA2Nove,
-                'desc' => $NovDesc,
-                'peri' => $CTA2Peri
-            );
-        }
-    } else {
-        $array[] = array(
-            'cod' => false,
-            'desc' => false,
-            'peri' => false
-        );
-    }
-
-    sqlsrv_free_stmt($rs);
-    sqlsrv_close($link);
-    return ($array);
-    // exit;
-}
+/**
+ * Summary of nov_cta_cte
+ * @return array<array{cod: bool, desc: bool, peri: bool}|array{cod: mixed, desc: mixed, peri: mixed}>
+ */
 function nov_cta_cte()
 {
     $query = "SELECT DISTINCT CTANOVE.CTA2Nove, NOVEDAD.NovDesc, CTANOVE.CTA2Peri FROM CTANOVE JOIN NOVEDAD ON CTANOVE.CTA2Nove = NOVEDAD.NovCodi ORDER BY CTANOVE.CTA2Peri DESC";
@@ -1823,6 +2006,12 @@ function nov_cta_cte()
     }
     return $array ?? [];
 }
+/**
+ * Summary of super_unique
+ * @param array $array
+ * @param string $key
+ * @return array
+ */
 function super_unique($array, $key)
 {
     $temp_array = [];
@@ -1833,17 +2022,34 @@ function super_unique($array, $key)
     $array = array_values($temp_array);
     return $array;
 }
-/** validar campos formmularios */
-function ValNumerico($val)
+/**
+ * Summary of siEsNumero
+ * @param mixed $val
+ * @return bool
+ * Valida si un valor es un número.
+ */
+function siEsNumero($val)
 {
     $val = is_numeric($val) ? true : false;
     return $val;
 }
-function ValString($val)
+/**
+ * Summary of siEsString
+ * @param mixed $val
+ * @return bool
+ * Valida si un valor es una cadena de texto.
+ */
+function siEsString($val)
 {
     $val = is_string($val) ? true : false;
     return $val;
 }
+/**
+ * Summary of DeleteRegistro
+ * Elimina un registro de la base de datos según la consulta proporcionada.
+ * @param mixed $query
+ * @return bool
+ */
 function DeleteRegistro($query)
 {
     $params = [];
@@ -1868,7 +2074,12 @@ function DeleteRegistro($query)
         exit;
     }
 }
-/** Query MYSQL */
+/**
+ * Summary of CountRegMayorCeroMySql
+ * @param string $query
+ * @return bool
+ * Ejecuta una consulta MySQL y devuelve true si hay registros mayores a cero.
+ */
 function CountRegMayorCeroMySql($query)
 {
     $stmt = simple_pdoQuery($query);
@@ -1878,6 +2089,13 @@ function CountRegMayorCeroMySql($query)
         return false;
     }
 }
+/**
+ * Summary of checkKey
+ * Verifica si una clave foránea existe en la tabla especificada.
+ * @param mixed $fk
+ * @param mixed $table
+ * @return bool
+ */
 function checkKey($fk, $table)
 {
     $db = $_ENV['DB_CHWEB_NAME'] ?? '';
@@ -1889,6 +2107,12 @@ function checkKey($fk, $table)
         return false;
     }
 }
+/**
+ * Summary of checkColumn
+ * @param mixed $table
+ * @param mixed $col
+ * @return bool
+ */
 function checkColumn($table, $col)
 {
     $db = $_ENV['DB_CHWEB_NAME'] ?? '';
@@ -1900,6 +2124,11 @@ function checkColumn($table, $col)
         return false;
     }
 }
+/**
+ * Summary of checkTable
+ * @param mixed $table
+ * @return bool
+ */
 function checkTable($table)
 {
     $db = $_ENV['DB_CHWEB_NAME'] ?? '';
@@ -1912,6 +2141,11 @@ function checkTable($table)
         return false;
     }
 }
+/**
+ * Summary of InsertRegistroMySql
+ * @param mixed $query
+ * @return bool
+ */
 function InsertRegistroMySql($query)
 {
     $stmt = pdoQuery($query);
@@ -1921,6 +2155,11 @@ function InsertRegistroMySql($query)
         return false;
     }
 }
+/**
+ * Summary of simpleQueryDataMS
+ * @param mixed $query
+ * @return array|bool
+ */
 function simpleQueryDataMS($query)
 {
     require __DIR__ . '/config/conect_mssql.php';
@@ -1944,6 +2183,14 @@ function simpleQueryDataMS($query)
         return false;
     }
 }
+/**
+ * Summary of arrayQueryDataMS
+ * @param mixed $query
+ * @return array[]|bool
+ * Ejecuta una consulta en SQL Server y devuelve los resultados como un array de arrays.
+ * @param mixed $query
+ * @return array[]|bool
+ */
 function arrayQueryDataMS($query)
 {
     require __DIR__ . '/config/conect_mssql.php';
@@ -1963,6 +2210,12 @@ function arrayQueryDataMS($query)
         return false;
     }
 }
+/**
+ * Summary of UpdateRegistroMySql
+ * @param mixed $query
+ * @return bool
+ * Actualiza un registro en la base de datos según la consulta proporcionada.
+ */
 function UpdateRegistroMySql($query)
 {
     $stmt = pdoQuery($query);
@@ -1973,6 +2226,12 @@ function UpdateRegistroMySql($query)
         return false;
     }
 }
+/**
+ * Summary of deleteRegistroMySql
+ * @param mixed $query
+ * @return bool
+ * Elimina un registro de la base de datos según la consulta proporcionada.
+ */
 function deleteRegistroMySql($query)
 {
     $stmt = pdoQuery($query);
@@ -1983,28 +2242,13 @@ function deleteRegistroMySql($query)
         return false;
     }
 }
-function dataLista2($lista, $rol)
-{
-    require __DIR__ . '/config/conect_mysql.php';
-    $stmt = mysqli_query($link, "SELECT datos FROM lista_roles where id_rol = '$rol' AND lista = '$lista'");
-    // print_r($query); exit;
-    if (($stmt)) {
-        if (mysqli_num_rows($stmt) > 0) {
-            while ($row = mysqli_fetch_assoc($stmt)) {
-                return array($row['datos']);
-            }
-        } else {
-            return array('-');
-        }
-
-        mysqli_free_result($stmt);
-        mysqli_close($link);
-    } else {
-        statusData('error', mysqli_error($link));
-        mysqli_close($link);
-        exit;
-    }
-}
+/**
+ * Summary of dataLista
+ * @param mixed $lista
+ * @param mixed $rol
+ * @return array
+ * Obtiene los datos de la lista de roles según el rol y la lista proporcionados.
+ */
 function dataLista($lista, $rol)
 {
 
@@ -2016,6 +2260,13 @@ function dataLista($lista, $rol)
         return array('-');
     }
 }
+/**
+ * Summary of dataListaEstruct
+ * @param mixed $lista
+ * @param mixed $uid
+ * @return array
+ * Obtiene los datos de la lista estructurada según el UID y la lista proporcionados.
+ */
 function dataListaEstruct($lista, $uid)
 {
     $q = "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = '$uid' AND lista_estruct.lista = '$lista'";
@@ -2027,26 +2278,12 @@ function dataListaEstruct($lista, $uid)
     } else {
         return array('-');
     }
-
-    // require __DIR__ . '/config/conect_mysql.php';
-    // $stmt = mysqli_query($link, "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = '$uid' AND lista_estruct.lista = '$lista'");
-
-    // if ($stmt) {
-    //     if (mysqli_num_rows($stmt) > 0) {
-    //         while ($row = mysqli_fetch_assoc($stmt)) {
-    //             print_r(array($row['datos'])).exit;
-    //             return array($row['datos']);
-    //         }
-    //         mysqli_free_result($stmt);
-    //     } else {
-    //         return array('-');
-    //     }
-    // } else {
-    //     $pathLog = __DIR__ . '/logs/error/' . date('Ymd') . '_errorQuery.log';
-    //     fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
-    //     return false;
-    // }
 }
+/**
+ * Summary of InsertRegistro
+ * @param string $query
+ * @return bool
+ */
 function InsertRegistro(string $query)
 {
     $params = [];
@@ -2069,6 +2306,12 @@ function InsertRegistro(string $query)
         exit;
     }
 }
+/**
+ * Summary of InsertRegistroMS
+ * @param mixed $query
+ * @return bool
+ * Inserta un registro en la base de datos SQL Server según la consulta proporcionada.
+ */
 function InsertRegistroMS($query)
 {
     $params = [];
@@ -2099,13 +2342,19 @@ function InsertRegistroMS($query)
         exit;
     }
 }
+/**
+ * Summary of UpdateRegistro
+ * @param mixed $query
+ * @return bool
+ * Actualiza un registro en la base de datos SQL Server según la consulta proporcionada.
+ */
 function UpdateRegistro($query)
 {
     $params = [];
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
     require __DIR__ . '/config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query, $params, $options);
-    // print_r($query);
+
     if (($stmt)) {
         sqlsrv_close($link);
         return true;
@@ -2114,16 +2363,19 @@ function UpdateRegistro($query)
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
                 PrintRespuestaJson('error', $mensaje[3]);
-                // $data[] = array("status" => "error", "dato" => $mensaje[3]);
-                // $data[] = array("status" => "error", "dato" => 'Ya existe Novedad.');
                 exit;
             }
         }
         echo json_encode($data);
         sqlsrv_close($link);
-        exit;
+        return false;
     }
 }
+/**
+ * Summary of CountRegistrosMayorCero
+ * @param mixed $query
+ * @return bool
+ */
 function CountRegistrosMayorCero($query)
 {
     $params = [];
@@ -2155,7 +2407,13 @@ function CountRegistrosMayorCero($query)
         exit;
     }
 }
-/** Fin Query MS-SQL */
+/**
+ * Summary of PerCierre
+ * Verifica si la fecha proporcionada es menor o igual a la fecha de cierre del legajo.
+ * @param mixed $FechaStr
+ * @param mixed $Legajo
+ * @return bool
+ */
 function PerCierre($FechaStr, $Legajo)
 {
     $params = [];
@@ -2188,6 +2446,12 @@ function PerCierre($FechaStr, $Legajo)
         }
     }
 }
+/**
+ * Summary of PerCierreFech
+ * @param mixed $FechaStr
+ * @param mixed $Legajo
+ * @return int|mixed|string
+ */
 function PerCierreFech($FechaStr, $Legajo)
 {
     try {
@@ -2228,13 +2492,26 @@ function PerCierreFech($FechaStr, $Legajo)
     } catch (\Throwable $th) {
         error_log($th->getMessage());
     }
+    return false;
     // sqlsrv_close($link);
 }
+/**
+ * Summary of rutaWebService
+ * Devuelve la URL completa del WebService de RRHH para el comando especificado.
+ * @param mixed $Comando
+ * @return string
+ */
 function rutaWebService($Comando)
 {
     return $_SESSION["WEBSERVICE"] . "/RRHHWebService/" . $Comando;
 }
-/** PARA EL WEBSERVICE CH*/
+/**
+ * Summary of respuestaWebService
+ * Procesa la respuesta del WebService y devuelve el valor antes del signo "=".
+ * @param mixed $respuesta La respuesta del WebService.
+ * @param mixed $split Indica si se debe dividir la respuesta por el signo "=".
+ * @return string El valor antes del signo "=" si $split es true, de lo contrario la respuesta completa.
+ */
 function respuestaWebService($respuesta, $split = true)
 {
     if (!$split) {
@@ -2244,6 +2521,12 @@ function respuestaWebService($respuesta, $split = true)
     $respuesta = explode("=", $respuesta);
     return $respuesta[0];
 }
+/**
+ * Summary of EstadoProceso
+ * Verifica el estado de un proceso a través de su URL.
+ * @param mixed $url
+ * @return string
+ */
 function EstadoProceso($url)
 {
     // CRÍTICO: Cerrar sesión para no bloquear otras peticiones
@@ -2288,6 +2571,12 @@ function EstadoProceso($url)
 
     return respuestaWebService($respuesta);
 }
+/**
+ * Summary of pingWebService
+ * Valida que el WebService de Control Horario esté disponible.
+ * @param mixed $textError Variable para almacenar el mensaje de error en caso de fallo.
+ * @return bool Devuelve true si el WebService está disponible, false en caso contrario.
+ */
 function pingWebService($textError) // Función para validar que el Webservice de Control Horario esta disponible
 {
     // CRÍTICO: Cerrar sesión para no bloquear otras peticiones
@@ -2383,6 +2672,13 @@ function pingWS()
 
     return ($http_code == 201) ? true : false; // escribir en el log
 }
+/**
+ * Summary of procesar_legajo
+ * @param mixed $legajo
+ * @param mixed $FechaDesde
+ * @param mixed $FechaHasta
+ * @return bool|string
+ */
 function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
 {
     if (pingWS()) {
@@ -2396,30 +2692,52 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        $respuesta = curl_exec($ch);
+        $respuesta = curl_exec($ch) ?? '';
         $curl_errno = curl_errno($ch);
         $curl_error = curl_error($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
         if ($curl_errno > 0) {
             $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
             fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
             return "Error";
-            // exit;
         }
+
         unset($ch);
+
         if ($httpCode == 404) {
             fileLog("Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\"", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
             return $respuesta;
-            // exit;
         }
+
         $processID = respuestaWebService($respuesta);
-        $url = rutaWebService("Estado?ProcesoId=" . $processID);
+        $url = rutaWebService("Estado?ProcesoId=$processID");
 
         if ($httpCode == 201) {
             return EstadoProceso($url);
         }
+        return "Error"; // si no se cumple ninguna condición, retornar error
     }
+    return "Error"; // si no hay conexión con el WebService, retornar error
 }
+/**
+ * Summary of FicharHorario
+ * Ingresa fichadas para un rango de legajos y fechas especificadas.
+ * @param mixed $FechaDesde
+ * @param mixed $FechaHasta
+ * @param mixed $LegajoDesde
+ * @param mixed $LegajoHasta
+ * @param mixed $TipoDePersonal
+ * @param mixed $Empresa
+ * @param mixed $Planta
+ * @param mixed $Sucursal
+ * @param mixed $Grupo
+ * @param mixed $Sector
+ * @param mixed $Seccion
+ * @param mixed $TipoDeFichada
+ * @param mixed $Laboral
+ * @return string
+ */
 function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion, $TipoDeFichada, $Laboral)
 {
     $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
@@ -2455,19 +2773,35 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
     $processID = respuestaWebService($respuesta);
     $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
-    if ($httpCode == 201) {
-        return EstadoProceso($url);
-        // exit;
-    } else {
-        $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+    switch ($httpCode) {
+        case 201:
+            return EstadoProceso($url);
+        default:
+            $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+            fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+            fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log');
+            break;
     }
+    return 'error';
 }
+/**
+ * Summary of Liquidar
+ * @param mixed $FechaDesde
+ * @param mixed $FechaHasta
+ * @param mixed $LegajoDesde
+ * @param mixed $LegajoHasta
+ * @param mixed $TipoDePersonal
+ * @param mixed $Empresa
+ * @param mixed $Planta
+ * @param mixed $Sucursal
+ * @param mixed $Grupo
+ * @param mixed $Sector
+ * @param mixed $Seccion
+ * @return string
+ * Ingresa liquidaciones para un rango de legajos y fechas especificadas.
+ */
 function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
 {
-    // $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
-    // $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
     $ruta = rutaWebService("Liquidar");
     $post_data = "{Usuario=Supervisor,TipoDePersonal=$TipoDePersonal,LegajoDesde=$LegajoDesde,LegajoHasta=$LegajoHasta,FechaDesde=$FechaDesde,FechaHasta=$FechaHasta,Empresa=$Empresa,Planta=$Planta,Sucursal=$Sucursal,Grupo=$Grupo,Sector=$Sector,Seccion=$Seccion}";
     $ch = curl_init();
@@ -2499,15 +2833,33 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $processID = respuestaWebService($respuesta);
     $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
-    if ($httpCode == 201) {
-        return EstadoProceso($url);
-        // exit;
-    } else {
-        $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+    switch ($httpCode) {
+        case 201:
+            return EstadoProceso($url);
+        default:
+            $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+            fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+            fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log');
+            break;
     }
+    return 'error';
 }
+/**
+ * Summary of Procesar
+ * Ingresa procesos para un rango de legajos y fechas especificadas.
+ * @param mixed $FechaDesde
+ * @param mixed $FechaHasta
+ * @param mixed $LegajoDesde
+ * @param mixed $LegajoHasta
+ * @param mixed $TipoDePersonal
+ * @param mixed $Empresa
+ * @param mixed $Planta
+ * @param mixed $Sucursal
+ * @param mixed $Grupo
+ * @param mixed $Sector
+ * @param mixed $Seccion
+ * @return array{EstadoProceso: string, ProcesoId: string, error: string|array{EstadoProceso: string, ProcesoId: string}}
+ */
 function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
 {
     $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
@@ -2544,17 +2896,34 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $processID = respuestaWebService($respuesta, $httpCode !== 201 ? false : true) ?? '';
     $url = rutaWebService("Estado?ProcesoId=$processID");
 
-    switch ($httpCode) {
-        case 201:
-            return ['ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url)];
-        default:
-            return ['error' => $processID, 'ProcesoId' => $processID, 'EstadoProceso' => ''];
-    }
-
-    fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-    fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+    return match ($httpCode) {
+        201 => ['ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url)],
+        default => ['error' => $processID, 'ProcesoId' => $processID, 'EstadoProceso' => ''],
+    };
 }
-
+/**
+ * Summary of IngresarNovedad
+ * Ingresa una novedad para un rango de legajos y fechas especificadas.
+ * @param mixed $TipoDePersonal
+ * @param mixed $LegajoDesde
+ * @param mixed $LegajoHasta
+ * @param mixed $FechaDesde
+ * @param mixed $FechaHasta
+ * @param mixed $Empresa
+ * @param mixed $Planta
+ * @param mixed $Sucursal
+ * @param mixed $Grupo
+ * @param mixed $Sector
+ * @param mixed $Seccion
+ * @param mixed $Laboral
+ * @param mixed $Novedad
+ * @param mixed $Justifica
+ * @param mixed $Observacion
+ * @param mixed $Horas
+ * @param mixed $Causa
+ * @param mixed $Categoria
+ * @return string
+ */
 function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesde, $FechaHasta, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion, $Laboral, $Novedad, $Justifica, $Observacion, $Horas, $Causa, $Categoria)
 {
     $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
@@ -2586,13 +2955,30 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
     $processID = respuestaWebService($respuesta);
     $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
-    if ($httpCode == 201) {
-        return EstadoProceso($url);
-        // exit;
-    } else {
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+    switch ($httpCode) {
+        case 201:
+            return EstadoProceso($url);
+        default:
+            fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log');
+            break;
     }
+    return '';
 }
+/**
+ * Summary of getHorario
+ * @param mixed $FechaDesde
+ * @param mixed $FechaHasta
+ * @param mixed $LegajoDesde
+ * @param mixed $LegajoHasta
+ * @param mixed $TipoDePersonal
+ * @param mixed $Empresa
+ * @param mixed $Planta
+ * @param mixed $Sucursal
+ * @param mixed $Grupo
+ * @param mixed $Sector
+ * @param mixed $Seccion
+ * @return array{Estado: string, ProcesoId: string}
+ */
 function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
 {
     $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
@@ -2626,35 +3012,64 @@ function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoD
     $respuesta = explode("=", $respuesta);
     $processID = ($respuesta[1]);
     $url = rutaWebService("Estado?ProcesoId=" . $processID);
-    if ($httpCode == 201) {
-        return array('ProcesoId' => $processID, 'Estado' => EstadoProceso($url));
-        // exit;
-    } else {
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+    switch ($httpCode) {
+        case 201:
+            return ['ProcesoId' => $processID, 'Estado' => EstadoProceso($url)];
+        default:
+            fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log');
+            break;
     }
+    return ['ProcesoId' => $processID, 'Estado' => 'error'];
 }
 /** FIN EL WEBSERVICE CH*/
-
+/**
+ * Summary of FusNuloPOST
+ * @param mixed $dato
+ * @param mixed $result
+ */
 function FusNuloPOST($dato, $result)
 {
     $_POST[$dato] = ($_POST[$dato]) ?? $result;
     return $_POST[$dato];
 }
+/**
+ * Summary of FusNuloGET
+ * @return mixed
+ * @param mixed $dato
+ * @param mixed $result
+ */
 function FusNuloGET($dato, $result)
 {
     $_GET[$dato] = ($_GET[$dato]) ?? $result;
     return $_GET[$dato];
 }
+/**
+ * Summary of dr_fecha
+ * @param mixed $ddmmyyyy
+ * @param mixed $format
+ * @return string
+ */
 function dr_fecha($ddmmyyyy, $format = 'Ymd')
 {
     $fecha = date($format, strtotime((str_replace("/", "-", $ddmmyyyy))));
     return $fecha;
 }
+/**
+ * Summary of dr_
+ * @param mixed $ddmmyyyy
+ * @return string
+ */
 function dr_($ddmmyyyy)
 {
     $fecha = date("Y-m-d", strtotime((str_replace("/", "-", $ddmmyyyy))));
     return $fecha;
 }
+/**
+ * Summary of datosGetIn
+ * @param mixed $Get
+ * @param mixed $Col
+ * @return string|null
+ */
 function datosGetIn($Get, $Col)
 {
     $v = ($Get >= '0') ? true : false;
@@ -2664,13 +3079,22 @@ function datosGetIn($Get, $Col)
         return test_input($t);
     }
 }
-;
+/**
+ * Summary of datosGet
+ * @param mixed $Get
+ * @param mixed $Col
+ * @return string
+ */
 function datosGet($Get, $Col)
 {
     $texto = !empty($Get) ? "AND " . $Col . " = '" . $Get . "' " : '';
     return $texto;
 }
-;
+/**
+ * Summary of MinHora
+ * @param mixed $Min
+ * @return string|false
+ */
 function MinHora($Min)
 {
     if ($Min == 0) {
@@ -2686,14 +3110,18 @@ function MinHora($Min)
     $segundos = $segundos - ($horas * 3600) - ($minutos * 60);
     $horas = str_pad($horas, 2, "0", STR_PAD_LEFT);
     $minutos = str_pad($minutos, 2, "0", STR_PAD_LEFT);
-    $hora = $horas . ':' . $minutos;
-    switch ($hora) {
-        case '00:00':
-            $hora = "-";
-            break;
-    }
+    $hora = "$horas:$minutos";
+    $hora = match ($hora) {
+        '00:00' => "-",
+        default => $hora
+    };
     return $hora;
 }
+/**
+ * Summary of HoraMin
+ * @param mixed $var
+ * @return int
+ */
 function HoraMin($var)
 {
     $var = explode(":", $var);
@@ -2702,6 +3130,11 @@ function HoraMin($var)
     $Minutos = $MinHora + $Min;
     return $Minutos;
 }
+/**
+ * Summary of ValidarHora
+ * @param mixed $Hora
+ * @return bool
+ */
 function ValidarHora($Hora)
 {
     if ($Hora == '00:00')
@@ -2710,6 +3143,11 @@ function ValidarHora($Hora)
     $Hora = ($Hora > '1439' || $Hora < '1') ? true : false;
     return $Hora;
 }
+/**
+ * Summary of ValidaFormatoHora
+ * @param mixed $valor
+ * @return bool
+ */
 function ValidaFormatoHora($valor)
 {
     $countValor = strlen($valor);
@@ -2721,12 +3159,23 @@ function ValidaFormatoHora($valor)
         return false;
     }
 }
+/**
+ * Summary of PrintError
+ * @param mixed $TituloError
+ * @param mixed $Mensaje
+ */
 function PrintError($TituloError, $Mensaje)
 {
     $data = array('status' => $TituloError, 'Mensaje' => $Mensaje);
     echo json_encode($data);
     /** Imprimo json con resultado */
 }
+/**
+ * Summary of PrintRespuestaJson
+ * @param mixed $status
+ * @param mixed $Mensaje
+ * @return void
+ */
 function PrintRespuestaJson($status, $Mensaje)
 {
     $data = [
@@ -2735,6 +3184,12 @@ function PrintRespuestaJson($status, $Mensaje)
     ];
     echo json_encode($data);
 }
+/**
+ * Summary of getRemoteFile
+ * @param mixed $url
+ * @param mixed $timeout
+ * @return bool|string
+ */
 function getRemoteFile($url, $timeout = 10)
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
@@ -2766,6 +3221,11 @@ function getRemoteFile($url, $timeout = 10)
         return false;
     }
 }
+/**
+ * Summary of parseApiResponse
+ * @param mixed $response
+ * @return array
+ */
 function parseApiResponse($response): array
 {
     if (!$response || !is_string($response)) {
@@ -2779,6 +3239,17 @@ function parseApiResponse($response): array
 
     return $decoded;
 }
+/**
+ * Summary of implodeArrayByKey
+ * @param array $array
+ * @param mixed $key
+ * @param mixed $separator
+ * @return bool|string
+ * @param array $array
+ * @param mixed $key
+ * @param mixed $separator
+ * @return bool|string
+ */
 function implodeArrayByKey(array $array, $key, $separator = ',')
 {
     if (!empty($array) && !empty($key)) {
@@ -2788,6 +3259,13 @@ function implodeArrayByKey(array $array, $key, $separator = ',')
     }
     return false;
 }
+/**
+ * Summary of sendRemoteData
+ * @param mixed $url
+ * @param mixed $payload
+ * @param mixed $timeout
+ * @return bool|string
+ */
 function sendRemoteData($url, $payload, $timeout = 10)
 {
     $ch = curl_init();
@@ -2814,7 +3292,16 @@ function sendRemoteData($url, $payload, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
     }
+    return '';
 }
+/**
+ * Summary of sendApiData
+ * @param mixed $url
+ * @param mixed $payload
+ * @param mixed $method
+ * @param mixed $timeout
+ * @return bool|string
+ */
 function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
 {
     $ch = curl_init();
@@ -2844,9 +3331,18 @@ function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
     }
     exit;
 }
+/**
+ * Summary of curlAPI
+ * @param mixed $url
+ * @param mixed $payload
+ * @param mixed $method
+ * @param mixed $token
+ * @param mixed $timeout
+ * @return bool|string
+ */
 function curlAPI($url, $payload, $method, $token, $timeout = 10)
 {
-    $method = $method ?? 'POST';
+    $method ??= 'POST';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -2873,8 +3369,13 @@ function curlAPI($url, $payload, $method, $token, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
     }
-    exit;
+    return '';
 }
+/**
+ * Summary of mod_roles
+ * @param mixed $recid_rol
+ * @return array{error: int|string, "mod_roles": array, success: string}
+ */
 function mod_roles($recid_rol)
 {
     $query = "SELECT mod_roles.id AS 'id', mod_roles.recid_rol AS 'recid_rol', modulos.nombre AS 'nombre', modulos.id AS 'id_mod', modulos.idtipo AS 'idtipo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo=modulos.id WHERE mod_roles.id>'0' AND modulos.estado='0' AND mod_roles.recid_rol='$recid_rol' ORDER BY modulos.orden";
@@ -2898,9 +3399,10 @@ function mod_roles($recid_rol)
                 'idtipo' => $idtipo
             );
         }
-        $respuesta = array('success' => 'YES', 'error' => '0', 'mod_roles' => $data);
+        $respuesta = ['success' => 'YES', 'error' => '0', 'mod_roles' => $data];
         return $respuesta;
     }
+    return ['error' => '1', 'mod_roles' => [], 'success' => 'NO'];
 }
 
 /**
@@ -2924,68 +3426,6 @@ function tokenMobile(string $token, string $campo): string
         'token' => $tokenParte,
         default => '',
     };
-}
-function tokenMobile_old($token, $data)
-{
-    /** data = "appcode" devuelve Aplication Code, "token" = devuelve el token */
-    if (!empty($token)) {
-        $t = explode('@', $token);
-        switch ($data) {
-            case 'appcode':
-                $t[1] ??= '';
-                return $t[1];
-            // break;
-            case 'token':
-                $t[0] ??= '';
-                return $t[0];
-            // break;
-            default:
-                return '';
-            // break;
-        }
-    } else {
-        return '';
-    }
-}
-function utf8str_old($cadena)
-{
-    return str_replace([
-        "&Aacute;",
-        "&Eacute;",
-        "&Iacute;",
-        "&Oacute;",
-        "&Uacute;",
-        "&Ntilde;",
-        "&aacute;",
-        "&eacute;",
-        "&iacute;",
-        "&oacute;",
-        "&uacute;",
-        "&ntilde;",
-        "&amp;",
-        "&#039;",
-        "&#39;",
-        "&quot;",
-        "&hellip;",
-    ], [
-        "Á",
-        "É",
-        "Í",
-        "Ó",
-        "Ú",
-        "Ñ",
-        "á",
-        "é",
-        "í",
-        "ó",
-        "ú",
-        "ñ",
-        "&",
-        "'",
-        "'",
-        "'",
-        "...",
-    ], $cadena);
 }
 /**
  * Decodifica entidades HTML a caracteres reales (UTF-8).
@@ -3011,6 +3451,12 @@ function utf8str(?string $cadena): string
 
     return $decoded;
 }
+/**
+ * Summary of horarioCH
+ * Obtiene la información de un horario por su código.
+ * @param mixed $HorCodi
+ * @return array{cod: mixed, desc: mixed}
+ */
 function horarioCH($HorCodi)
 {
     require __DIR__ . '/config/conect_mssql.php';
@@ -3020,40 +3466,39 @@ function horarioCH($HorCodi)
     $stmt = sqlsrv_query($link, $query, $params, $options);
     // print_r($query);
     while ($a = sqlsrv_fetch_array($stmt)) {
-        $data = array(
+        $data = [
             'cod' => $a['HorCodi'],
             'desc' => $a['HorDesc'],
-        );
+        ];
         return $data;
     }
     sqlsrv_close($link);
+    return ['cod' => null, 'desc' => null]; // Devuelve un valor por defecto si no se encuentra el horario.
 }
-function listaRol($idLista = '0')
+/**
+ * Summary of listaRol
+ * Devuelve el nombre del rol según su ID.
+ * @param string $idLista
+ * @return string
+ */
+/**
+ * Summary of listaRol
+ * Devuelve el nombre del rol según su ID.
+ * @param string $idLista
+ * @return string
+ */
+function listaRol(string $idLista = '0')
 {
     $idLista = intval($idLista);
-    switch ($idLista) {
-        case 0:
-            return 'Todos';
-        // break;
-        case 1:
-            return 'Novedades';
-        // break;
-        case 2:
-            return 'Otras Novedades';
-        // break;
-        case 3:
-            return 'Horarios';
-        // break;
-        case 4:
-            return 'Rotaciones';
-        // break;
-        case 5:
-            return 'Tipos de Hora';
-        // break;
-        default:
-            return 'Todos';
-        // break;
-    }
+    return match ($idLista) {
+        0 => 'Todos',
+        1 => 'Novedades',
+        2 => 'Otras Novedades',
+        3 => 'Horarios',
+        4 => 'Rotaciones',
+        5 => 'Tipos de Hora',
+        default => 'Todos',
+    };
 }
 function listaEstruct($idLista = '0')
 {
@@ -3071,41 +3516,49 @@ function listaEstruct($idLista = '0')
         default => 'Todos',
     };
 }
+/**
+ * Summary of totalDiasFechas
+ * Calcula el total de días entre dos fechas.
+ * @param mixed $fecha_inicial
+ * @param mixed $fecha_final
+ * @return float
+ */
 function totalDiasFechas($fecha_inicial, $fecha_final)
 {
-    $dias = (strtotime($fecha_inicial) - strtotime($fecha_final)) / 86400;
-    $dias = abs($dias);
-    $dias = floor($dias);
-    return $dias;
+    $days = (strtotime($fecha_inicial) - strtotime($fecha_final)) / 86400;
+    $days = abs($days);
+    $days = floor($days);
+    return $days;
 }
-function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
+/**
+ * Summary of fechaIniFinDias
+ * @param mixed $fecha_inicial
+ * @param mixed $fecha_final
+ * @param mixed $days
+ * @return array{FechaFin: string, FechaIni: string[]}
+ */
+function fechaIniFinDias($fecha_inicial, $fecha_final, $days)
 {
     $TotalDias = totalDiasFechas($fecha_inicial, $fecha_final);
     $arrayTotalMeses[] = [];
-    for ($i = 0; $i < intval($TotalDias / $dias); $i++) {
-        $arrayTotalMeses[] = array($i);
+    for ($i = 0; $i < intval($TotalDias / $days); $i++) {
+        $arrayTotalMeses[] = [$i];
     }
     foreach ($arrayTotalMeses as $value) {
         $fecha1 = $fecha_inicial;
-        $fecha2 = date("Ymd", strtotime($fecha1 . "+ " . $dias . " days"));
+        $fecha2 = date("Ymd", strtotime($fecha1 . "+ " . $days . " days"));
         $fecha2 = ($fecha2 > date('Ymd')) ? date('Ymd') : $fecha2;
-        $arrayFechas[] = array('FechaIni' => FechaFormatVar($fecha1, 'd-m-Y'), 'FechaFin' => FechaFormatVar($fecha2, 'd-m-Y'));
+        $arrayFechas[] = ['FechaIni' => FechaFormatVar($fecha1, 'd-m-Y'), 'FechaFin' => FechaFormatVar($fecha2, 'd-m-Y')];
         $fecha_inicial = date("Ymd", strtotime($fecha2 . "+ 1 days"));
     }
     return $arrayFechas ?? [];
 }
-// Obtiene la version de la base de datos
-function getVerDBCH_old($link)
-{
-    $query = "SELECT * FROM DBData"; // Query
-    $stmt = sqlsrv_query($link, $query); // Ejecución del query
-    $path = '';
-    while ($a = sqlsrv_fetch_array($stmt)) { // Recorre el resultado
-        $path = $a['BDVersion']; // Asigna el valor a la variable
-    }
-    sqlsrv_free_stmt($stmt); // Libera el query
-    return $path; // Retorna el valor
-}
+/**
+ * Summary of getVerDBCH
+ * Obtiene la versión de la base de datos CHWeb.
+ * @param mixed $link
+ * @return string|false
+ */
 function getVerDBCH($link)
 {
     // Primero, verificamos si la tabla 'DBData' existe
@@ -3141,6 +3594,16 @@ function getVerDBCH($link)
     sqlsrv_free_stmt($stmt);
     return $path;
 }
+/**
+ * Summary of fileLog
+ * Escribe un mensaje en un archivo de log.
+ * @param mixed $text El texto a escribir en el log.
+ * @param mixed $ruta_archivo La ruta del archivo de log.
+ * @param mixed $type El tipo de log (opcional).
+ * @param mixed $text
+ * @param mixed $ruta_archivo
+ * @param mixed $type
+ */
 function fileLog($text, $ruta_archivo, $type = false)
 {
     $log = fopen($ruta_archivo, 'a');
@@ -3150,6 +3613,11 @@ function fileLog($text, $ruta_archivo, $type = false)
     fclose($log);
     log_local($text);
 }
+/**
+ * Summary of log_local
+ * Escribe un mensaje en el log de errores local si el host es localhost o chweb.local.
+ * @param string $msg El mensaje a escribir en el log.
+ */
 function log_local(string $msg)
 {
     switch ($_SERVER['HTTP_HOST'] ?? '') {
@@ -3159,18 +3627,14 @@ function log_local(string $msg)
             break;
     }
 }
-function fileLogJson($text, $ruta_archivo, $date = true)
-{
-    if ($date) {
-        $log = fopen(date('YmdHis') . '_' . $ruta_archivo, 'w');
-    } else {
-        $log = fopen($ruta_archivo, 'w');
-    }
-    $text = json_encode($text, JSON_PRETTY_PRINT) . "\n";
-    fwrite($log, $text);
-    fclose($log);
-}
-// diferencia en días entre dos fechas
+/**
+ * Summary of dateDifference
+ * Calcula la diferencia entre dos fechas.
+ * @param mixed $date_1
+ * @param mixed $date_2
+ * @param mixed $differenceFormat
+ * @return string
+ */
 function dateDifference($date_1, $date_2, $differenceFormat = '%a')
 {
     $datetime1 = date_create($date_1); // creo la fecha 1
@@ -3178,8 +3642,14 @@ function dateDifference($date_1, $date_2, $differenceFormat = '%a')
     $interval = date_diff($datetime1, $datetime2); // obtengo la diferencia de fechas
     return $interval->format($differenceFormat); // devuelvo el número de días
 }
-// borra los logs a partir de una cantidad de días
-function borrarLogs($path, $days, $ext)
+/**
+ * Summary of borrarLogs
+ * Borra los logs a partir de una cantidad de días.
+ * @param string $path La ruta del directorio donde se encuentran los logs.
+ * @param int $days La cantidad de días a partir de los cuales se eliminarán los logs.
+ * @param string $ext La extensión de los archivos de log.
+ */
+function borrarLogs(string $path, int $days, string $ext)
 {
 
     // si el directorio $path no existe throw error
@@ -3188,7 +3658,7 @@ function borrarLogs($path, $days, $ext)
         // fileLog('El directorio ' . $path . ' no existe', $pathLog); // escribir en el log de errores el error
         return false;
     }
-    $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
+    $files = glob("$path*$ext"); //obtenemos el nombre de todos los ficheros
     try {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_successBorrarLogs.log';
         foreach ($files as $file) { // recorremos todos los ficheros.
@@ -3207,57 +3677,11 @@ function borrarLogs($path, $days, $ext)
     }
 
 }
-function borrarFileHoras($path, $horas, $ext)
-{
-    // Convertir horas a segundos
-    $segundos = $horas * 3600;
-
-    // Obtener la fecha actual
-    $fechaActual = time();
-
-    // Abrir directorio
-    $directorio = opendir($path);
-
-    // Recorrer archivos del directorio
-    while ($archivo = readdir($directorio)) {
-
-        // Obtener la fecha de modificación del archivo
-        $fechaModificacion = filemtime($path . "/" . $archivo);
-
-        // Calcular la diferencia en segundos entre la fecha actual y la de modificación del archivo
-        $diferenciaSegundos = $fechaActual - $fechaModificacion;
-
-        // Si la diferencia en segundos es mayor a la cantidad de segundos especificada, eliminar el archivo
-        if ($diferenciaSegundos > $segundos) {
-
-            // Verificar si la extensión del archivo coincide con la extensión especificada
-            if (pathinfo($archivo, PATHINFO_EXTENSION) === $ext) {
-
-                unlink($path . "/" . $archivo);
-            }
-        }
-    }
-
-    // Cerrar directorio
-    closedir($directorio);
-}
-function borrarFile($path, $ext)
-{
-    // Abrir directorio
-    $directorio = opendir($path);
-
-    // Recorrer archivos del directorio
-    while ($archivo = readdir($directorio)) {
-        // Verificar si la extensión del archivo coincide con la extensión especificada
-        if (pathinfo($archivo, PATHINFO_EXTENSION) === $ext) {
-            unlink($path . "/" . $archivo);
-        }
-    }
-
-    // Cerrar directorio
-    closedir($directorio);
-}
-
+/**
+ * Summary of fechaHora
+ * Devuelve la fecha y hora actual con microsegundos.
+ * @return string
+ */
 function fechaHora()
 {
     timeZone();
@@ -3265,6 +3689,11 @@ function fechaHora()
     $t = date("Ymd H:i:s", $t[1]) . substr((string) $t[0], 1, 4);
     return $t;
 }
+/**
+ * Summary of fechaHora2
+ * Devuelve la fecha y hora actual sin microsegundos.
+ * @return string
+ */
 function fechaHora2()
 {
     timeZone();
@@ -3279,6 +3708,13 @@ function timeZone_lang()
 {
     return setlocale(LC_TIME, "es_ES");
 }
+/**
+ * Summary of simple_pdoQuery
+ * Ejecuta una consulta PDO simple y devuelve la primera fila como un array asociativo.
+ * @param mixed $sql
+ * @return array|null
+ * @param mixed $sql
+ */
 function simple_pdoQuery($sql)
 {
     require __DIR__ . '/config/conect_pdo.php';
@@ -3309,7 +3745,7 @@ function count_pdoQuery(string $sql)
     }
     $stmt = null;
 }
-function array_pdoQuery($sql)
+function array_pdoQuery(string $sql)
 {
     require __DIR__ . '/config/conect_pdo.php';
     try {
@@ -3323,7 +3759,7 @@ function array_pdoQuery($sql)
     }
     $stmt = null;
 }
-function insert_pdoQuery($sql)
+function insert_pdoQuery(string $sql)
 {
     require __DIR__ . '/config/conect_pdo.php';
     try {
@@ -3335,7 +3771,7 @@ function insert_pdoQuery($sql)
     }
     $stmt = null;
 }
-function pdoQuery($sql)
+function pdoQuery(string $sql)
 {
     require __DIR__ . '/config/conect_pdo.php';
     try {
@@ -3348,7 +3784,7 @@ function pdoQuery($sql)
     }
     $stmt = null;
 }
-function rowCount_pdoQuery($sql)
+function rowCount_pdoQuery(string $sql)
 {
     require __DIR__ . '/config/conect_pdo.php';
     try {
@@ -3361,30 +3797,56 @@ function rowCount_pdoQuery($sql)
     }
     $stmt = null;
 }
-function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
+/**
+ * Summary of filtrarObjeto
+ * Filtra un array de objetos por una clave y valor específico.
+ * @param array $array El array de objetos a filtrar.
+ * @param string $key La clave por la cual filtrar.
+ * @param mixed $valor El valor que debe tener la clave para ser incluido en el resultado.
+ * @return object|null El primer objeto que cumpla con el criterio de filtrado, o null si no se encuentra ninguno.
+ */
+function filtrarObjeto(array $array, string $key, $valor) // Función para filtrar un objeto
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
         return $e[$key] == $valor;
     });
-    foreach ($r as $key => $value) {
+    foreach ($r as $k => $value) {
         return ($value);
     }
 }
-function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
+/**
+ * Summary of filtrarObjetoArr
+ * Filtra un array de objetos por una clave y valor específico.
+ * @param array $array
+ * @param string $key
+ * @param mixed $valor
+ * @return array
+ */
+function filtrarObjetoArr(array $array, string $key, $valor) // Función para filtrar un objeto
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
         return $e[$key] == $valor;
     });
-    foreach ($r as $key => $value) {
+    foreach ($r as $k => $value) {
         $v[] = $value;
     }
     return $v ?? [];
 }
-function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto 
+/**
+ * Summary of filtrarObjetoArr2
+ * Filtra un array de objetos por dos claves y valores específicos.
+ * @param array $array
+ * @param string $key
+ * @param string $key2
+ * @param mixed $valor
+ * @param mixed $valor2
+ * @return array
+ */
+function filtrarObjetoArr2(array $array, string $key, string $key2, $valor, $valor2) // Función para filtrar un objeto 
 {
     $a = [];
     if ($array && $key && $key2 && $valor && $valor2) {
-        foreach ($array as $v) {
+        foreach ($array as $k => $v) {
             if ($v[$key] == $valor && $v[$key2] == $valor2) {
                 $a[] = $v;
             }
@@ -3398,35 +3860,32 @@ function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para
     }
     return $a;
 }
-function filtrarElementoArray($array, $key, $value)
-{
-    $result = array_filter($array, function ($item) use ($key, $value) {
-        return $item[$key] === $value ?? [];
-    });
-    return $result;
-}
+/**
+ * Summary of tipoAud
+ * Devuelve una descripción legible del tipo de auditoría basado en un código.
+ * @param mixed $tipo
+ * @return string
+ */
 function tipoAud($tipo)
 {
-    switch ($tipo) {
-        case 'P':
-            $tipo = 'Proceso';
-            break;
-        case 'M':
-            $tipo = 'Modificación';
-            break;
-        case 'A':
-            $tipo = 'Alta';
-            break;
-        case 'B':
-            $tipo = 'Baja';
-            break;
-        default:
-            $tipo = '';
-            break;
-    }
+    $tipo = match ($tipo) {
+        'P' => 'Proceso',
+        'M' => 'Modificación',
+        'A' => 'Alta',
+        'B' => 'Baja',
+        default => '',
+    };
     return $tipo;
 }
-function login_logs($estado, $usuario = '')
+/**
+ * Summary of login_logs
+ * Registra los intentos de inicio de sesión en la base de datos.
+ * @param mixed $estado Estado del login (1: correcto, 2: incorrecto)
+ * @param mixed $usuario Nombre de usuario (opcional, se obtiene de POST si no se proporciona)
+ * @param mixed $estado
+ * @param mixed $usuario
+ */
+function login_logs($estado, $usuario = null)
 {
     // estado = 1: Login correcto; 2: Login incorrecto
     require __DIR__ . '/config/conect_pdo.php'; //Conexion a la base de datos
@@ -3435,7 +3894,7 @@ function login_logs($estado, $usuario = '')
         $sql = 'INSERT INTO login_logs(usuario,uid,estado,rol,cliente,ip,agent,fechahora) VALUES(:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)';
         $stmt = $connpdo->prepare($sql); // prepara la consulta
 
-        $usuario = ($usuario == '') ? filter_input(INPUT_POST, 'user', FILTER_DEFAULT) : $usuario;
+        $usuario = ($usuario === null) ? filter_input(INPUT_POST, 'user', FILTER_DEFAULT) : $usuario;
 
         $data = [
             // array asociativo con los parametros a pasar a la consulta preparada (:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)
@@ -3458,23 +3917,28 @@ function login_logs($estado, $usuario = '')
         $stmt->bindParam(':agent', $data['agent']);
         $stmt->bindParam(':fechahora', $data['fechahora']);
         if ($stmt->execute()) { // ejecuta la consulta
-            $_SESSION['UID'] = $_SESSION['UID'] ?? '';
+            $_SESSION['UID'] ??= '';
             $_SESSION['ID_SESION'] = $connpdo->lastInsertId();
-            $message = "Sesion correcta \"($_SESSION[UID]) $data[usuario]\""; // mensaje de exito
+            $message = "Sesion correcta \"($_SESSION[UID]) $data[usuario]\""; // mensaje de éxito
             if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
                 $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_successSesion.log'; // ruta del archivo de log
                 fileLog($message, $pathLog); // escribir en el log de errores
             }
         }
-        $connpdo->commit(); // si todo salio bien, confirma la transaccion
+        $connpdo->commit(); // si todo salio bien, confirma la transacción
     } catch (\Throwable $th) { // si hay error
-        $connpdo->rollBack(); // revierte la transaccion
+        $connpdo->rollBack(); // revierte la transacción
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorLogSesion.log'; // ruta del archivo de Log
         error_log($th->getMessage()); // escribir en el log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores
     }
     $connpdo = null; // cierra la conexion
 }
+/**
+ * Escapa los caracteres especiales de SQL para su uso en consultas con comodines.
+ * @param mixed $s
+ * @return string
+ */
 function escape_sql_wild($s)
 {
     $result = [];
@@ -3487,6 +3951,11 @@ function escape_sql_wild($s)
     return
         implode("", $result);
 }
+/**
+ * Genera un archivo de claves API para las aplicaciones móviles.
+ * @return bool|int Retorna false si no se puede abrir el archivo, o el número de bytes escritos si tiene éxito.
+ * @return bool|int
+ */
 function write_apiKeysFile()
 {
     $q = "SELECT `c`.`host` AS 'hostDB', `c`.`user` AS 'userDB',`c`.`pass` AS 'passDB', `c`.`db` AS 'DB', `c`.`auth` AS 'authDB', `c`.`id` as 'idCompany', `c`.`nombre` as 'nameCompany', `c`.`recid` as 'recidCompany', 'key' as 'key', `c`.`urlAppMobile` AS 'urlAppMobile', `c`.`localCH` as 'localCH', (SELECT `valores` FROM `params` `p` WHERE `p`.`modulo` = 1 AND `p`.`descripcion` = 'host' AND `p`.`cliente` = `c`.`id` LIMIT 1) AS 'hostCHWeb', `c`.`WebService` AS 'WebService', `c`.`ApiMobileHRP` AS 'apiMobileHRP' FROM `clientes` `c`";
@@ -3540,14 +4009,20 @@ function getIniCuenta(string $recidCuenta, $key = false)
     $d = (getDataIni(__DIR__ . '/mobileApikey.php'));
     foreach ($d as $k => $value) {
         if ($value['recidCompany'] == $recidCuenta) {
-            $urlHost = array($k => $value);
+            $urlHost = [$k => $value];
             return $urlHost[$k];
-            // break;
         }
     }
-    return ($key) ? $urlHost[0][$key] : $urlHost[0];
+    return ($key) ? $urlHost[0][intval($key)] : $urlHost[0];
 }
-function getDataIni($url) // obtiene el json de la url
+/**
+ * Summary of getDataIni
+ * Obtiene los datos de un archivo INI y los devuelve como un array asociativo.
+ * Si el archivo no existe o está vacío, retorna false.
+ * @param mixed $url
+ * @return array|bool
+ */
+function getDataIni(string $url) // obtiene el json de la url
 {
     try {
         if (!file_exists($url))
@@ -3562,6 +4037,7 @@ function getDataIni($url) // obtiene el json de la url
     } catch (Exception $e) {
         fileLog($e->getMessage(), __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
     }
+    return false; // Retornar false si ocurre algún error o el archivo está vacío
 }
 function gethostCHWeb_old()
 {
@@ -3628,9 +4104,12 @@ function getHomeHost()
     return getClientHostData('homeHost');
 }
 /**
- * @param $str = string a escapar
- * @param $length = cantidad de caracteres a devolver
- * @param $pad  = caracteres de autocompletado
+ * Summary of padLeft
+ * Rellena una cadena a la izquierda hasta alcanzar la longitud especificada con el carácter dado.
+ * @param mixed $str
+ * @param mixed $length
+ * @param mixed $pad
+ * @return string
  */
 function padLeft($str, $length, $pad = ' ')
 {
@@ -3680,6 +4159,21 @@ function pingApiMobileHRP(string $urlAppMobile)
     return ($file_contents) ? $file_contents : false;
     // exit;
 }
+/**
+ * Summary of sendApiMobileHRP
+ * Envía una solicitud a la API móvil HRP con los datos proporcionados.
+ * @param mixed $payload Los datos a enviar en la solicitud.
+ * @param mixed $urlApp La URL base de la aplicación móvil HRP.
+ * @param mixed $paramsUrl Los parámetros de la URL para la solicitud.
+ * @param mixed $idCompany El ID de la empresa.
+ * @param mixed $post Indica si la solicitud es POST (true) o GET (false).
+ * @param mixed $payload
+ * @param mixed $urlApp
+ * @param mixed $paramsUrl
+ * @param mixed $idCompany
+ * @param mixed $post
+ * @return bool|string
+ */
 function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = true)
 {
     $ch = curl_init();
@@ -3708,6 +4202,15 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = tru
     unset($ch);
     return ($file_contents) ? $file_contents : false;
 }
+/**
+ * Summary of confidenceFaceStr
+ * Devuelve una cadena descriptiva basada en el valor de confianza, el ID de la API y el umbral proporcionados.
+ * @param mixed $confidence El valor de confianza obtenido.
+ * @param mixed $id_api El ID de la API utilizada.
+ * @param mixed $threshold El umbral de confianza para determinar si la identificación es válida.
+ * @return string Una cadena descriptiva que indica el estado de la identificación.
+ * @return string
+ */
 function confidenceFaceStr($confidence, $id_api, $threshold)
 {
     $i = intval($id_api) ?? 0;
@@ -3741,6 +4244,11 @@ function confidenceFaceStr($confidence, $id_api, $threshold)
     }
     return $c ?? 'No Disponible';
 }
+/**
+ * Summary of access_log
+ * @param mixed $Modulo
+ * @return string
+ */
 function access_log($Modulo)
 {
     return '';
@@ -3773,6 +4281,12 @@ function access_log($Modulo)
         exit;
     }
 }
+/**
+ * Summary of access_log_proy
+ * Envía un registro de acceso para la aplicación de proyecto.
+ * @param mixed $Modulo
+ * @return string
+ */
 function access_log_proy($Modulo)
 {
     return '';
@@ -3805,35 +4319,15 @@ function access_log_proy($Modulo)
         // exit;
     }
 }
-function createDir($path, $gitignore = true)
-{
-    $dirname = dirname($path . '/index.php');
-    if (!is_dir($dirname)) {
-        mkdir($dirname, 0755, true);
-
-        if ($gitignore) {
-            $git = dirname($path . '/.gitignore');
-            if (!file_exists($git)) {
-                mkdir($path, 0700);
-                mkdir($git, 0755, true);
-                $logGit = fopen($git . '/.gitignore', 'a');
-                $textGit = '*';
-                fwrite($logGit, $textGit);
-                fclose($logGit);
-            }
-        }
-
-        $log = fopen($dirname . '/index.php', 'a');
-        $text = '<?php exit;';
-        fwrite($log, $text);
-        fclose($log);
-    }
-}
-
-require __DIR__ . '/vendor/autoload.php';
 
 use Carbon\Carbon;
 
+/**
+ * Summary of tareDiff
+ * @param mixed $start
+ * @param mixed $end
+ * @return string La diferencia de tiempo en formato legible.
+ */
 function tareDiff($start, $end)
 {
     Carbon::setLocale('es');
@@ -3847,6 +4341,13 @@ function tareDiff($start, $end)
     $tareDiff = trim(str_replace('hace', '', $d2));
     return $tareDiff;
 }
+/**
+ * Summary of diffStartEnd
+ * Calcula la diferencia entre dos fechas y devuelve información detallada sobre la duración y la diferencia inicial.
+ * @param mixed $start
+ * @param mixed $end
+ * @return array{diffInMinutes: int, diffInSeconds: int, diffIni: string, duration: string}
+ */
 function diffStartEnd($start, $end)
 {
     Carbon::setLocale('es');
@@ -3868,6 +4369,14 @@ function diffStartEnd($start, $end)
     );
     return $t;
 }
+/**
+ * Summary of implode_keys_values
+ * Combina los valores únicos de una columna específica de un array en una cadena separada por un separador.
+ * @param mixed $key La clave de la columna a combinar.
+ * @param mixed $separator El separador a utilizar entre los valores.
+ * @param mixed $array El array de entrada.
+ * @return string La cadena resultante con los valores combinados.
+ */
 function implode_keys_values($key, $separator, $array = [])
 {
     if (!$array):
@@ -3878,6 +4387,12 @@ function implode_keys_values($key, $separator, $array = [])
     $key = implode($separator, $key);
     return $key;
 }
+/**
+ * Summary of simple_MSQuery
+ * Ejecuta una consulta simple en Microsoft SQL Server y devuelve el primer registro encontrado o false si no hay resultados.
+ * @param mixed $query
+ * @return array|bool
+ */
 function simple_MSQuery($query)
 {
     $params = [];
@@ -3906,6 +4421,12 @@ function simple_MSQuery($query)
         exit;
     }
 }
+/**
+ * Summary of MSQuery
+ * Ejecuta una consulta en Microsoft SQL Server y devuelve true si se ejecuta correctamente, o false en caso de error.
+ * @param mixed $query La consulta SQL a ejecutar.
+ * @return bool Verdadero si la consulta se ejecuta correctamente, falso en caso de error.
+ */
 function MSQuery($query)
 {
     $params = [];
@@ -4042,7 +4563,13 @@ function arrMSQueryData(string $query)
         }
     }
 }
-
+/**
+ * Summary of confTar
+ * Genera un archivo de configuración de tareas a partir de un array asociativo y lo guarda en la ruta especificada.
+ * @param mixed $assoc El array asociativo con la configuración de tareas.
+ * @param mixed $path La ruta donde se guardará el archivo de configuración.
+ * @return bool|int Devuelve false si no se pudo abrir el archivo, o el número de bytes escritos si se guardó correctamente.
+ */
 function confTar($assoc, $path)
 {
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! -->\n";
@@ -4066,10 +4593,10 @@ function confTar($assoc, $path)
     $content .= ";ProcPendTar : Procesar Tareas Pendientes. \"1\" = Si, \"0\" = No \n";
     $content .= ";ProcDescTar : Procesar Tiempo de descanso. \"1\" = Si, \"0\" = No \n";
     $content .= ";HoraCierre  : Hora de cierre del día para cerrar tareas pendientes. De \"00:00\" a \"23:59\"\n";
-    $content .= ";MinimoDesc  : Tiempo Minimo de horario de descanso.\n";
+    $content .= ";MinimoDesc  : Tiempo Mínimo de horario de descanso.\n";
     $content .= ";LimitTar    : Hora límite para cerrar tareas pendientes. De \"0\" a \"9999\"\n";
-    $content .= ";ProcRedTar  : Redondear finalizacion de tarea. De \"0\" a \"9999\"\n";
-    $content .= ";RecRedTar   : Recorte y redondeo de finalizacion de tarea.";
+    $content .= ";ProcRedTar  : Redondear finalización de tarea. De \"0\" a \"9999\"\n";
+    $content .= ";RecRedTar   : Recorte y redondeo de finalización de tarea.";
     $success = fwrite($handle, $content);
     fclose($handle);
     return $success;
@@ -4082,15 +4609,17 @@ function getConfTar()
     return $confTar;
 }
 /**
- * @param {String} Start Fecha y hora de incio de la tarea
- * @param {String} End Fecha y hora de finalización de la tarea
- * @return {Array} Devuelve un arregle con la diferencia de tiempo entre las dos fechas, status = 0 si hay error, status = 1 si no hay error, limitMin = límite de la tarea en minutos, limitHor = límite de la tarea en Horas (18:00), diffMin = diferencia de tiempo en minutos, diffHor = diferencia de tiempo en Horas (18:00), confTar = arregle con la configuración de las tareas
+ * Summary of calcLimitTar
+ * Calcula el límite de tiempo de una tarea y la diferencia entre el inicio y el fin.
+ * @param mixed $start
+ * @param mixed $end
+ * @return array{confTar: mixed, diffHor: bool|string, diffMin: int, limitHor: bool|string, limitMin: int, status: int}
  */
 function calcLimitTar($start, $end)
 {
     $getConfTar = ((getConfTar()['confTar'])); // Obtenemos configuración de confTarea.php en una array
-    $getlimitTar = (($getConfTar['LimitTar'])); // Obtenemos el limite de tiempo de la tarea en horas
-    $limitTar = intval($getlimitTar) * 60; // Convertimos el limite de tiempo a minutos
+    $getLimitTar = (($getConfTar['LimitTar'])); // Obtenemos el límite de tiempo de la tarea en horas
+    $limitTar = intval($getLimitTar) * 60; // Convertimos el limite de tiempo a minutos
     $diffStartEnd = intval(diffStartEnd($start, $end)['diffInMinutes']); // Calculamos la diferencia de tiempo de la tarea
     $obj = array(
         'status' => ($diffStartEnd > $limitTar) ? 1 : 0,
@@ -4181,25 +4710,34 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10, $method =
         return false;
     }
 }
+/**
+ * Summary of horarioApi
+ * @param mixed $ent
+ * @param mixed $sal
+ * @param mixed $labo
+ * @param mixed $Feri
+ * @return string
+ * 
+ * Devuelve el horario de trabajo en formato legible según los parámetros proporcionados.
+ */
 function horarioApi($ent, $sal, $labo, $Feri)
 {
-    $h = $ent . ' a ' . $sal; // Horario de trabajo
+    $h = "$ent a $sal"; // Horario de trabajo
     $h = ($labo == '0') ? 'Franco' : $h;
     $h = ($Feri == '1') ? 'Feriado' : $h;
     $h = ($Feri == '1' && $labo == '1') ? $ent . ' a ' . $sal : $h;
     return $h;
 }
-function mergeArrayIfValue($arr1, $arr2, $key)
-{
-    if ($arr1 && $arr2) {
-        $d = (array_merge($arr1, $arr2));
-        foreach ($d as $i)
-            $n[$i[$key]] = $i;
-        return $n;
-    }
-    return false;
-}
-function checkenroll($recid, $userID, $apimobile, $sleep)
+/**
+ * Summary of checkEnroll
+ * Verifica la inscripción de un usuario en la API móvil después de un tiempo de espera especificado.
+ * @param mixed $recid
+ * @param mixed $userID
+ * @param mixed $apimobile
+ * @param mixed $sleep
+ * @return void
+ */
+function checkEnroll($recid, $userID, $apimobile, $sleep)
 {
     sleep($sleep);
     $paramsCheck = array(
@@ -4207,41 +4745,41 @@ function checkenroll($recid, $userID, $apimobile, $sleep)
         'userID' => $userID,
     );
     $apiCheck = "api/v1/enroll/check/";
-    $urlCheck = $apimobile . "/" . HOMEHOST . "/mobile/hrp/" . $apiCheck;
+    $urlCheck = "$apimobile/" . HOMEHOST . "/mobile/hrp/" . $apiCheck;
     sendApiData($urlCheck, $paramsCheck, 'POST');
 }
 /**
- * Convierte bytes en tamaño de archivo legible por humanos.
- *
- * @param $bytes
- * @return // legible por humanos tamaño de archivo (2,87 Мб)
+ * Summary of FileSizeConvert
+ * Convierte bytes en un tamaño de archivo legible por humanos.
+ * @param mixed $bytes
+ * @return string
  */
 function FileSizeConvert($bytes)
 {
     $result = '';
     $bytes = floatval($bytes);
-    $arBytes = array(
-        0 => array(
+    $arBytes = [
+        0 => [
             "UNIT" => "TB",
             "VALUE" => pow(1024, 4)
-        ),
-        1 => array(
+        ],
+        1 => [
             "UNIT" => "GB",
             "VALUE" => pow(1024, 3)
-        ),
-        2 => array(
+        ],
+        2 => [
             "UNIT" => "MB",
             "VALUE" => pow(1024, 2)
-        ),
-        3 => array(
+        ],
+        3 => [
             "UNIT" => "KB",
             "VALUE" => 1024
-        ),
-        4 => array(
+        ],
+        4 => [
             "UNIT" => "B",
             "VALUE" => 1
-        ),
-    );
+        ],
+    ];
 
     foreach ($arBytes as $arItem) {
         if ($bytes >= $arItem["VALUE"]) {
@@ -4252,6 +4790,11 @@ function FileSizeConvert($bytes)
     }
     return $result;
 }
+/**
+ * Summary of get_client_ip
+ * Obtiene la dirección IP del cliente.
+ * @return string
+ */
 function get_client_ip(): string
 {
     $ipaddress = '';
@@ -4272,6 +4815,13 @@ function get_client_ip(): string
     }
     return $ipaddress;
 }
+/**
+ * Summary of setParamsOrSession
+ * Obtiene los parámetros de la solicitud o de la sesión.
+ * @param mixed $params
+ * @param mixed $session
+ * @return array
+ */
 function setParamsOrSession($params, $session)
 {
     if ($params) {
@@ -4284,6 +4834,12 @@ function setParamsOrSession($params, $session)
 
     return explodeSession($session);
 }
+/**
+ * Summary of explodeSession
+ * Convierte una cadena de sesión separada por comas en un array.
+ * @param string $session
+ * @return array
+ */
 function explodeSession($session)
 {
     if (empty($session)) {
@@ -4292,6 +4848,12 @@ function explodeSession($session)
 
     return explode(',', $session);
 }
+/**
+ * Summary of actualizar_cache
+ * Actualiza la caché para un endpoint dado.
+ * @param string $endpoint
+ * @throws Exception
+ */
 function actualizar_cache(string $endpoint)
 {
     try {
@@ -4311,9 +4873,15 @@ function actualizar_cache(string $endpoint)
         }
         unset($ch);
     } catch (Exception $e) {
-        filelog($e->getMessage(), 'error.log');
+        filelog($e->getMessage(), 'error.log', false);
     }
 }
+/**
+ * Summary of createDateRangeArray
+ * @param mixed $strDateFrom
+ * @param mixed $strDateTo
+ * @return array
+ */
 function createDateRangeArray($strDateFrom, $strDateTo)
 {
     //Crea un array de fechas (excluyendo el fin y el inicio)
@@ -4343,6 +4911,13 @@ function OS()
     }
     return 'unknown';
 }
+/**
+ * Summary of auth_ad
+ * Autentica un usuario contra Active Directory usando los datos proporcionados.
+ * @param mixed $passLogin
+ * @param mixed $row
+ * @return bool
+ */
 function auth_ad($passLogin, $row)
 {
     $_SESSION['RECID_CLIENTE'] = $row['recid_cliente'] ?? '';
@@ -4385,6 +4960,8 @@ function auth_ad($passLogin, $row)
             return false;
         }
     }
+    // Si llegamos aquí, significa que hubo un error en la autenticación AD
+    return false;
 }
 
 $LABEL_ESTRUCT = function ($struct, $plural = false) {
@@ -4490,7 +5067,7 @@ function redirectToLogin(): void
     $hostCHWeb = host();
     $homeHost = HOMEHOST;
 
-    if ($hostCHWeb === false || $homeHost === false) {
+    if (empty($hostCHWeb) || empty($homeHost)) {
         error_log('redirectToLogin: no se pudo resolver el host del cliente.');
         exit;
     }
@@ -4615,15 +5192,113 @@ function removeAccents(string $str): string
         return transliterator_transliterate('Any-Latin; Latin-ASCII', $str);
     }
 
-    $from = ['á', 'é', 'í', 'ó', 'ú', 'à', 'è', 'ì', 'ò', 'ù', 'ä', 'ë', 'ï', 'ö', 'ü',
-        'â', 'ê', 'î', 'ô', 'û', 'ã', 'õ', 'ñ', 'ç', 'ý', 'ÿ',
-        'Á', 'É', 'Í', 'Ó', 'Ú', 'À', 'È', 'Ì', 'Ò', 'Ù', 'Ä', 'Ë', 'Ï', 'Ö', 'Ü',
-        'Â', 'Ê', 'Î', 'Ô', 'Û', 'Ã', 'Õ', 'Ñ', 'Ç', 'Ý'];
+    $from = [
+        'á',
+        'é',
+        'í',
+        'ó',
+        'ú',
+        'à',
+        'è',
+        'ì',
+        'ò',
+        'ù',
+        'ä',
+        'ë',
+        'ï',
+        'ö',
+        'ü',
+        'â',
+        'ê',
+        'î',
+        'ô',
+        'û',
+        'ã',
+        'õ',
+        'ñ',
+        'ç',
+        'ý',
+        'ÿ',
+        'Á',
+        'É',
+        'Í',
+        'Ó',
+        'Ú',
+        'À',
+        'È',
+        'Ì',
+        'Ò',
+        'Ù',
+        'Ä',
+        'Ë',
+        'Ï',
+        'Ö',
+        'Ü',
+        'Â',
+        'Ê',
+        'Î',
+        'Ô',
+        'Û',
+        'Ã',
+        'Õ',
+        'Ñ',
+        'Ç',
+        'Ý'
+    ];
 
-    $to = ['a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u',
-        'a', 'e', 'i', 'o', 'u', 'a', 'o', 'n', 'c', 'y', 'y',
-        'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U',
-        'A', 'E', 'I', 'O', 'U', 'A', 'O', 'N', 'C', 'Y'];
+    $to = [
+        'a',
+        'e',
+        'i',
+        'o',
+        'u',
+        'a',
+        'e',
+        'i',
+        'o',
+        'u',
+        'a',
+        'e',
+        'i',
+        'o',
+        'u',
+        'a',
+        'e',
+        'i',
+        'o',
+        'u',
+        'a',
+        'o',
+        'n',
+        'c',
+        'y',
+        'y',
+        'A',
+        'E',
+        'I',
+        'O',
+        'U',
+        'A',
+        'E',
+        'I',
+        'O',
+        'U',
+        'A',
+        'E',
+        'I',
+        'O',
+        'U',
+        'A',
+        'E',
+        'I',
+        'O',
+        'U',
+        'A',
+        'O',
+        'N',
+        'C',
+        'Y'
+    ];
 
     return str_replace($from, $to, $str);
 }
@@ -4684,4 +5359,53 @@ function array_reduce_safe(array $array, $callback, $initial = [])
         return $initial;
     }
     return array_reduce($array, $callback, $initial);
+}
+
+/**
+ * Ejecuta un SELECT parametrizado y devuelve la primera fila como array
+ * asociativo, o null si no hay resultados.
+ *
+ * Sustituye a simple_pdoQuery() cuando necesites parámetros.
+ *
+ * @param string $sql    SQL con placeholders (? o :nombre).
+ * @param array  $params Parámetros a bindear.
+ * @return array|null
+ */
+function pdoQuerySeguro(string $sql, array $params = []): ?array
+{
+    require __DIR__ . '/config/conect_pdo.php';
+
+    try {
+        $stmt = $connpdo->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        return $row === false ? null : $row;
+    } catch (\Throwable $th) {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log';
+        error_log($th->getMessage());
+        return null;
+    }
+}
+
+function pdoExec(string $sql, array $params = []): bool
+{
+    require __DIR__ . '/config/conect_pdo.php';
+    try {
+        $stmt = $connpdo->prepare($sql);
+        foreach ($params as $i => $v) {
+            $tipo = match (true) {
+                is_int($v) => PDO::PARAM_INT,
+                is_bool($v) => PDO::PARAM_BOOL,
+                $v === null => PDO::PARAM_NULL,
+                default => PDO::PARAM_STR,
+            };
+            // $i+1 para placeholders posicionales (?), o $i+1 si usas :nombre con array indexado
+            $stmt->bindValue(is_int($i) ? $i + 1 : $i, $v, $tipo);
+        }
+        return $stmt->execute();
+    } catch (\PDOException $th) {
+        error_log("SQL: $sql | " . $th->getMessage());
+        throw new Exception($th->getMessage(), (int) $th->getCode(), $th);
+    }
 }

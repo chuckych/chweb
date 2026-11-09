@@ -2,7 +2,7 @@
 // require __DIR__ . '/function.php';
 require __DIR__ . '/../vendor/autoload.php';
 
-// Evitar reconexión si ya existe la conexión
+// Evitar conexion si ya existe la conexión
 if (!isset($connpdo) || !($connpdo instanceof PDO)) {
 	try {
 		$routeEnv = in_array(getOS(), ['linux', 'mac'], true) ? '/' : getConfigPath();

@@ -90,7 +90,7 @@ if (($_datos != 'cta_horas') && ($_datos != 'mobile')) {
 
         foreach ($data2 as $key => $value) {
             $banner = Fech_Format_Var($value['Fecha'], 'd') . ' ' . Nombre_Mes($value['Fecha']) . ' ' . Fech_Format_Var($value['Fecha'], 'Y');
-            $dia = '<span class="align-middle">' . nombre_dias($value['num_dia'], true) . '&nbsp;<span class="">' . $banner . '</span></span>';
+            $dia = '<span class="align-middle">' . dayString($value['num_dia'], true) . '&nbsp;<span class="">' . $banner . '</span></span>';
             $dia = '<small><div class="d-flex align-items-center align-middle text-white radius h40 px-4 border fw4 opa9 text-center bg-custom">' . $dia .= '</div></small>';
         }
     }

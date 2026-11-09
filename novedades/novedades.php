@@ -34,7 +34,7 @@
         <div class="" id="divTablas">
             <div class="row radius pt-3 mb-0 pb-0">
                 <div class="col-12 col-sm-6">
-                    <button <?= AttrDisabled($_SESSION["ABM_ROL"]['aNov']) ?> type="button"
+                    <button <?= attrDisabled($_SESSION["ABM_ROL"]['aNov']) ?> type="button"
                         class="btn opa7 btn-custom btn-sm fontq" data-toggle="tooltip" data-placement="right"
                         data-html="true" title="" data-original-title="<span class='font1'>Agregar Novedades</span>"
                         id="addNov">
