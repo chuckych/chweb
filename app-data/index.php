@@ -1359,7 +1359,7 @@ Flight::route('POST /liquidar/custom/campos', function () {
 
         Flight::json([
             'status' => 'ok',
-            'message' => 'Configuracion guardada correctamente.',
+            'message' => 'Configuración guardada correctamente.',
             'data' => $guardados,
         ]);
     } catch (\Throwable $th) {
@@ -1573,7 +1573,7 @@ Flight::route('POST /proyectar', function () {
         $FechaHasta = $payload['FechaHasta'] ?? '';
         $Legajos = $payload['Legajos'] ?? [];
 
-        // fomatear las fechas a 'd/m/Y'
+        // formatear las fechas a 'd/m/Y'
         $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
         $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
 
@@ -1608,7 +1608,7 @@ Flight::route('DELETE /proyectar', function () {
         $FechaHasta = $payload['FechaHasta'] ?? '';
         $Legajos = $payload['Legajos'] ?? [];
 
-        // fomatear las fechas a 'd/m/Y'
+        // formatear las fechas a 'd/m/Y'
         $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
         $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
 
@@ -1676,10 +1676,10 @@ Flight::route('POST /asignados/exportar', function () {
             $diff = $FechaDesde->diff($FechaHasta);
             $FechaDesde = $FechaDesde->format('d/m/Y');
             $FechaHasta = $FechaHasta->format('d/m/Y');
-            $dias = $diff->days ??= 0;
+            $days = $diff->days ??= 0;
 
-            if ($dias + 1 !== 7 && ($payload['PlanillaSemanal'] ?? 0) === 1) {
-                throw new Exception('Error: La planilla semanal requiere exactamente 7 días. Rango actual: ' . ($dias + 1) . ' días');
+            if ($days + 1 !== 7 && ($payload['PlanillaSemanal'] ?? 0) === 1) {
+                throw new Exception('Error: La planilla semanal requiere exactamente 7 días. Rango actual: ' . ($days + 1) . ' días');
             }
             $Datos = Flight::asignados($payload);
             require '../informes/horasign/pdf.php';
@@ -1747,7 +1747,7 @@ Flight::route('POST /ws_novedades', function () {
         $FechaHasta = $payload['FechaHasta'] ?? '';
         $Legajos = $payload['Legajos'] ?? [];
 
-        // fomatear las fechas a 'd/m/Y'
+        // formatear las fechas a 'd/m/Y'
         $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
         $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
 
@@ -1837,7 +1837,7 @@ Flight::route('POST /ws_procesar', function () {
         $FechaHasta = $payload['FechaHasta'] ?? '';
         $Legajos = $payload['Legajos'] ?? [];
 
-        // fomatear las fechas a 'd/m/Y'
+        // formatear las fechas a 'd/m/Y'
         $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
         $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
 
@@ -1929,7 +1929,7 @@ Flight::route('POST /cierres/generar', function () {
         $Legajos = $payload['Legajos'] ?? [];
         $Eliminar = $payload['Eliminar'] ?? '0';
 
-        // fomatear las fechas a 'd/m/Y'
+        // formatear las fechas a 'd/m/Y'
         $Fecha = date('d/m/Y', strtotime($Fecha));
         if ($Legajos) {
             $AudDato = $Eliminar === '1' ? "Eliminación de cierres" : "Cierre Legajo";
@@ -2020,7 +2020,7 @@ Flight::route('POST /ws_fichar_horario', function () {
         $FechaHasta = $payload['FechaHasta'] ?? '';
         $Legajos = $payload['Legajos'] ?? [];
 
-        // fomatear las fechas a 'd/m/Y'
+        // formatear las fechas a 'd/m/Y'
         $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
         $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
 
@@ -2450,7 +2450,7 @@ Flight::route('POST /rotacion/importar-xls', function () {
             $mapUploadError = [
                 UPLOAD_ERR_INI_SIZE => 'El archivo supera el tamaño permitido por el servidor.',
                 UPLOAD_ERR_FORM_SIZE => 'El archivo supera el tamaño permitido por el formulario.',
-                UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente. Reintente.',
+                UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente. Intente nuevamente.',
                 UPLOAD_ERR_NO_FILE => 'No se seleccionó ningún archivo.',
                 UPLOAD_ERR_NO_TMP_DIR => 'No existe el directorio temporal de subida.',
                 UPLOAD_ERR_CANT_WRITE => 'No se pudo escribir el archivo en disco.',
@@ -2651,9 +2651,9 @@ Flight::route('DELETE /horario/unused', function () {
     $horario = ch_api($endpoint, ['User' => $User], 'DELETE', []);
     $horario = json_decode($horario ?? [], true);
     $result = $horario ?? [];
-    $elminados = $result['DATA']['eliminados'] ?? [];
-    if ($elminados) {
-        foreach ($elminados as $key => $el) {
+    $eliminados = $result['DATA']['eliminados'] ?? [];
+    if ($eliminados) {
+        foreach ($eliminados as $key => $el) {
             $arrayAuditoria[] = [
                 'AudTipo' => 'B',
                 'AudDato' => "Horario: {$el['HorCodi']} {$el['HorDesc']} eliminado por no estar asignado a ningún legajo.",
@@ -2749,7 +2749,7 @@ Flight::route('POST /horario/importar-xls', function () {
             $mapUploadError = [
                 UPLOAD_ERR_INI_SIZE => 'El archivo supera el tamaño permitido por el servidor.',
                 UPLOAD_ERR_FORM_SIZE => 'El archivo supera el tamaño permitido por el formulario.',
-                UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente. Reintente.',
+                UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente. Intente nuevamente.',
                 UPLOAD_ERR_NO_FILE => 'No se seleccionó ningún archivo.',
                 UPLOAD_ERR_NO_TMP_DIR => 'No existe el directorio temporal de subida.',
                 UPLOAD_ERR_CANT_WRITE => 'No se pudo escribir el archivo en disco.',

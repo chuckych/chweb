@@ -93,17 +93,17 @@ function ClearFormCitacion() {
     $(".submit_btn_Citación").prop("disabled", false);
     $('#modalGeneral').modal('hide')
 };
-/** Toogle Rango de fecha por defecto Activo */
+/** toggle Rango de fecha por defecto Activo */
 $("#_range").prop('checked', true);
 $("#divRangofecha").addClass('d-none');
 $("#PagDia").addClass('d-none');
-/** Toogle Solo Laboral por defecto Activo */
+/** toggle Solo Laboral por defecto Activo */
 $("#_dl").prop('checked', true);
-/** Div de paginar por dias invisible */
+/** Div de paginar por días invisible */
 $('#PagDia').addClass('invisible');
-/** Botton total dia oculto */
+/** Botón total dia oculto */
 $('#Total_dia').addClass('d-none');
-/** Al hacer cick en el toggle Solo Laboral */
+/** Al hacer clic en el toggle Solo Laboral */
 $(document).on("click", "#_dl", function () {
     CheckSesion()
     if ($("#_dl").is(":checked")) {
@@ -441,7 +441,7 @@ $(document).ready(function () {
         $('#table-Total_Nov_Tipo_Dia').DataTable().clear().draw().destroy();
     })
 });
-/** Al hace click en boton + agregar fichada del modal general */
+/** Al hace click en botón + agregar fichada del modal general */
 $(document).on("click", "#AddFic", function (e) {
     CheckSesion()
     ClearFormFic()
@@ -453,7 +453,7 @@ $(document).on("click", "#AddFic", function (e) {
     OcultaNavTab()
     $("#xsTFic").html('Agregar Fichada')
 });
-/** Al hace click en boton + agregar novedad del modal general*/
+/** Al hace click en botón + agregar novedad del modal general*/
 $(document).on("click", "#AddNov", function (e) {
     CheckSesion()
     ClearFormNov()
@@ -468,7 +468,7 @@ $(document).on("click", "#AddNov", function (e) {
     OcultaNavTab()
     $("#xsTNov").html('Agregar Novedad')
 });
-/** Al hace click en boton + agregar hora del modal general*/
+/** Al hace click en botón + agregar hora del modal general*/
 $(document).on("click", "#AddHora", function (e) {
     CheckSesion()
     ClearFormHora()
@@ -483,7 +483,7 @@ $(document).on("click", "#AddHora", function (e) {
     OcultaNavTab()
     $("#xsTHor").html('Agregar Horas')
 });
-/** Al hace click en boton + agregar Otra Novedad del modal general*/
+/** Al hace click en botón + agregar Otra Novedad del modal general*/
 $(document).on("click", "#AddONov", function (e) {
     CheckSesion()
     ClearFormONov()
@@ -495,23 +495,23 @@ $(document).on("click", "#AddONov", function (e) {
     OcultaNavTab()
     $("#xsTOnov").html('Agregar Novedad')
 });
-/** Al hace click en boton cancelar del formulario fichadas del modal general*/
+/** Al hace click en botón cancelar del formulario fichadas del modal general*/
 $(document).on("click", ".cancelar_btn_fic", function (e) {
     CheckSesion()
     ClearFormFic();
 });
-/** Al hace click en boton cancelar del formulario novedade del modal general*/
+/** Al hace click en botón cancelar del formulario novedades del modal general*/
 $(document).on("click", ".cancelar_btn_nov", function (e) {
     CheckSesion()
     ClearFormNov();
     $('#novCate').val('2').trigger('change');
 });
-/** Al hace click en boton cancelar del formulario horas del modal general*/
+/** Al hace click en botón cancelar del formulario horas del modal general*/
 $(document).on("click", "#cancelar_btn_hor", function (e) {
     CheckSesion()
     ClearFormHora();
 });
-/** Al hace click en boton cancelar del formulario Otra Novedad del modal general*/
+/** Al hace click en botón cancelar del formulario Otra Novedad del modal general*/
 $(document).on("click", "#cancelar_btn_OtrasNov", function (e) {
     CheckSesion()
     ClearFormONov();
@@ -1251,7 +1251,7 @@ $(document).on("click", ".open-modal", function (e) {
                 return 'No hay resultados..'
             },
             inputTooLong: function (args) {
-                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caractér';
                 if (overChars != 1) {
                     message += 'es'
                 }
@@ -1320,7 +1320,7 @@ $(document).on("click", ".open-modal", function (e) {
                 return 'No hay resultados..'
             },
             inputTooLong: function (args) {
-                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caractér';
                 if (overChars != 1) {
                     message += 'es'
                 }
@@ -1374,7 +1374,7 @@ $(document).on("click", ".open-modal", function (e) {
                 return 'No hay resultados..'
             },
             inputTooLong: function (args) {
-                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caractér';
                 if (overChars != 1) {
                     message += 'es'
                 }
@@ -1430,7 +1430,7 @@ $(document).on("click", ".open-modal", function (e) {
                 return 'No hay resultados..'
             },
             inputTooLong: function (args) {
-                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caractér';
                 if (overChars != 1) {
                     message += 'es'
                 }
@@ -1497,7 +1497,7 @@ $(document).on("click", ".open-modal", function (e) {
                 return 'No hay resultados..'
             },
             inputTooLong: function (args) {
-                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caractér';
                 if (overChars != 1) {
                     message += 'es'
                 }
@@ -1735,7 +1735,7 @@ $(document).on("click", ".open-modal", function (e) {
             CheckSesion()
             $.ajax({
                 type: $(this).attr("method"),
-                // contetnType: "application_json; charset=utf-8",
+                // contenType: "application_json; charset=utf-8",
                 url: $(this).attr("action"),
                 data: $(this).serialize(),
                 beforeSend: function (data) {
@@ -1754,12 +1754,12 @@ $(document).on("click", ".open-modal", function (e) {
                         ClearFormNov()
                         /** Notificación */
                         if (data.tipo == 'mod') {
-                            var Textsuccess = 'Novedad modificada.';
+                            var textSuccess = 'Novedad modificada.';
                         } else {
-                            var Textsuccess = 'Novedad creada.';
+                            var textSuccess = 'Novedad creada.';
                         }
                         $.notifyClose();
-                        notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                        notify(textSuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
                     } else {
                         DisabledClean();
                         $.notifyClose();
@@ -1889,7 +1889,7 @@ $(document).on("click", ".open-modal", function (e) {
         CheckSesion()
         $.ajax({
             type: $(this).attr("method"),
-            // contetnType: "application_json; charset=utf-8",
+            // contenType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1907,12 +1907,12 @@ $(document).on("click", ".open-modal", function (e) {
                     RefreshDataTables();
                     /** Notificación */
                     if (data.tipo == 'mod') {
-                        var Textsuccess = 'Hora modificada.';
+                        var textSuccess = 'Hora modificada.';
                     } else {
-                        var Textsuccess = 'Hora cargada.';
+                        var textSuccess = 'Hora cargada.';
                     }
                     $.notifyClose();
-                    notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                    notify(textSuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
                     /** refresh datatable */
                 } else {
                     DisabledClean();
@@ -2024,15 +2024,15 @@ $(document).on("click", ".open-modal", function (e) {
                     $.notifyClose();
                     /** Notificación */
                     if (data.tipo == 'mod') {
-                        let Textsuccess = 'Novedad modificada.';
-                        notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                        let textSuccess = 'Novedad modificada.';
+                        notify(textSuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
                     } else {
-                        let Textsuccess = 'Novedad creada.';
+                        let textSuccess = 'Novedad creada.';
                         if (Array.isArray(data.Mensaje)) {
                             let Mensaje = data.Mensaje.join('<br>')
-                            notify(Textsuccess + '<br>' + Mensaje, 'success', 5000, 'right')
+                            notify(textSuccess + '<br>' + Mensaje, 'success', 5000, 'right')
                         } else {
-                            notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                            notify(textSuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
                         }
                     }
                 } else {
@@ -2164,7 +2164,7 @@ $(document).on("click", ".open-modal", function (e) {
         });
 
     });
-    /** Al hace click en boton + agregar Citación modal general*/
+    /** Al hace click en botón + agregar Citación modal general*/
     $(document).ready(function () {
         $("#Citacion").on("click", function (e) {
             CheckSesion()
