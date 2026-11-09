@@ -140,6 +140,15 @@ function filtrarObjetoArr($array, $key, $valor) // Función para filtrar un obje
     }
     return $a;
 }
+/**
+ * Summary of filtrarObjetoArr2
+ * @param mixed $array
+ * @param mixed $key
+ * @param mixed $key2
+ * @param mixed $valor
+ * @param mixed $valor2
+ * @return array
+ */
 function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Función para filtrar un objeto por dos valores
 {
     $a = [];
@@ -149,12 +158,6 @@ function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Función par
                 $a[] = $v;
             }
         }
-        // $a = array_filter($array, function ($e) use ($key, $key2, $valor, $valor2) {
-        //     return $e[$key] === $valor && $e[$key2] === $valor2;
-        // });
-        // foreach ($a as $key => $x) {
-        //     $a[] = $x;
-        // }
     }
     return $a;
 }
@@ -1812,4 +1815,12 @@ function buildOrderByClause(array $order, array $mapOrder): string
         response([], 0, $e->getMessage(), 400, timeStart(), 0, 0);
         exit;
     }
+}
+function indexarPorDosClaves(array $rows, string $k1, string $k2): array
+{
+    $idx = [];
+    foreach ($rows as $r) {
+        $idx[$r[$k1] . '|' . $r[$k2]][] = $r;
+    }
+    return $idx;
 }

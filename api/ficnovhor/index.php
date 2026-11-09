@@ -6,6 +6,21 @@ ini_set('memory_limit', '1024M');
 tz();
 tzLang();
 errorReport();
+session_write_close();
+// $t = ['inicio' => microtime(true)];
+// register_shutdown_function(function () use (&$t) {
+//     $ahora = microtime(true);
+//     $out = ['arranque=' . round(($t['inicio'] - $_SERVER['REQUEST_TIME_FLOAT']) * 1000) . 'ms'];
+//     $prev = $t['inicio'];
+//     foreach ($t as $k => $ts) {
+//         if ($k === 'inicio') continue;
+//         $out[] = $k . '=' . round(($ts - $prev) * 1000) . 'ms';
+//         $prev = $ts;
+//     }
+//     $out[] = 'respuesta=' . round(($ahora - $prev) * 1000) . 'ms';
+//     $out[] = 'TOTAL=' . round(($ahora - $_SERVER['REQUEST_TIME_FLOAT']) * 1000) . 'ms';
+//     error_log('ficnovhor ' . implode(' ', $out));
+// });
 
 $iLega2 = $total = $wcFicFech = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $colCierre = $joinCierres = $onlyRegCount = '';
 $IlegFic = [];
@@ -15,6 +30,7 @@ $control->check_method("POST");
 $control->check_json();
 
 require __DIR__ . '/wc.php';
+// $t['bootstrap'] = microtime(true);
 
 if ($dp['getReg']) {
     $FicCountSelect = "(SELECT count(1) FROM REGISTRO R WHERE R.RegFeAs = FICHAS.FicFech AND R.RegLega = FICHAS.FicLega) AS 'FicCount',";
@@ -25,6 +41,7 @@ if ($dp['getReg']) {
         $onlyRegCount = " AND (SELECT count(1) FROM REGISTRO R WHERE R.RegFeAs = FICHAS.FicFech AND R.RegLega = FICHAS.FicLega) > 0 ";
     }
 }
+
 if ($wcNov) {
     $joinFichas3 = " INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn";
 }
@@ -96,9 +113,11 @@ if ($wcHoras) {
 $qFicCount .= ") AS FICHAS";
 
 $stmtFicCount = $dbApiQuery($qFicCount)[0]['count'] ?? '';
+// $t['count'] = microtime(true);
 $qFic .= $orderByStr ?: " ORDER BY FICHAS.FicFech";
 $qFic .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 $stmtFic = $dbApiQuery($qFic) ?? '';
+// $t['fichas'] = microtime(true);
 
 if (empty($stmtFic)) {
     http_response_code(200);
@@ -176,6 +195,13 @@ if ($dp['getReg']) {
     $qReg = "SELECT REGISTRO.RegFeAs AS 'Fecha', RegLega, RegTarj, RegFech, RegHora, RegTipo, RegFeAs, RegFeRe, RegHoRe, RegRelo, RegLect FROM REGISTRO WHERE REGISTRO.RegLega > 0 $wcFicFechReg $IlegFic ORDER BY REGISTRO.RegFeRe, REGISTRO.RegHoRe";
     $stmtRegistros = $dbApiQuery($qReg);
 }
+// $t['queries'] = microtime(true);
+
+$idxNov  = is_array($stmtNov ?? null)       ? indexarPorDosClaves($stmtNov,       'FicLega', 'Fecha') : [];
+$idxONov = is_array($stmtONov ?? null)      ? indexarPorDosClaves($stmtONov,      'FicLega', 'Fecha') : [];
+$idxHor  = is_array($stmtHoras ?? null)     ? indexarPorDosClaves($stmtHoras,     'FicLega', 'Fecha') : [];
+$idxReg  = is_array($stmtRegistros ?? null) ? indexarPorDosClaves($stmtRegistros, 'RegLega', 'Fecha') : [];
+// $t['indices'] = microtime(true);
 
 foreach ($stmtFic as $key => $v) {
 
@@ -192,7 +218,8 @@ foreach ($stmtFic as $key => $v) {
     if ($dp['getNov']) {
         // if ($SumNov) {
         if ($stmtNov) {
-            $arrNov = filtrarObjetoArr2($stmtNov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+            // $arrNov = filtrarObjetoArr2($stmtNov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+            $arrNov = $idxNov[$v['FicLega'] . '|' . $v['Fecha']] ?? [];
             foreach ($arrNov as $n) {
                 $dataNov[] = [
                     'Codi' => $n['NovCodi'],
@@ -216,7 +243,8 @@ foreach ($stmtFic as $key => $v) {
     }
     if ($dp['getONov']) {
         if ($stmtONov) {
-            $arrONov = filtrarObjetoArr2($stmtONov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+            // $arrONov = filtrarObjetoArr2($stmtONov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+            $arrONov = $idxONov[$v['FicLega'] . '|' . $v['Fecha']] ?? [];
             foreach ($arrONov as $vo) {
                 $dataONov[] = [
                     'ONov' => $vo['FicONov'],
@@ -232,8 +260,8 @@ foreach ($stmtFic as $key => $v) {
     if ($dp['getHor']) {
         if ($stmtHoras) {
             // if (horaMin($v['FicHsTr']) > 0) {
-            $dataHora = filtrarObjetoArr2($stmtHoras, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
-
+            // $dataHora = filtrarObjetoArr2($stmtHoras, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+            $dataHora = $idxHor[$v['FicLega'] . '|' . $v['Fecha']] ?? [];
             foreach ($dataHora as $h) {
                 $dataHoras[] = [
                     'Hora' => $h['FicHora'],
@@ -259,7 +287,8 @@ foreach ($stmtFic as $key => $v) {
         if ($v['FicNovA'] == 0) {
             // if ($v['FicNovA'] == 0 && $v['FicCount'] > 0) {
             if ($stmtRegistros) {
-                $dataFichada = filtrarObjetoArr2($stmtRegistros, 'RegLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+                // $dataFichada = filtrarObjetoArr2($stmtRegistros, 'RegLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+                $dataFichada = $idxReg[$v['FicLega'] . '|' . $v['Fecha']] ?? [];
                 foreach ($dataFichada as $r) {
                     $esta = ($r['RegHora'] == $r['RegHoRe']) ? '' : 'Modificada';
                     $dataFichadas[] = [
@@ -358,6 +387,7 @@ foreach ($stmtFic as $key => $v) {
         'Cierre' => $cierre
     ];
 }
+// $t['bucle'] = microtime(true);
 
 if ($hayLimit) {
     $limit = intval($dp['DiasLimite']);
@@ -441,9 +471,10 @@ if ($hayLimit) {
     exit;
 }
 
-
 $countData = count($data);
 http_response_code(200);
+
+// $prev = $t['inicio']; $out = [];
 
 response(
     $data,
@@ -454,4 +485,3 @@ response(
     $countData,
     $idCompany
 );
-
