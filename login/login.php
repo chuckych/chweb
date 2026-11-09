@@ -1,13 +1,29 @@
 <?php
+
+foreach (['clave'] as $cookieLegacy) {
+    if (isset($_COOKIE[$cookieLegacy])) {
+        setcookie($cookieLegacy, '', [
+            'expires' => time() - 3600, // Expira en el pasado para eliminar la cookie
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+        // También sin array, por si el navegador exige coincidencia con la firma original
+        setcookie($cookieLegacy, '', time() - 3600, '/');
+        unset($_COOKIE[$cookieLegacy]);
+    }
+}
+
 $checked = (isset($_COOKIE['user'])) ? 'checked ' : '';
 $usuario = (isset($_COOKIE['user'])) ? $_COOKIE['user'] : '';
 $clave = (isset($_COOKIE['clave'])) ? $_COOKIE['clave'] : '';
 $Modulo = '999';
 $bgcolor = 'bg-custom ';
 $_GET['l'] ??= '';
-// session_destroy();
 $self = explode('/', $_SERVER['PHP_SELF']);
 $self = $self[1];
+
 ?>
 <?php
 // if (inicio() == 0) {

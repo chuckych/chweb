@@ -1,5 +1,5 @@
 <?php
-// try {
+
 $authenticate = false;
 $Server = $_SERVER['SERVER_NAME'] ?? '';
 
@@ -21,18 +21,8 @@ if (session_status() == PHP_SESSION_NONE) {
 $guarda = $_POST["guarda"] ?? '';
 
 if ($guarda == "on") {
-	##  GUARDAR COOKIE ## 
 	// setcookie("user", strtolower($_POST["user"]), time() + 3600 * 24 * 30);
 	setcookie('user', strtolower($_POST["user"]), [
-		'expires' => time() + 3600 * 24 * 30, // expira en 30 días
-		'path' => $path, // disponible en todo el dominio
-		'domain' => $domain,
-		'secure' => $secure,
-		'httponly' => true, // Esto evita que la cookie sea accesible a través de JavaScript
-		'samesite' => $sameSite // Establece el valor de SameSite
-	]);
-	// setcookie("clave", $_POST["clave"], time() + 3600 * 24 * 30);
-	setcookie('clave', $_POST["clave"], [
 		'expires' => time() + 3600 * 24 * 30, // expira en 30 días
 		'path' => $path, // disponible en todo el dominio
 		'domain' => $domain,
@@ -57,9 +47,10 @@ require_once __DIR__ . '/../config/conect_pdo.php'; //Conexión a la base de dat
 
 try {
 
-	$a = simple_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1"); // Traigo el valor de la version de la DB mysql
+	// Traigo el valor de la version de la DB mysql
+	$dbVersion = pdoQuerySeguro("SELECT valores FROM params WHERE modulo = ? and cliente = ? LIMIT 1", [0, 0]);
 
-	$verDB = intval($a['valores']); // valor de la version de la DB mysql
+	$verDB = intval($dbVersion['valores']); // valor de la version de la DB mysql
 
 	$cols = [
 		"usuarios.usuario AS 'usuario'",
@@ -104,15 +95,23 @@ try {
 	fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
 	exit; // termina la ejecución
 }
+
 // Si el usuario no es de AD, se procede con la autenticación normal
-$authenticate = (($row['user_ad'] ?? '0') === '1') ?
-	auth_ad($passLogin, $row) :
-	password_verify($passLogin ?? '', $row['clave'] ?? ''); // Verifica la contraseña utilizando password_verify
+if (($row['user_ad'] ?? '0') === '1') {
+	$authenticate = auth_ad($passLogin, $row);
+} else {
+	$authenticate = password_verify($passLogin ?? '', $row['clave'] ?? ''); // Verifica la contraseña utilizando password_verify
+	if ($authenticate && password_needs_rehash($row['clave'] ?? '', PASSWORD_DEFAULT)) {
+		error_log("Password needs rehash for user ID: " . $row['usuario'] ?? '');
+		$newHash = password_hash($passLogin ?? '', PASSWORD_DEFAULT);
+		pdoExec("UPDATE usuarios SET clave = ? WHERE id = ?", [$newHash, $row['id']]);
+	}
+}
 
 // Si la autenticación es correcta (true)
 if ($authenticate) {
 
-	$checkHost = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 1 AND descripcion = 'host' AND cliente = $row[id_cliente] LIMIT 1");
+	$checkHost = pdoExec("SELECT 1 FROM params WHERE modulo = ? AND descripcion = ? AND cliente = ? LIMIT 1", [1, 'host', $row['id_cliente']]);
 
 	if (empty($checkHost)) {
 		$linux = in_array(OS(), ['linux', 'mac'], true); // Si es linux o mac
@@ -120,17 +119,12 @@ if ($authenticate) {
 
 		$OriginalHost = $_SERVER['HTTP_ORIGIN'] ?? 'http://localhost'; // Obtener el host original
 
-		// si es linux o mac quitar el puerto del string $OriginaHost
-		// $host = $linux ? 'localhost' : $OriginalHost;
-		// $host = $linux ? preg_replace('/:[0-9]+$/', '', $OriginalHost) : $OriginalHost;
-
-		pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (1, 'host', '$OriginalHost', $row[id_cliente])");
+		pdoExec("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (1, 'host', ?, ?)", [$OriginalHost, $row['id_cliente']]);
 		write_apiKeysFile();
-		access_log('Host registrado: ' . $OriginalHost);
 	}
 
-	$filepiKeysFile = __DIR__ . '/../mobileApikey.php'; // ruta del archivo de apiKeys
-	if (!file_exists($filepiKeysFile)) {
+	$fileKeysFile = __DIR__ . '/../mobileApikey.php'; // ruta del archivo de apiKeys
+	if (!file_exists($fileKeysFile)) {
 		write_apiKeysFile();
 	}
 
@@ -165,9 +159,7 @@ if ($authenticate) {
 	sesionListas(intval($row['id_rol']), 4, 'ListaRotaciones'); // Sesión lista de rotaciones
 	sesionListas(intval($row['id_rol']), 5, 'ListaTipoHora'); // Sesión lista de tipos de horas
 
-	// $abm = simpleQueryData("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1", $link); // Traigo los permisos del rol
-	$abm = simple_pdoQuery("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1"); // Traigo los permisos del rol
-
+	$abm = pdoQuerySeguro("SELECT * FROM abm_roles WHERE recid_rol = ? LIMIT 1", [$row['recid_rol']]); // Traigo los permisos del rol
 	$keys = ['aFic', 'mFic', 'bFic', 'aNov', 'mNov', 'bNov', 'aHor', 'mHor', 'bHor', 'aONov', 'mONov', 'bONov', 'Proc', 'aCit', 'mCit', 'bCit', 'aTur', 'mTur', 'bTur'];
 
 	$ABMRol = [];
@@ -179,7 +171,7 @@ if ($authenticate) {
 		$ABMRol = array_fill_keys($keys, '0');
 	}
 
-	$data_mod = array_pdoQuery("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo` = `modulos`.`id` WHERE `mod_roles`.`recid_rol` ='$row[recid_rol]'"); // Traigo los módulos asociados al rol
+	$data_mod = pdoQuerySeguro("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo` = `modulos`.`id` WHERE `mod_roles`.`recid_rol` = ?", [$row['recid_rol']], true); // Traigo los módulos asociados al rol
 
 	$data_mod = array_map(function ($item) {
 		$item['modsrol'] = (int) $item['modsrol'];
@@ -192,74 +184,66 @@ if ($authenticate) {
 	$_SESSION["ABM_ROL"] = $ABMRol; // Guardo en la session los permisos del rol
 	$_SESSION["USER_AD"] = $row['user_ad'] ?? '0'; // Guardo en la session los permisos del rol
 
-	$arrModProy = array_pdoQuery("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo`=`modulos`.`id` WHERE `mod_roles`.`recid_rol`='$row[recid_rol]' and `modulos` .`idtipo`=6");
+	$arrModProy = pdoQuerySeguro("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo`=`modulos`.`id` WHERE `mod_roles`.`recid_rol`= ? and `modulos` .`idtipo`=6", [$row['recid_rol']], true);
 
 	$_SESSION["MODS_ROL_PROY"] = ($arrModProy) ? $arrModProy : 'error';
 
-	function estructura_recid_rol(string $recid_rol,string  $e, string $data)
+	/**
+	 * Devuelve una lista de IDs (separados por coma) de la tabla de roles
+	 * correspondiente a la estructura indicada, filtrando por recid_rol.
+	 *
+	 * @param string $recid_rol Recid del rol.
+	 * @param string $e         Estructura: sectores|plantas|grupos|sucursales|empresas|convenios|secciones|personal.
+	 * @param string $data      (no usado, conservado por compatibilidad)
+	 * @return string           IDs separados por coma, o '' si no hay resultados.
+	 */
+	function estructura_recid_rol(string $recid_rol, string $e, string $data = ''): string
 	{
-		E_ALL();
-		require __DIR__ . '/../config/conect_mysql.php';
-		$concat = '';
-		switch ($e) {
-			case 'sectores':
-				$tabla = 'sect_roles';
-				$ColEstr = 'sector';
-				break;
-			case 'plantas':
-				$tabla = 'plan_roles';
-				$ColEstr = 'planta';
-				break;
-			case 'grupos':
-				$tabla = 'grup_roles';
-				$ColEstr = 'grupo';
-				break;
-			case 'sucursales':
-				$tabla = 'suc_roles';
-				$ColEstr = 'sucursal';
-				break;
-			case 'empresas':
-				$tabla = 'emp_roles';
-				$ColEstr = 'empresa';
-				break;
-			case 'convenios':
-				$tabla = 'conv_roles';
-				$ColEstr = 'convenio';
-				break;
-			case 'secciones':
-				$tabla = 'secc_roles';
-				$ColEstr = 'seccion';
-				$concat = ", CONCAT(secc_roles.sector,secc_roles.seccion) AS 'sect_secc'";
-				break;
-			case 'personal':
-				break;
-			default:
-				$concat = '';
-				// $respuesta = array('success' => 'NO', 'error' => '1', 'mensaje' => 'No se especifico parámetro de estructura');
-				// $datos = array($respuesta);
-				// echo json_encode($datos);
-				// exit;
-				break;
+		// Mapa explícito: cada estructura → tabla + columna (+ concat opcional)
+		$mapa = [
+			'sectores' => ['tabla' => 'sect_roles', 'col' => 'sector', 'concat' => ''],
+			'plantas' => ['tabla' => 'plan_roles', 'col' => 'planta', 'concat' => ''],
+			'grupos' => ['tabla' => 'grup_roles', 'col' => 'grupo', 'concat' => ''],
+			'sucursales' => ['tabla' => 'suc_roles', 'col' => 'sucursal', 'concat' => ''],
+			'empresas' => ['tabla' => 'emp_roles', 'col' => 'empresa', 'concat' => ''],
+			'convenios' => ['tabla' => 'conv_roles', 'col' => 'convenio', 'concat' => ''],
+			'secciones' => [
+				'tabla' => 'secc_roles',
+				'col' => 'seccion',
+				'concat' => ", CONCAT(secc_roles.sector, secc_roles.seccion) AS sect_secc",
+			],
+			'personal' => null, // no implementado
+		];
+
+		if (!isset($mapa[$e]) || $mapa[$e] === null) {
+			// Estructura desconocida o 'personal' (no soportada): devolvemos vacío
+			return '';
 		}
 
-		$recidRol = (isset($e)) ? "WHERE $tabla.recid_rol = '$recid_rol'" : "";
-		$query = "SELECT DISTINCT $tabla.$ColEstr AS id, $tabla.recid_rol AS recid_rol $concat FROM $tabla $recidRol";
-		$result = mysqli_query($link, $query);
+		$tabla = $mapa[$e]['tabla'];
+		$col = $mapa[$e]['col'];
+		$concat = $mapa[$e]['concat'];
 
-		if (mysqli_num_rows($result) > 0) {
-			while ($row = mysqli_fetch_assoc($result)) {
-				$id = ($e == 'secciones') ? $row['sect_secc'] : $row['id'];
-				// $recid_rol = $row['recid_rol'];
-				$DataID[] = ($id);
-			}
+		// Si recid_rol viene vacío, no filtramos (comportamiento original)
+		$where = $recid_rol !== '' ? "WHERE {$tabla}.recid_rol = :recid_rol" : '';
+		$params = $recid_rol !== '' ? [':recid_rol' => $recid_rol] : [];
 
-			$data = implode(",", $DataID);
-		} else {
-			$data = '';
+		$sql = "SELECT DISTINCT {$tabla}.{$col} AS id, {$tabla}.recid_rol AS recid_rol {$concat}
+            FROM {$tabla}
+            {$where}";
+
+		$rows = pdoQuerySeguro($sql, $params, true);
+
+		if (empty($rows)) {
+			return '';
 		}
-		mysqli_free_result($result);
-		mysqli_close($link);
-		return $data;
+
+		$ids = [];
+		foreach ($rows as $row) {
+			$ids[] = ($e === 'secciones') ? $row['sect_secc'] : $row['id'];
+		}
+
+		return implode(',', $ids);
 	}
 	function estructUsuario(int $uid, int $lista)
 	{
@@ -270,10 +254,10 @@ if ($authenticate) {
 	}
 
 	$_SESSION['EstrUser'] = estructUsuario(intval($row['id']), 8);
-	
+
 	if ($row["recid_cliente"] == 'kxo7w2q-') { // solo para la cuenta de SKF 'kxo7w2q-'
-		$checkEstruct = count_pdoQuery("select 1 from lista_estruct where uid = '$row[id]'");
-		if ($checkEstruct > 0) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
+		$checkEstruct = pdoQuerySeguro("SELECT 1 FROM lista_estruct WHERE uid = ?", [$row['id']]);
+		if (!empty($checkEstruct)) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
 			$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
 			$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
 			$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
@@ -311,8 +295,8 @@ if ($authenticate) {
 	$_SESSION["RECID_USER"] = $row["recid_user"];
 	$_SESSION["ID_ROL"] = $row["id_rol"];
 	$_SESSION["ID_CLIENTE"] = $row["id_cliente"];
-	$q = simple_pdoQuery("SELECT ApiMobileHRP FROM clientes WHERE id = '$row[id_cliente]' LIMIT 1");
-	$_SESSION["APIMOBILEHRP"] = $q["ApiMobileHRP"];
+	$q = pdoQuerySeguro("SELECT ApiMobileHRP FROM clientes WHERE id = ? LIMIT 1", [$row['id_cliente']]);
+	$_SESSION["APIMOBILEHRP"] = $q["ApiMobileHRP"] ?? null;
 	$_SESSION["CLIENTE"] = $row["cliente"];
 	$_SESSION["ROL"] = $row["rol"];
 	$_SESSION["RECID_ROL"] = $row["recid_rol"];
@@ -328,7 +312,7 @@ if ($authenticate) {
 	$_SESSION['CONECT_MSSQL'] = false;
 	$_SESSION['HOST_CHWEB'] = OS() === 'linux' ? 'http://localhost' : gethostCHWeb();
 
-	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'");
+	$modRol = pdoQuerySeguro("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol = ?", [$row['recid_rol']], true);
 	$modRol = array_map(function ($item) {
 		$item['id'] = (string) $item['id'];
 		return $item;
@@ -353,8 +337,6 @@ if ($authenticate) {
 
 	if ($_POST['lasturl'] ?? '') {
 		header('Location:' . urldecode($_POST['lasturl']));
-		// } else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {
-		// 	header('Location:/' . HOMEHOST . '/dashboard/');
 	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
 		header('Location:/' . HOMEHOST . '/mishoras/');
 		exit;
@@ -375,7 +357,3 @@ if ($authenticate) {
 	header('Location:/' . HOMEHOST . '/login/?error');
 	access_log('Login incorrecto');
 }
-
-// } catch (\Throwable $th) {
-// 	error_log($th->getMessage()); // escribir en el log de errores
-// }

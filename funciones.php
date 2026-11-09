@@ -2269,14 +2269,13 @@ function dataLista($lista, $rol)
  */
 function dataListaEstruct($lista, $uid)
 {
-    $q = "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = '$uid' AND lista_estruct.lista = '$lista'";
+    $q = "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = ? AND lista_estruct.lista = ?";
 
-    $stmt = simple_pdoQuery($q);
-
+    $stmt = pdoQuerySeguro($q, [$uid, $lista]);
     if ($stmt) {
-        return array($stmt['datos']);
+        return [$stmt['datos']];
     } else {
-        return array('-');
+        return ['-'];
     }
 }
 /**
@@ -3667,7 +3666,7 @@ function borrarLogs(string $path, int $days, string $ext)
             $dateDiff = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
             if ($dateDiff >= $days) {
                 unlink($file); //elimino el fichero
-                fileLog("Se eliminó log {$file}", $pathLog);
+                // fileLog("Se eliminó log {$file}", $pathLog);
             }
         }
 
@@ -5371,14 +5370,14 @@ function array_reduce_safe(array $array, $callback, $initial = [])
  * @param array  $params Parámetros a bindear.
  * @return array|null
  */
-function pdoQuerySeguro(string $sql, array $params = []): ?array
+function pdoQuerySeguro(string $sql, array $params = [], $fetchAll = false): ?array
 {
     require __DIR__ . '/config/conect_pdo.php';
 
     try {
         $stmt = $connpdo->prepare($sql);
         $stmt->execute($params);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $fetchAll ? $stmt->fetchAll(PDO::FETCH_ASSOC) : $stmt->fetch(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
         return $row === false ? null : $row;
     } catch (\Throwable $th) {
