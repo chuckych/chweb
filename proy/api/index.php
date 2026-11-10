@@ -76,7 +76,7 @@ if ($request->query->redondear == '1') {
             $min = $date->format("i");
             $date = Carbon::create($year, $month, $day, $hour, $min, 0);
             $nearestSec = $redondearEn * 60;
-            $minimumMoment = $date->subMinutes((int)$limite);
+            $minimumMoment = $date->subMinutes((int) $limite);
             $futureTimestamp = ceil($minimumMoment->timestamp / $nearestSec) * $nearestSec;
             $futureMoment = Carbon::createFromTimestamp($futureTimestamp);
             $futureMoment->startOfMinute()->format("Y-m-d H:i");
@@ -93,7 +93,7 @@ if ($request->query->redondear == '1') {
         }
     }
     if ($confTar['RecRedTar'] && $confTar['ProcRedTar']) {
-        $rs = (redondear(   $fechahora, $redondear, $limite));
+        $rs = (redondear($fechahora, $redondear, $limite));
         $rs = new DateTime($rs);
     } else {
         $d = new DateTime($fechahora);
@@ -112,12 +112,21 @@ if ($request->query->redondear == '1') {
 }
 
 if ($request->query->descanso == '1') {
-    foreach (getConfTar() as $key => $v) {
-        $confTar = array(
-            'ProcDescTar' => $v['ProcDescTar'],
-            'MinimoDesc' => HoraMin($v['MinimoDesc']),
-            'LimitTar' => intval($v['LimitTar']) * 60, // Limite de tiempo maximo en tareas
-        );
+    $getConfTar = getConfTar() ?? [];
+    if ($getConfTar) {
+        foreach ($getConfTar as $key => $v) {
+            $confTar = [
+                'ProcDescTar' => $v['ProcDescTar'],
+                'MinimoDesc' => HoraMin($v['MinimoDesc']),
+                'LimitTar' => intval($v['LimitTar']) * 60, // Limite de tiempo máximo en tareas
+            ];
+        }
+    } else {
+        $confTar = [
+            'ProcDescTar' => '0',
+            'MinimoDesc' => 0,
+            'LimitTar' => 0,
+        ];
     }
 
     $start = ($request->data->start);
@@ -181,8 +190,8 @@ if ($request->query->descanso == '1') {
         $q = array_pdoQuery($q);
         return $q;
     }
-    if ($confTar['ProcDescTar'] == '1') {
-        /** Recorremos la configuracion de descanso y sepramos dos arrays. 
+    if (($confTar['ProcDescTar'] ?? '0') == '1') {
+        /** Recorremos la configuracion de descanso y separamos dos arrays. 
          * Uno la configuracion del usuario y la otra la del sistema */
         foreach (getConfDesc($user) as $key => $h) {
             if ($h['TarDesUsr'] == NULL) {
@@ -221,16 +230,16 @@ if ($request->query->descanso == '1') {
         $confDesc = ($confUser) ? $confUser : $confGeneral; // Definimos la configuracion de descanso asignada.
     }
     /** Si encontramos configuración de descanso 
-     * Arrancamos con los calculos de horario de descanso
+     * Arrancamos con los cálculos de horario de descanso
      */
     if ($confDesc) {
-        $a = ($start); // Fecha Hora de Inicio en formato estandar 2022-12-06 09:00
+        $a = ($start); // Fecha Hora de Inicio en formato estándar 2022-12-06 09:00
         $a1 = ($startInt); // Fecha Hora de Inicio en formato int 202212060900
-        $b = FechaFormatVar($confDesc['IniInt'], 'Y-m-d H:i'); // Fecha Hora de Inicio Descanso en formato estandar 2022-12-06 12:00
+        $b = FechaFormatVar($confDesc['IniInt'], 'Y-m-d H:i'); // Fecha Hora de Inicio Descanso en formato estándar 2022-12-06 12:00
         $b1 = ($confDesc['IniInt']); // Fecha Hora de Inicio Descanso en formato int 202212061200
-        $c = FechaFormatVar($confDesc['FinInt'], 'Y-m-d H:i'); // Fecha Hora de Fin en formato estandar 2022-12-06 13:00
+        $c = FechaFormatVar($confDesc['FinInt'], 'Y-m-d H:i'); // Fecha Hora de Fin en formato estándar 2022-12-06 13:00
         $c1 = ($confDesc['FinInt']); // Fecha Hora de Fin en formato int 202212061300
-        $d = ($end); // Fecha Hora de Fin en formato estandar 2022-12-06 15:00
+        $d = ($end); // Fecha Hora de Fin en formato estándar 2022-12-06 15:00
         $d1 = ($endInt); // Fecha Hora de Fin en formato int 202212061500
 
         /** 

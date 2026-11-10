@@ -4279,6 +4279,7 @@ function access_log($Modulo)
         fclose($log);
         exit;
     }
+    return '';
 }
 /**
  * Summary of access_log_proy
@@ -5407,4 +5408,37 @@ function pdoExec(string $sql, array $params = []): bool
         error_log("SQL: $sql | " . $th->getMessage());
         throw new Exception($th->getMessage(), (int) $th->getCode(), $th);
     }
+}
+/**
+ * Summary of esRutaLocal
+ * Determina si una URL es local al servidor actual.
+ * Considera rutas relativas que comienzan con / y URLs absolutas con el mismo host.
+ * @param string $url
+ * @return bool
+ */
+function esRutaLocal(string $url): bool
+{
+    if ($url === '') {
+        return false;
+    }
+
+    // Protocol-relative //evil.com
+    if (str_starts_with($url, '//')) {
+        return false;
+    }
+
+    // Ruta relativa: debe empezar con / y no contener backslashes
+    if (str_starts_with($url, '/')) {
+        return !str_contains($url, '\\');
+    }
+
+    // URL absoluta: host debe coincidir con el actual
+    $parts = parse_url($url);
+    if ($parts === false || empty($parts['host'])) {
+        return false;
+    }
+
+    $hostActual = $_SERVER['HTTP_HOST'] ?? '';
+
+    return strcasecmp($parts['host'], $hostActual) === 0;
 }

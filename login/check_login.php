@@ -335,25 +335,46 @@ if ($authenticate) {
 
 	login_logs('1');
 
-	if ($_POST['lasturl'] ?? '') {
-		header('Location:' . urldecode($_POST['lasturl']));
-	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
-		header('Location:/' . HOMEHOST . '/mishoras/');
-		exit;
-	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '5'")) {
-		header('Location:/' . HOMEHOST . '/mobile/');
-	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '32'")) {
-		header('Location:/' . HOMEHOST . '/mobile/hrp/');
-	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '43'")) {
-		header('Location:/' . HOMEHOST . '/proy/');
-	} else {
-		header('Location:/' . HOMEHOST . '/inicio/');
+	$modulos = [
+		6 => 'mishoras',
+		32 => 'mobile/hrp',
+		43 => 'proy'
+	];
+
+	// 1. lasturl con validación anti open-redirect
+	$lasturl = urldecode($_POST['lasturl'] ?? '');
+	if ($lasturl !== '') {
+		if (esRutaLocal($lasturl)) {
+			header("Location: $lasturl");
+			exit;
+		}
 	}
-	access_log('Login correcto');
+
+	// 2. Buscar módulos del rol en una sola query
+	$modulosIn = implode(',', array_keys($modulos));
+	$rows = pdoQuerySeguro(
+		"SELECT modulo FROM mod_roles WHERE recid_rol = ? AND modulo IN ($modulosIn)",
+		[$row['recid_rol']],
+		true
+	);
+
+	$modulosRol = array_column($rows ?? [], 'modulo');
+
+	// 3. Elegir destino por prioridad; fallback a /inicio/
+	$destino = '/' . HOMEHOST . '/inicio/';
+	foreach ($modulos as $key => $mod) {
+		if (in_array((string) $key, $modulosRol, true) || in_array($key, $modulosRol, true)) {
+			$destino = '/' . HOMEHOST . '/' . $mod . '/';
+			break;
+		}
+	}
+
+	header("Location: $destino");
+	exit;
 
 
 } else {
 	login_logs('2');
 	header('Location:/' . HOMEHOST . '/login/?error');
-	access_log('Login incorrecto');
+	return;
 }
