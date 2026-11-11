@@ -1,5 +1,5 @@
 <?php
-if (!$dataCompany) {
+if (!($dataCompany ?? false)) {
     http_response_code(400);
     (response([], 0, 'No hay datos de cuenta', 400, timeStart(), 0, ''));
     exit;

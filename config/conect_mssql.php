@@ -1,19 +1,13 @@
 <?php
-/** FUNCIÓN PARA ESCRIBIR UN ARCHIVO */
 E_ALL();
 if (isset($_GET['_c'])) {
-	// require __DIR__ . '/conect_mysql.php';
-	$querydb = "SELECT clientes.host, clientes.db, clientes.user, clientes.pass, clientes.auth FROM clientes WHERE clientes.recid = '$_GET[_c]'";
-	// $result = mysqli_query($link, $querydb);
-	$row = simple_pdoQuery($querydb);
-	// print_r($row).exit;
-	// mysqli_free_result($result);
+	$querydb = "SELECT clientes.host, clientes.db, clientes.user, clientes.pass, clientes.auth FROM clientes WHERE clientes.recid = ?";
+	$row = pdoQuerySeguro($querydb, [$_GET['_c']], false);
 	$serverName = $row['host'];
 	$db = $row['db'];
 	$user = $row['user'];
 	$pass = $row['pass'];
 	$auth = $row['auth'];
-	// mysqli_close($link);
 	$conexionSesion = false;
 
 } else {
@@ -24,11 +18,14 @@ if (isset($_GET['_c'])) {
 	$auth = $_SESSION["CONEXION_MS"]['auth']; // 0 = SQL Server Authentication, 1 = Windows Authentication
 	$conexionSesion = true;
 }
-if ((empty($db . $user . $pass . $serverName))) { // Si no hay datos de conexion SQL
-	$data = array();
+
+if ((empty("{$db}{$user}{$pass}{$serverName}"))) { // Si no hay datos de conexion SQL
+	$data = [];
 	PrintRespuestaJson('Error', 'Error: no hay datos de conexion SQL');
 	exit; // Termina el script
 }
+
+$connectionInfo = [];
 
 switch ($auth) { // 0 = SQL Server Authentication, 1 = Windows Authentication
 	case '1':
@@ -56,14 +53,11 @@ switch ($auth) { // 0 = SQL Server Authentication, 1 = Windows Authentication
 /** conexion mediante autenticación de windows */
 //$connectionInfo = array("Database"=>$base, "CharacterSet" => "UTF-8");
 /********************************************************************************* */
-// header("Content-Type: application/json");
-// $data = array('status' => 'Error', 'Mensaje' => $connectionInfo);
-// echo json_encode($data);
-// exit;
 $errorLink = false;
 $link = sqlsrv_connect($serverName, $connectionInfo);
-if ($link === false) {
+if (!$link) {
 	$errorLink = true;
+	$errorHTML = '';
 	if (($errors = sqlsrv_errors()) != null) {
 		foreach ($errors as $key => $error) {
 			date_default_timezone_set('America/Argentina/Buenos_Aires');
@@ -83,7 +77,6 @@ if ($link === false) {
 		}
 		if (!$conexionSesion) { // Si no se esta usando la conexion de sesión
 			header("Content-Type: application/json"); // Tipo de contenido de la respuesta
-			// echo '<pre>';
 			PrintRespuestaJson('Error', $errorHTML);
 			exit;
 		}
@@ -107,16 +100,3 @@ if ($link === false) {
 		}
 	}
 }
-// print_r($connectionInfo);
-// print_r(json_encode(sqlsrv_client_info($link)));
-// if ($client_info = sqlsrv_client_info($link)) {
-// 	foreach ($client_info as $key => $value) {
-// 		// echo $key.": ".$value."<br />";
-// 	}
-// } 
-// else {
-// 	header("Content-Type: application/json");
-// 	$data = array('status' => 'Error', 'Mensaje' => 'Error al recuperar información del cliente.');
-// 	echo json_encode($data);
-// 	// exit;
-// }

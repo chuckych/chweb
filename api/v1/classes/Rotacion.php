@@ -181,7 +181,9 @@ class Rotacion
         try {
             $conn->beginTransaction();
 
+            
             foreach ($items as $item) {
+                error_log(print_r($item, true));
                 try {
                     (new InputValidator($item, $rules))->validate();
                 } catch (ValidationException $e) {

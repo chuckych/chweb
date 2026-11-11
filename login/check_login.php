@@ -255,9 +255,28 @@ if ($authenticate) {
 
 	$_SESSION['EstrUser'] = estructUsuario(intval($row['id']), 8);
 
-	if ($row["recid_cliente"] == 'kxo7w2q-') { // solo para la cuenta de SKF 'kxo7w2q-'
-		$checkEstruct = pdoQuerySeguro("SELECT 1 FROM lista_estruct WHERE uid = ?", [$row['id']]);
-		if (!empty($checkEstruct)) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
+	switch ($row["recid_cliente"]) {
+		case 'kxo7w2q-':
+			$checkEstruct = pdoQuerySeguro("SELECT 1 FROM lista_estruct WHERE uid = ?", [$row['id']]);
+			if (!empty($checkEstruct)) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
+				$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
+				$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
+				$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
+				$_SESSION['SectRol'] = estructUsuario(intval($row['id']), 4);
+				$_SESSION['Sec2Rol'] = estructUsuario(intval($row['id']), 5);
+				$_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
+				$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
+			} else {
+				$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
+				$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));
+				$_SESSION['ConvRol'] = (estructura_recid_rol($row['recid_rol'], 'convenios', 'convenio'));
+				$_SESSION['SectRol'] = (estructura_recid_rol($row['recid_rol'], 'sectores', 'sector'));
+				$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
+				$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
+				$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
+			}
+			break;
+		default:
 			$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
 			$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
 			$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
@@ -265,23 +284,7 @@ if ($authenticate) {
 			$_SESSION['Sec2Rol'] = estructUsuario(intval($row['id']), 5);
 			$_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
 			$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
-		} else {
-			$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
-			$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));
-			$_SESSION['ConvRol'] = (estructura_recid_rol($row['recid_rol'], 'convenios', 'convenio'));
-			$_SESSION['SectRol'] = (estructura_recid_rol($row['recid_rol'], 'sectores', 'sector'));
-			$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
-			$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
-			$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
-		}
-	} else {
-		$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
-		$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
-		$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
-		$_SESSION['SectRol'] = estructUsuario(intval($row['id']), 4);
-		$_SESSION['Sec2Rol'] = estructUsuario(intval($row['id']), 5);
-		$_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
-		$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
+			break;
 	}
 
 
@@ -331,6 +334,7 @@ if ($authenticate) {
 	if (session_status() !== PHP_SESSION_ACTIVE) {
 		session_start();
 	}
+
 	$_SESSION['LABELS'] = $Etiquetas;
 
 	login_logs('1');

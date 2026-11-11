@@ -220,6 +220,7 @@ Flight::route('DELETE /horarios/desde-hasta', [$horarios, 'delete_horario']);
 Flight::route('DELETE /horarios/legajo-desde-hasta', [$horarios, 'delete_horario']);
 Flight::route('DELETE /horarios/citacion', [$horarios, 'delete_horario']);
 Flight::route('DELETE /horarios/legajo-citacion', [$horarios, 'delete_horario']);
+Flight::route('DELETE /horarios/rotacion', [$horarios, 'delete_horario']);
 Flight::route('DELETE /rotacion', [$rotacion, 'delete']);
 Flight::route('DELETE /horarios/legajo-rotacion', [$horarios, 'delete_horario']);
 Flight::route('POST /horarios/legajo-desde', [$horarios, 'set_horario']);

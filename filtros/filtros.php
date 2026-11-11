@@ -10,13 +10,24 @@ $Get_suc = (!isset($_GET['_suc'])) ? '' : $_GET['_suc'];
 $Get_per = (!isset($_GET['_per'])) ? '' : $_GET['_per'];
 $Get_per2 = (!isset($_POST['_lega'])) ? '' : 'AND PERSONAL.LegNume = ' . $_POST['_lega'];
 
+/**
+ * Summary of filtrar_estructura
+ * @param mixed $get
+ * @param mixed $col
+ * @return string
+ */
 function filtrar_estruc($get, $col)
 {
-    $cond = ((!empty($get)));
+    $valores = '';
+    $cond = !empty($get);
     $Nombre_Filtro = ($cond ? $valores = implode(",", $get) : $cond) ? "AND PERSONAL.$col IN ($valores)" : '';
     return $Nombre_Filtro;
 }
-
+/**
+ * Summary of Filtro_Personal
+ * @param mixed $get_per
+ * @return string
+ */
 function Filtro_Personal($get_per)
 {
     $get_per = (!isset($_GET['_per'])) ? '' : $_GET['_per'];

@@ -62,7 +62,7 @@ const getStorageClass = async () => {
                 return mod.default;
             })
             .catch((error) => {
-                console.warn('No se pudo cargar Storage class dinamicamente.', error);
+                console.warn('No se pudo cargar Storage class dinámicamente.', error);
                 return null;
             });
     }
