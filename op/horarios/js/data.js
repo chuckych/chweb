@@ -48,9 +48,73 @@ const LS_VALUE_FECHA = `${homehost}_value_fecha`;
 const LS_MARCADOS = `${homehost}_marcados`;
 const LS_MARCADOS_PAGE = `${homehost}_marcados_page`;
 const LS_PAGE_PERSONAL = `${homehost}_page_personal`;
+const MODAL_ASIGN_FOCUS_STATE = {
+    lastFocusedElement: null,
+    listenersBound: false,
+};
 let HORARIOS_CACHE = null;
 let HORARIOS_INDEXED = null;
 let STORAGE_CLASS_PROMISE = null;
+
+const bindModalAsignFocusHandlers = () => {
+    if (MODAL_ASIGN_FOCUS_STATE.listenersBound) return;
+
+    const getModalFocusFallback = () => {
+        let fallback = document.querySelector('#modalAsignFocusFallback');
+        if (fallback) return fallback;
+
+        fallback = document.createElement('button');
+        fallback.type = 'button';
+        fallback.id = 'modalAsignFocusFallback';
+        fallback.tabIndex = -1;
+        fallback.setAttribute('aria-hidden', 'true');
+        fallback.style.position = 'fixed';
+        fallback.style.left = '-9999px';
+        fallback.style.top = '0';
+        fallback.style.width = '1px';
+        fallback.style.height = '1px';
+        fallback.style.opacity = '0';
+        fallback.style.pointerEvents = 'none';
+        document.body.appendChild(fallback);
+        return fallback;
+    };
+
+    const moveFocusOutsideModal = (modalElement) => {
+        const lastFocused = MODAL_ASIGN_FOCUS_STATE.lastFocusedElement;
+        const canRestoreFocus = lastFocused &&
+            !modalElement.contains(lastFocused) &&
+            document.contains(lastFocused) &&
+            typeof lastFocused.focus === 'function';
+
+        if (canRestoreFocus) {
+            lastFocused.focus();
+        }
+
+        if (modalElement.contains(document.activeElement)) {
+            const fallback = getModalFocusFallback();
+            fallback.focus();
+        }
+    };
+
+    $(document).on('show.bs.modal.modalAsignFocus', ID_MODAL, function () {
+        MODAL_ASIGN_FOCUS_STATE.lastFocusedElement = document.activeElement;
+    });
+
+    $(document).on('hide.bs.modal.modalAsignFocus', ID_MODAL, function () {
+        const activeElement = document.activeElement;
+        if (this.contains(activeElement) && typeof activeElement.blur === 'function') {
+            activeElement.blur();
+        }
+        moveFocusOutsideModal(this);
+    });
+
+    $(document).on('hidden.bs.modal.modalAsignFocus', ID_MODAL, function () {
+        moveFocusOutsideModal(this);
+        MODAL_ASIGN_FOCUS_STATE.lastFocusedElement = null;
+    });
+
+    MODAL_ASIGN_FOCUS_STATE.listenersBound = true;
+};
 
 const getStorageClass = async () => {
     if (window.CHStorageClass) return window.CHStorageClass;
@@ -1536,6 +1600,7 @@ $(function () {
     // const PERMISOS = getAcciones();
     const getModal = async (data) => {
         CheckSesion();
+        bindModalAsignFocusHandlers();
 
         const textMarcados = textMarcadosModal();
 
