@@ -609,9 +609,7 @@ $(function () {
             language: lenguaje_dt('Horarios Desde')
         });
 
-        $(table.table().body()).off('click', 'tr');
-
-        table.on('click', 'tbody tr', (event) => {
+        table.off('click.rowActions').on('click.rowActions', 'tbody tr', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
             const elementName = event.target.getAttribute('name') || event.target.tagName.toLowerCase();
@@ -621,8 +619,7 @@ $(function () {
             }
             if (!mapElementName[elementName]) return;
             const tr = event.target.closest('tr');
-            const index = tr.getAttribute('data-index');
-            const dataRow = tableData[index];
+            const dataRow = table.row(tr).data();
             if (!dataRow) return;
             ls.set(LS_ACTION, mapElementName[elementName]);
             getModal(dataRow);
@@ -684,9 +681,7 @@ $(function () {
             language: lenguaje_dt('Horarios Desde - Hasta')
         });
 
-        $(table.table().body()).off('click', 'tr');
-
-        table.on('click', 'tbody tr', (event) => {
+        table.off('click.rowActions').on('click.rowActions', 'tbody tr', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
             const elementName = event.target.getAttribute('name') || event.target.tagName.toLowerCase();
@@ -696,8 +691,7 @@ $(function () {
             }
             if (!mapElementName[elementName]) return;
             const tr = event.target.closest('tr');
-            const index = tr.getAttribute('data-index');
-            const dataRow = tableData2[index];
+            const dataRow = table.row(tr).data();
             if (!dataRow) return;
             ls.set(LS_ACTION, mapElementName[elementName]);
             getModal(dataRow);
@@ -781,9 +775,7 @@ $(function () {
             language: lenguaje_dt('Citaciones')
         });
 
-        $(table.table().body()).off('click', 'tr');
-
-        table.on('click', 'tbody tr', (event) => {
+        table.off('click.rowActions').on('click.rowActions', 'tbody tr', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
             const elementName = event.target.getAttribute('name') || event.target.tagName.toLowerCase();
@@ -793,8 +785,7 @@ $(function () {
             }
             if (!mapElementName[elementName]) return;
             const tr = event.target.closest('tr');
-            const index = tr.getAttribute('data-index');
-            const dataRow = tableData4[index];
+            const dataRow = table.row(tr).data();
 
             if (!dataRow) return;
             ls.set(LS_ACTION, mapElementName[elementName]);
@@ -864,9 +855,7 @@ $(function () {
             language: lenguaje_dt('Rotaciones')
         });
 
-        $(table.table().body()).off('click', 'tr');
-
-        table.on('click', 'tbody tr', (event) => {
+        table.off('click.rowActions').on('click.rowActions', 'tbody tr', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
             const elementName = event.target.getAttribute('name') || event.target.tagName.toLowerCase();
@@ -876,8 +865,7 @@ $(function () {
             }
             if (!mapElementName[elementName]) return;
             const tr = event.target.closest('tr');
-            const index = tr.getAttribute('data-index');
-            const dataRow = tableData3[index];
+            const dataRow = table.row(tr).data();
 
             if (!dataRow) return;
             ls.set(LS_ACTION, mapElementName[elementName]);
@@ -1386,7 +1374,7 @@ $(function () {
         });
         const grillaSemanaHtml = `
         <div class="radius p-1 d-flex flex-column w-100">
-            <div class="select d-flex justify-content-between p-1 font08">
+            <div class="select d-flex justify-content-between p-1 font08" style="min-width: 540px">
                 <div>
                     ${fecha}<br>
                     (${RotCodi}) ${RotDesc}
